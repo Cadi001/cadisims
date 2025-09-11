@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modeling & Simulation Hub</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../css/main.css" rel="stylesheet">
+    <link href="../css/home.css" rel="stylesheet">
+</head>
+<body>
+    <div class="hero-section">
+        <div class="container">
+            <h1 class="display-4 fw-bold mb-4">
+                <i class="fas fa-chart-line me-3"></i>
+                Modeling & Simulation Hub
+            </h1>
+            <p class="lead mb-4">Choose your simulation type and explore complex systems with ease</p>
+            <div class="text-center mb-4">
+                <a href="topics.html" class="btn btn-outline-light btn-lg me-3">
+                    <i class="fas fa-graduation-cap me-2"></i>
+                    Learn the Concepts First
+                </a>
+                <a href="interactive-simulations.html" class="btn btn-primary btn-lg">
+                    <i class="fas fa-play me-2"></i>
+                    Try Interactive Simulations
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container pb-5">
+        <!-- Educational Resources Section -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <h2 class="text-center mb-4 text-white">
+                    <i class="fas fa-book-open me-2"></i>
+                    Educational Resources
+                </h2>
+                <div class="row g-3">
+                    <div class="col-lg-2 col-md-4 col-sm-6">
+                        <a href="intro-modeling-simulation.html" class="btn btn-light w-100 h-100 d-flex flex-column justify-content-center align-items-center p-3 text-decoration-none border-2 shadow-sm" style="background-color: rgba(255,255,255,0.95); color: #6f42c1; border-color: #6f42c1;">
+                            <i class="fas fa-play-circle fa-2x mb-2"></i>
+                            <small class="text-center fw-bold">Intro to Modeling & Simulation</small>
+                        </a>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-sm-6">
+                        <a href="simulation-by-hand.html" class="btn btn-light w-100 h-100 d-flex flex-column justify-content-center align-items-center p-3 text-decoration-none border-2 shadow-sm" style="background-color: rgba(255,255,255,0.95); color: #198754; border-color: #198754;">
+                            <i class="fas fa-hand-paper fa-2x mb-2"></i>
+                            <small class="text-center fw-bold">Simulation by Hand</small>
+                        </a>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-sm-6">
+                        <a href="simulation-with-excel.html" class="btn btn-light w-100 h-100 d-flex flex-column justify-content-center align-items-center p-3 text-decoration-none border-2 shadow-sm" style="background-color: rgba(255,255,255,0.95); color: #0dcaf0; border-color: #0dcaf0;">
+                            <i class="fas fa-file-excel fa-2x mb-2"></i>
+                            <small class="text-center fw-bold">Simulation with Excel</small>
+                        </a>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-sm-6">
+                        <a href="more-about-modeling.html" class="btn btn-light w-100 h-100 d-flex flex-column justify-content-center align-items-center p-3 text-decoration-none border-2 shadow-sm" style="background-color: rgba(255,255,255,0.95); color: #fd7e14; border-color: #fd7e14;">
+                            <i class="fas fa-cogs fa-2x mb-2"></i>
+                            <small class="text-center fw-bold">More About Modeling</small>
+                        </a>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-sm-6">
+                        <a href="more-about-simulation.html" class="btn btn-light w-100 h-100 d-flex flex-column justify-content-center align-items-center p-3 text-decoration-none border-2 shadow-sm" style="background-color: rgba(255,255,255,0.95); color: #dc3545; border-color: #dc3545;">
+                            <i class="fas fa-chart-line fa-2x mb-2"></i>
+                            <small class="text-center fw-bold">More About Simulation</small>
+                        </a>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-sm-6">
+                        <a href="interactive-simulations.html" class="btn btn-light w-100 h-100 d-flex flex-column justify-content-center align-items-center p-3 text-decoration-none border-2 shadow-sm" style="background-color: rgba(255,255,255,0.95); color: #212529; border-color: #212529;">
+                            <i class="fas fa-rocket fa-2x mb-2"></i>
+                            <small class="text-center fw-bold">Interactive Simulations</small>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="card info-card">
+                    <div class="card-header text-center info-card-header">
+                        <h5 class="mb-0"><i class="fas fa-question-circle me-2"></i>Which Model Should I Use?</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-3 col-md-6 mb-3">
+                                <h6 class="text-primary"><i class="fas fa-dice me-2"></i>Use Monte Carlo When:</h6>
+                                <ul class="list-unstyled small">
+                                    <li>✅ Testing <strong>many random scenarios</strong></li>
+                                    <li>✅ Estimating <strong>probabilities</strong> or averages</li>
+                                    <li>✅ Each trial is <strong>independent</strong></li>
+                                    <li>✅ Asking: <em>"What if I try this 10,000 times?"</em></li>
+                                </ul>
+                                <div class="alert alert-primary p-2">
+                                    <small><strong>Examples:</strong> Investment risk, π estimation, insurance claims, portfolio analysis</small>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6 mb-3">
+                                <h6 class="text-success"><i class="fas fa-clock me-2"></i>Use Discrete-Event When:</h6>
+                                <ul class="list-unstyled small">
+                                    <li>✅ Events happen at <strong>specific times</strong></li>
+                                    <li>✅ System state changes <strong>instantaneously</strong></li>
+                                    <li>✅ Modeling <strong>queues and services</strong></li>
+                                    <li>✅ Asking: <em>"When do things happen?"</em></li>
+                                </ul>
+                                <div class="alert alert-success p-2">
+                                    <small><strong>Examples:</strong> Bank queues, manufacturing lines, hospital ER, call centers</small>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6 mb-3">
+                                <h6 class="text-info"><i class="fas fa-hand-paper me-2"></i>Use Hand Simulation When:</h6>
+                                <ul class="list-unstyled small">
+                                    <li>✅ Learning <strong>simulation fundamentals</strong></li>
+                                    <li>✅ Small-scale <strong>proof of concept</strong></li>
+                                    <li>✅ Understanding <strong>step-by-step process</strong></li>
+                                    <li>✅ Asking: <em>"How does this actually work?"</em></li>
+                                </ul>
+                                <div class="alert alert-info p-2">
+                                    <small><strong>Examples:</strong> Demand forecasting, random walk, inventory tracking, weather patterns</small>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6 mb-3">
+                                <h6 class="text-warning"><i class="fas fa-file-excel me-2"></i>Use Excel-Style When:</h6>
+                                <ul class="list-unstyled small">
+                                    <li>✅ Need <strong>quick prototypes</strong></li>
+                                    <li>✅ Business-friendly <strong>presentation</strong></li>
+                                    <li>✅ Formula-based <strong>transparency</strong></li>
+                                    <li>✅ Asking: <em>"Can I build this quickly?"</em></li>
+                                </ul>
+                                <div class="alert alert-warning p-2">
+                                    <small><strong>Examples:</strong> Sales forecasting, project risk, budget variance, quality control</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="alert alert-secondary p-3">
+                                    <h6 class="text-dark"><i class="fas fa-globe me-2"></i>Real-World System Integration:</h6>
+                                    <p class="mb-0 small">
+                                        <strong>For complex systems:</strong> Combine multiple approaches! Use Monte Carlo for risk analysis, 
+                                        Discrete-Event for operations, Hand simulation for validation, and Excel for stakeholder communication. 
+                                        Examples: Supply chains, healthcare systems, transportation networks, e-commerce platforms.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6">
+                <div class="simulation-card active" onclick="startSimulation('monte-carlo')">
+                    <div class="simulation-icon">
+                        <i class="fas fa-dice"></i>
+                    </div>
+                    <h3 class="simulation-title">Monte Carlo Simulation</h3>
+                    <p class="simulation-description">
+                        Use random sampling to solve complex mathematical and physical problems with statistical accuracy.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="simulation-card active" onclick="startSimulation('stochastic')">
+                    <div class="simulation-icon">
+                        <i class="fas fa-random"></i>
+                    </div>
+                    <h3 class="simulation-title">Stochastic Simulation</h3>
+                    <p class="simulation-description">
+                        Model real-life random processes like weather, queues, and population growth.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="simulation-card active" onclick="startSimulation('molecular-dynamics')">
+                    <div class="simulation-icon">
+                        <i class="fas fa-atom"></i>
+                    </div>
+                    <h3 class="simulation-title">Molecular Dynamics</h3>
+                    <p class="simulation-description">
+                        Simulate molecular behavior in drug design, materials science, and chemistry.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="simulation-card active" onclick="startSimulation('agent-based')">
+                    <div class="simulation-icon">
+                        <i class="fas fa-network-wired"></i>
+                    </div>
+                    <h3 class="simulation-title">Agent-Based Model</h3>
+                    <p class="simulation-description">
+                        Model complex systems by simulating autonomous agents and their interactions.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="simulation-card active" onclick="startSimulation('system-dynamics')">
+                    <div class="simulation-icon">
+                        <i class="fas fa-project-diagram"></i>
+                    </div>
+                    <h3 class="simulation-title">System Dynamics</h3>
+                    <p class="simulation-description">
+                        Understand complex systems behavior through stocks, flows, and feedback loops.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="simulation-card active" onclick="startSimulation('discrete-event')">
+                    <div class="simulation-icon">
+                        <i class="fas fa-wave-square"></i>
+                    </div>
+                    <h3 class="simulation-title">Discrete Event</h3>
+                    <p class="simulation-description">
+                        Model systems as sequences of events occurring at discrete time points.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="simulation-card active" onclick="startSimulation('wolf-sheep')">
+                    <div class="simulation-icon">
+                        <i class="fas fa-leaf"></i>
+                    </div>
+                    <h3 class="simulation-title">Wolf-Sheep Ecosystem</h3>
+                    <p class="simulation-description">
+                        Explore predator-prey dynamics and ecosystem balance in a living environment.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Copyright Footer -->
+    <footer class="text-center py-4 mt-5">
+        <div class="container">
+            <p class="mb-2">
+                <i class="fas fa-copyright me-2"></i>
+                © 2025 <strong>Aldwin Nunag</strong>. All rights reserved.
+            </p>
+            <div class="mb-2">
+                <i class="fab fa-creative-commons me-1"></i>
+                <i class="fab fa-creative-commons-by me-1"></i>
+                <i class="fab fa-creative-commons-nc me-1"></i>
+                <i class="fab fa-creative-commons-sa me-2"></i>
+                <strong>Open Source Project</strong> - Licensed under 
+                <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" class="text-decoration-none">
+                    CC BY-NC-SA 4.0
+                </a>
+            </div>
+            <small class="text-muted">
+                Free to use, modify, and share for educational purposes only. Commercial use prohibited. 
+                Modified works must retain this license and be shared under the same terms.
+            </small>
+            <br>
+            <small class="text-muted">
+                Modeling & Simulation Hub - Educational Interactive Simulations
+            </small>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        function startSimulation(type) {
+            const simulations = {
+                'monte-carlo': 'monte-carlo.html',
+                'stochastic': 'stochastic.html',
+                'molecular-dynamics': 'molecular-dynamics.html',
+                'agent-based': 'agent-based.html',
+                'system-dynamics': 'system-dynamics.html',
+                'discrete-event': 'discrete-event.html',
+                'wolf-sheep': 'wolf-sheep-predation.html'
+            };
+            
+            if (simulations[type]) {
+                window.location.href = simulations[type];
+            } else {
+                alert('This simulation is not available yet!');
+            }
+        }
+
+        $(document).ready(function() {
+            $('.simulation-card.active').hover(
+                function() {
+                    $(this).css('transform', 'translateY(-8px)');
+                },
+                function() {
+                    $(this).css('transform', 'translateY(-5px)');
+                }
+            );
+        });
+    </script>
+</body>
+</html>

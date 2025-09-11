@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python:*)",
+      "Read(//c/Users/Ale/Downloads/**)",
+      "Bash(find:*)",
+      "Bash(node:*)",
+      "Bash(ls:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modeling & Simulation Topics - Educational Guide</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../css/main.css" rel="stylesheet">
+    <link href="../css/topics.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-arrow-left me-2"></i>
+                Educational Topics Guide
+            </a>
+        </div>
+    </nav>
+
+    <div class="container mt-4 mb-5">
+        <div class="hero-section text-center mb-5">
+            <h1 class="display-4 fw-bold text-white mb-4">
+                <i class="fas fa-graduation-cap me-3"></i>
+                Understanding Modeling & Simulation
+            </h1>
+            <p class="lead text-white">A beginner-friendly guide to the concepts behind our simulations</p>
+        </div>
+
+        <!-- What is a Model Section -->
+        <div class="topic-section mb-5">
+            <div class="topic-header">
+                <h2><i class="fas fa-cube me-3"></i>What is a Model?</h2>
+            </div>
+            <div class="topic-content">
+                <div class="simple-explanation">
+                    <h4>Think of it like this...</h4>
+                    <p>A <strong>model</strong> is like a simplified copy of something real that helps us understand or study it better. It's like:</p>
+                    <ul>
+                        <li>🏠 <strong>A dollhouse</strong> - represents a real house but smaller and simpler</li>
+                        <li>🗺️ <strong>A map</strong> - shows real places but on paper</li>
+                        <li>🧠 <strong>A brain diagram</strong> - shows how the brain works without opening a real head!</li>
+                    </ul>
+                </div>
+
+                <div class="real-world-box">
+                    <h5><i class="fas fa-lightbulb me-2"></i>Why do we need models?</h5>
+                    <p>Sometimes studying the real thing is:</p>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="reason-card">
+                                <i class="fas fa-dollar-sign"></i>
+                                <h6>Too Expensive</h6>
+                                <p>Testing real rockets costs millions!</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="reason-card">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <h6>Too Dangerous</h6>
+                                <p>Can't test nuclear reactions safely</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="reason-card">
+                                <i class="fas fa-clock"></i>
+                                <h6>Too Slow/Fast</h6>
+                                <p>Evolution takes millions of years!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interactive Question 1 -->
+                <div class="interactive-question">
+                    <h5><i class="fas fa-question-circle me-2"></i>Class Discussion Question 1</h5>
+                    <div class="question-content">
+                        <p><strong>Can you think of 3 examples of models you use in everyday life?</strong></p>
+                        <div class="question-hints">
+                            <button class="btn btn-outline-primary btn-sm me-2" onclick="toggleHints('hints1')">
+                                <i class="fas fa-eye me-1"></i>Show Hints
+                            </button>
+                            <div id="hints1" class="hints-content" style="display: none;">
+                                <ul>
+                                    <li>📱 Think about apps on your phone (GPS maps, weather apps)</li>
+                                    <li>🎮 Consider video games (simulated worlds)</li>
+                                    <li>📊 Look at charts or graphs you've seen</li>
+                                    <li>🏠 Think about miniature versions of things</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="discussion-space">
+                            <textarea class="form-control" rows="3" placeholder="Write your answers here for class discussion..."></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Types of Models Section -->
+        <div class="topic-section mb-5">
+            <div class="topic-header">
+                <h2><i class="fas fa-shapes me-3"></i>Types of Models</h2>
+            </div>
+            <div class="topic-content">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="model-type-card">
+                            <h4><i class="fas fa-hand-paper me-2"></i>Physical Models</h4>
+                            <p>You can touch these! They're like:</p>
+                            <ul>
+                                <li>🏗️ Scale models of buildings</li>
+                                <li>🧬 Plastic models of DNA</li>
+                                <li>🪐 Solar system mobiles</li>
+                                <li>✈️ Wind tunnel airplane models</li>
+                            </ul>
+                            <div class="example-box">
+                                <strong>Example:</strong> Architects build small house models to show clients what the real house will look like.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="model-type-card">
+                            <h4><i class="fas fa-calculator me-2"></i>Mathematical Models</h4>
+                            <p>Made of numbers and equations! Like:</p>
+                            <ul>
+                                <li>📈 Graphs and charts</li>
+                                <li>🧮 Computer programs</li>
+                                <li>📊 Statistical formulas</li>
+                                <li>🎮 Video game physics</li>
+                            </ul>
+                            <div class="example-box">
+                                <strong>Example:</strong> Weather apps use math equations to predict if it'll rain tomorrow.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interactive Question 2 -->
+                <div class="interactive-question">
+                    <h5><i class="fas fa-question-circle me-2"></i>Class Discussion Question 2</h5>
+                    <div class="question-content">
+                        <p><strong>Which type of model would be better for each scenario? Physical or Mathematical?</strong></p>
+                        <div class="scenario-quiz">
+                            <div class="scenario-item">
+                                <p>🏥 <strong>Scenario A:</strong> Designing a new hospital layout to reduce patient walking distance</p>
+                                <div class="quiz-options">
+                                    <label class="option-label">
+                                        <input type="radio" name="q2a" value="physical"> Physical Model
+                                    </label>
+                                    <label class="option-label">
+                                        <input type="radio" name="q2a" value="mathematical"> Mathematical Model
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="scenario-item">
+                                <p>🚗 <strong>Scenario B:</strong> Testing how a new car design handles wind resistance</p>
+                                <div class="quiz-options">
+                                    <label class="option-label">
+                                        <input type="radio" name="q2b" value="physical"> Physical Model
+                                    </label>
+                                    <label class="option-label">
+                                        <input type="radio" name="q2b" value="mathematical"> Mathematical Model
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="scenario-item">
+                                <p>📈 <strong>Scenario C:</strong> Predicting next month's sales based on historical data</p>
+                                <div class="quiz-options">
+                                    <label class="option-label">
+                                        <input type="radio" name="q2c" value="physical"> Physical Model
+                                    </label>
+                                    <label class="option-label">
+                                        <input type="radio" name="q2c" value="mathematical"> Mathematical Model
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="btn btn-success btn-sm mt-2" onclick="checkAnswers()">
+                            <i class="fas fa-check me-1"></i>Check Answers
+                        </button>
+                        <div id="quiz-results" class="quiz-results mt-2" style="display: none;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Classification of Models Section -->
+        <div class="topic-section mb-5">
+            <div class="topic-header">
+                <h2><i class="fas fa-tags me-3"></i>How We Group Different Models</h2>
+            </div>
+            <div class="topic-content">
+                <div class="classification-grid">
+                    <div class="classification-item">
+                        <h4>📸 Static vs 🎬 Dynamic</h4>
+                        <div class="vs-comparison">
+                            <div class="vs-left">
+                                <h5>Static (Like a Photo)</h5>
+                                <ul>
+                                    <li>Shows one moment in time</li>
+                                    <li>Like a snapshot</li>
+                                    <li>Example: Population count today</li>
+                                </ul>
+                            </div>
+                            <div class="vs-vs">vs</div>
+                            <div class="vs-right">
+                                <h5>Dynamic (Like a Movie)</h5>
+                                <ul>
+                                    <li>Shows changes over time</li>
+                                    <li>Like watching a story unfold</li>
+                                    <li>Example: How population grows over years</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="classification-item">
+                        <h4>🎯 Deterministic vs 🎲 Stochastic</h4>
+                        <div class="vs-comparison">
+                            <div class="vs-left">
+                                <h5>Deterministic (Predictable)</h5>
+                                <ul>
+                                    <li>Same input = same output</li>
+                                    <li>Like a calculator</li>
+                                    <li>Example: If everyone arrives on time</li>
+                                </ul>
+                            </div>
+                            <div class="vs-vs">vs</div>
+                            <div class="vs-right">
+                                <h5>Stochastic (Random)</h5>
+                                <ul>
+                                    <li>Has randomness/luck involved</li>
+                                    <li>Like rolling dice</li>
+                                    <li>Example: People arrive randomly</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="classification-item">
+                        <h4>📏 Discrete vs 〰️ Continuous</h4>
+                        <div class="vs-comparison">
+                            <div class="vs-left">
+                                <h5>Discrete (Countable)</h5>
+                                <ul>
+                                    <li>You can count individual things</li>
+                                    <li>Like counting people</li>
+                                    <li>Example: 5 customers in line</li>
+                                </ul>
+                            </div>
+                            <div class="vs-vs">vs</div>
+                            <div class="vs-right">
+                                <h5>Continuous (Flowing)</h5>
+                                <ul>
+                                    <li>Smooth, flowing changes</li>
+                                    <li>Like temperature</li>
+                                    <li>Example: Water level rising</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interactive Question 3 -->
+                <div class="interactive-question">
+                    <h5><i class="fas fa-question-circle me-2"></i>Class Discussion Question 3</h5>
+                    <div class="question-content">
+                        <p><strong>Match each real-world example to the correct model classification:</strong></p>
+                        <div class="matching-exercise">
+                            <div class="matching-item">
+                                <span class="match-left">🎲 Rolling a dice game</span>
+                                <select class="form-select form-select-sm match-select">
+                                    <option value="">Choose...</option>
+                                    <option value="deterministic">Deterministic</option>
+                                    <option value="stochastic">Stochastic</option>
+                                </select>
+                            </div>
+                            <div class="matching-item">
+                                <span class="match-left">📐 Calculating area of a rectangle</span>
+                                <select class="form-select form-select-sm match-select">
+                                    <option value="">Choose...</option>
+                                    <option value="deterministic">Deterministic</option>
+                                    <option value="stochastic">Stochastic</option>
+                                </select>
+                            </div>
+                            <div class="matching-item">
+                                <span class="match-left">🎬 Population growth over 50 years</span>
+                                <select class="form-select form-select-sm match-select">
+                                    <option value="">Choose...</option>
+                                    <option value="static">Static</option>
+                                    <option value="dynamic">Dynamic</option>
+                                </select>
+                            </div>
+                            <div class="matching-item">
+                                <span class="match-left">📸 Current number of students in class</span>
+                                <select class="form-select form-select-sm match-select">
+                                    <option value="">Choose...</option>
+                                    <option value="static">Static</option>
+                                    <option value="dynamic">Dynamic</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button class="btn btn-success btn-sm mt-2" onclick="checkMatching()">
+                            <i class="fas fa-check me-1"></i>Check Matching
+                        </button>
+                        <div id="matching-results" class="quiz-results mt-2" style="display: none;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Simulation Types Section -->
+        <div class="topic-section mb-5">
+            <div class="topic-header">
+                <h2><i class="fas fa-play me-3"></i>Types of Simulations in Our Website</h2>
+            </div>
+            <div class="topic-content">
+                <div class="simulation-types">
+                    <div class="sim-type-card">
+                        <div class="sim-icon">🎲</div>
+                        <h4>Monte Carlo</h4>
+                        <p class="sim-simple">Like playing the same game thousands of times to see what usually happens</p>
+                        <div class="sim-detailed">
+                            <strong>Real Example:</strong> Flipping a coin 1000 times to prove it's fair (should get ~500 heads, ~500 tails)
+                        </div>
+                        <div class="sim-uses">
+                            <strong>Used for:</strong> Testing luck-based scenarios, risk analysis, probability estimation
+                        </div>
+                    </div>
+
+                    <div class="sim-type-card">
+                        <div class="sim-icon">🔄</div>
+                        <h4>Stochastic</h4>
+                        <p class="sim-simple">Like predicting tomorrow's weather based on today's weather (with some randomness)</p>
+                        <div class="sim-detailed">
+                            <strong>Real Example:</strong> If it's sunny today, there's a 70% chance it'll be sunny tomorrow, 30% chance of rain
+                        </div>
+                        <div class="sim-uses">
+                            <strong>Used for:</strong> Weather prediction, stock market trends, population changes
+                        </div>
+                    </div>
+
+                    <div class="sim-type-card">
+                        <div class="sim-icon">⚛️</div>
+                        <h4>Molecular Dynamics</h4>
+                        <p class="sim-simple">Like watching tiny invisible particles bounce around and interact</p>
+                        <div class="sim-detailed">
+                            <strong>Real Example:</strong> Watching how soap molecules break apart grease (but magnified billions of times!)
+                        </div>
+                        <div class="sim-uses">
+                            <strong>Used for:</strong> Drug design, material science, understanding how things work at tiny scales
+                        </div>
+                    </div>
+
+                    <div class="sim-type-card">
+                        <div class="sim-icon">👥</div>
+                        <h4>Agent-Based</h4>
+                        <p class="sim-simple">Like controlling thousands of little characters in a video game, each following simple rules</p>
+                        <div class="sim-detailed">
+                            <strong>Real Example:</strong> Each "bird" in a flock follows 3 rules: stay close, avoid collisions, match direction
+                        </div>
+                        <div class="sim-uses">
+                            <strong>Used for:</strong> Crowd behavior, ecosystem modeling, market dynamics, social networks
+                        </div>
+                    </div>
+
+                    <div class="sim-type-card">
+                        <div class="sim-icon">🔄</div>
+                        <h4>System Dynamics</h4>
+                        <p class="sim-simple">Like understanding how water flows through pipes, but with information, money, or people</p>
+                        <div class="sim-detailed">
+                            <strong>Real Example:</strong> More customers → more revenue → hire more staff → better service → even more customers
+                        </div>
+                        <div class="sim-uses">
+                            <strong>Used for:</strong> Business planning, city management, understanding complex feedback loops
+                        </div>
+                    </div>
+
+                    <div class="sim-type-card">
+                        <div class="sim-icon">⏰</div>
+                        <h4>Discrete Event</h4>
+                        <p class="sim-simple">Like managing a restaurant where things happen at specific times (order taken, food ready, customer pays)</p>
+                        <div class="sim-detailed">
+                            <strong>Real Example:</strong> 9:15 AM - Customer arrives, 9:17 AM - Order taken, 9:25 AM - Food ready, 9:30 AM - Customer leaves
+                        </div>
+                        <div class="sim-uses">
+                            <strong>Used for:</strong> Queue management, hospital operations, manufacturing, service optimization
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interactive Question 4 -->
+                <div class="interactive-question">
+                    <h5><i class="fas fa-question-circle me-2"></i>Class Discussion Question 4</h5>
+                    <div class="question-content">
+                        <p><strong>For each simulation type, can you think of a problem in your field of study that could use it?</strong></p>
+                        <div class="brainstorm-grid">
+                            <div class="brainstorm-item">
+                                <h6>🎲 Monte Carlo</h6>
+                                <textarea class="form-control brainstorm-text" rows="2" placeholder="Example: Risk assessment in..."></textarea>
+                            </div>
+                            <div class="brainstorm-item">
+                                <h6>🔄 Stochastic</h6>
+                                <textarea class="form-control brainstorm-text" rows="2" placeholder="Example: Predicting trends in..."></textarea>
+                            </div>
+                            <div class="brainstorm-item">
+                                <h6>👥 Agent-Based</h6>
+                                <textarea class="form-control brainstorm-text" rows="2" placeholder="Example: Studying behavior of..."></textarea>
+                            </div>
+                            <div class="brainstorm-item">
+                                <h6>⏰ Discrete Event</h6>
+                                <textarea class="form-control brainstorm-text" rows="2" placeholder="Example: Optimizing processes in..."></textarea>
+                            </div>
+                        </div>
+                        <div class="brainstorm-examples mt-3">
+                            <button class="btn btn-outline-info btn-sm" onclick="showExamples()">
+                                <i class="fas fa-lightbulb me-1"></i>Show Example Ideas
+                            </button>
+                            <div id="example-ideas" class="examples-content mt-2" style="display: none;">
+                                <div class="alert alert-info">
+                                    <strong>Example Ideas by Field:</strong>
+                                    <ul class="mb-0 mt-2">
+                                        <li><strong>Business:</strong> Customer queue management, inventory optimization, market risk analysis</li>
+                                        <li><strong>Healthcare:</strong> Patient flow, disease spread, treatment effectiveness</li>
+                                        <li><strong>Engineering:</strong> System reliability, traffic flow, manufacturing processes</li>
+                                        <li><strong>Environmental:</strong> Climate patterns, population dynamics, resource management</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Steps in Simulation Section -->
+        <div class="topic-section mb-5">
+            <div class="topic-header">
+                <h2><i class="fas fa-list-ol me-3"></i>How to Build a Simulation (12 Steps)</h2>
+            </div>
+            <div class="topic-content">
+                <div class="steps-container">
+                    <div class="step-group">
+                        <h4>🎯 Planning Phase</h4>
+                        <div class="step-item">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h5>Problem Formulation</h5>
+                                <p><strong>Simple:</strong> "What exactly are we trying to figure out?"</p>
+                                <p><strong>Example:</strong> "Why is our coffee shop always so crowded in the morning?"</p>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h5>Set Objectives</h5>
+                                <p><strong>Simple:</strong> "What questions do we want answered?"</p>
+                                <p><strong>Example:</strong> "How many baristas do we need to reduce wait time to under 5 minutes?"</p>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <h5>Model Conceptualization</h5>
+                                <p><strong>Simple:</strong> "Draw a picture of how the system works"</p>
+                                <p><strong>Example:</strong> Customers arrive → get in line → order coffee → pay → leave</p>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">4</div>
+                            <div class="step-content">
+                                <h5>Data Collection</h5>
+                                <p><strong>Simple:</strong> "Gather the numbers we need"</p>
+                                <p><strong>Example:</strong> How many customers per hour? How long to make each drink?</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-group">
+                        <h4>🛠️ Building Phase</h4>
+                        <div class="step-item">
+                            <div class="step-number">5</div>
+                            <div class="step-content">
+                                <h5>Model Translation</h5>
+                                <p><strong>Simple:</strong> "Turn our idea into computer code"</p>
+                                <p><strong>Example:</strong> Program the computer to simulate customers and baristas</p>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">6</div>
+                            <div class="step-content">
+                                <h5>Verification</h5>
+                                <p><strong>Simple:</strong> "Does our code work without bugs?"</p>
+                                <p><strong>Example:</strong> Make sure customers don't disappear or clone themselves!</p>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">7</div>
+                            <div class="step-content">
+                                <h5>Validation</h5>
+                                <p><strong>Simple:</strong> "Does our simulation match real life?"</p>
+                                <p><strong>Example:</strong> If real shop serves 100 customers/hour, simulation should too</p>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">8</div>
+                            <div class="step-content">
+                                <h5>Experimental Design</h5>
+                                <p><strong>Simple:</strong> "What different scenarios should we test?"</p>
+                                <p><strong>Example:</strong> Test with 1, 2, 3, or 4 baristas to see what works best</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-group">
+                        <h4>🧪 Testing Phase</h4>
+                        <div class="step-item">
+                            <div class="step-number">9</div>
+                            <div class="step-content">
+                                <h5>Production Runs</h5>
+                                <p><strong>Simple:</strong> "Run the simulation and collect results"</p>
+                                <p><strong>Example:</strong> Run 100 simulated days and measure average wait times</p>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">10</div>
+                            <div class="step-content">
+                                <h5>More Runs?</h5>
+                                <p><strong>Simple:</strong> "Do we need to test more scenarios?"</p>
+                                <p><strong>Example:</strong> Maybe also test what happens during holiday rushes</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-group">
+                        <h4>📋 Finishing Phase</h4>
+                        <div class="step-item">
+                            <div class="step-number">11</div>
+                            <div class="step-content">
+                                <h5>Documentation</h5>
+                                <p><strong>Simple:</strong> "Write down what we did and what we learned"</p>
+                                <p><strong>Example:</strong> "3 baristas reduce wait time to 4 minutes on average"</p>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">12</div>
+                            <div class="step-content">
+                                <h5>Implementation</h5>
+                                <p><strong>Simple:</strong> "Actually make the changes in real life"</p>
+                                <p><strong>Example:</strong> Hire one more barista and see if it really works!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Why Learn This Section -->
+        <div class="topic-section mb-5">
+            <div class="topic-header">
+                <h2><i class="fas fa-question-circle me-3"></i>Why Should You Learn This?</h2>
+            </div>
+            <div class="topic-content">
+                <div class="benefits-grid">
+                    <div class="benefit-card">
+                        <i class="fas fa-brain"></i>
+                        <h4>Better Problem Solving</h4>
+                        <p>Learn to break down complex problems into manageable pieces</p>
+                    </div>
+                    <div class="benefit-card">
+                        <i class="fas fa-eye"></i>
+                        <h4>See Patterns</h4>
+                        <p>Understand how small changes can have big effects over time</p>
+                    </div>
+                    <div class="benefit-card">
+                        <i class="fas fa-crystal-ball"></i>
+                        <h4>Predict Outcomes</h4>
+                        <p>Make better decisions by testing ideas safely first</p>
+                    </div>
+                    <div class="benefit-card">
+                        <i class="fas fa-save"></i>
+                        <h4>Save Resources</h4>
+                        <p>Avoid costly mistakes by testing in virtual worlds first</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Try It Yourself Section -->
+        <div class="topic-section mb-5">
+            <div class="topic-header">
+                <h2><i class="fas fa-rocket me-3"></i>Ready to Try It Yourself?</h2>
+            </div>
+            <div class="topic-content">
+                <!-- Final Reflection Question -->
+                <div class="interactive-question mb-4">
+                    <h5><i class="fas fa-question-circle me-2"></i>Final Reflection Question</h5>
+                    <div class="question-content">
+                        <p><strong>Now that you've learned about modeling and simulation, how do you think this knowledge could help you in your future career?</strong></p>
+                        <div class="reflection-space">
+                            <textarea class="form-control" rows="4" placeholder="Share your thoughts about how you might use modeling and simulation in your field..."></textarea>
+                        </div>
+                        <div class="reflection-prompts mt-2">
+                            <small class="text-muted">
+                                <strong>Think about:</strong> Decision making, problem solving, risk assessment, optimization, understanding complex systems...
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="try-it-box">
+                    <p>Now that you understand the basics, go back to our simulations and try them out! You'll see these concepts in action.</p>
+                    <div class="d-grid gap-2 d-md-block text-center">
+                        <a href="../index.html" class="btn btn-success btn-lg me-3">
+                            <i class="fas fa-play me-2"></i>Try Simulations
+                        </a>
+                        <a href="#" onclick="window.print()" class="btn btn-outline-light btn-lg">
+                            <i class="fas fa-print me-2"></i>Print This Guide
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Copyright Footer -->
+    <footer class="text-center py-4 mt-5">
+        <div class="container">
+            <p class="mb-2">
+                <i class="fas fa-copyright me-2"></i>
+                © 2025 <strong>Aldwin Nunag</strong>. All rights reserved.
+            </p>
+            <div class="mb-2">
+                <i class="fab fa-creative-commons me-1"></i>
+                <i class="fab fa-creative-commons-by me-1"></i>
+                <i class="fab fa-creative-commons-nc me-1"></i>
+                <i class="fab fa-creative-commons-sa me-2"></i>
+                <strong>Open Source Project</strong> - Licensed under 
+                <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" class="text-decoration-none">
+                    CC BY-NC-SA 4.0
+                </a>
+            </div>
+            <small class="text-muted">
+                Free to use, modify, and share for educational purposes only. Commercial use prohibited. 
+                Modified works must retain this license and be shared under the same terms.
+            </small>
+            <br>
+            <small class="text-muted">
+                Educational Topics Guide - Part of Modeling & Simulation Hub
+            </small>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <script>
+        // Interactive Question Functions
+        function toggleHints(hintsId) {
+            const hints = document.getElementById(hintsId);
+            if (hints.style.display === 'none') {
+                hints.style.display = 'block';
+            } else {
+                hints.style.display = 'none';
+            }
+        }
+
+        function checkAnswers() {
+            const results = document.getElementById('quiz-results');
+            const answers = {
+                'q2a': 'mathematical', // Hospital layout optimization
+                'q2b': 'physical',     // Car wind resistance
+                'q2c': 'mathematical'  // Sales prediction
+            };
+            
+            let score = 0;
+            let total = Object.keys(answers).length;
+            let feedback = '<div class="alert alert-info"><h6>Results:</h6><ul>';
+            
+            for (let question in answers) {
+                const selected = document.querySelector(`input[name="${question}"]:checked`);
+                if (selected) {
+                    if (selected.value === answers[question]) {
+                        score++;
+                        feedback += `<li class="text-success">✓ ${question.toUpperCase()}: Correct!</li>`;
+                    } else {
+                        feedback += `<li class="text-danger">✗ ${question.toUpperCase()}: Try again. Think about whether you need to touch/build something or use calculations.</li>`;
+                    }
+                } else {
+                    feedback += `<li class="text-warning">⚠ ${question.toUpperCase()}: No answer selected</li>`;
+                }
+            }
+            
+            feedback += `</ul><strong>Score: ${score}/${total}</strong></div>`;
+            results.innerHTML = feedback;
+            results.style.display = 'block';
+        }
+
+        function checkMatching() {
+            const results = document.getElementById('matching-results');
+            const answers = {
+                0: 'stochastic',   // Dice game
+                1: 'deterministic', // Rectangle area
+                2: 'dynamic',      // Population growth
+                3: 'static'        // Current students
+            };
+            
+            const selects = document.querySelectorAll('.match-select');
+            let score = 0;
+            let total = selects.length;
+            let feedback = '<div class="alert alert-info"><h6>Matching Results:</h6><ul>';
+            
+            selects.forEach((select, index) => {
+                const correct = answers[index];
+                if (select.value === correct) {
+                    score++;
+                    feedback += `<li class="text-success">✓ Item ${index + 1}: Correct!</li>`;
+                } else if (select.value === '') {
+                    feedback += `<li class="text-warning">⚠ Item ${index + 1}: No selection made</li>`;
+                } else {
+                    feedback += `<li class="text-danger">✗ Item ${index + 1}: Try again!</li>`;
+                }
+            });
+            
+            feedback += `</ul><strong>Score: ${score}/${total}</strong></div>`;
+            results.innerHTML = feedback;
+            results.style.display = 'block';
+        }
+
+        function showExamples() {
+            const examples = document.getElementById('example-ideas');
+            if (examples.style.display === 'none') {
+                examples.style.display = 'block';
+            } else {
+                examples.style.display = 'none';
+            }
+        }
+
+        // Auto-save functionality for text areas (optional)
+        document.addEventListener('DOMContentLoaded', function() {
+            const textareas = document.querySelectorAll('textarea');
+            textareas.forEach(textarea => {
+                const key = 'topics_' + textarea.placeholder.substring(0, 20).replace(/\s+/g, '_');
+                
+                // Load saved content
+                const saved = localStorage.getItem(key);
+                if (saved) {
+                    textarea.value = saved;
+                }
+                
+                // Save on input
+                textarea.addEventListener('input', function() {
+                    localStorage.setItem(key, textarea.value);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
