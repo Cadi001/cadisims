@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monte Carlo Simulation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../css/main.css" rel="stylesheet">
+    <link href="../css/monte-carlo.css" rel="stylesheet">
+    
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-arrow-left me-2"></i>
+                Monte Carlo Simulation
+            </a>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="control-panel">
+                    <h4 class="mb-4"><i class="fas fa-sliders-h me-2"></i>Simulation Controls</h4>
+                    
+                    <div class="mb-4">
+                        <h6>Select Scenario:</h6>
+                        <select class="form-select mb-3" id="scenarioSelect">
+                            <option value="pi-estimation">🔵 π Estimation - Find the value of π using random dots</option>
+                            <option value="stock-price">📈 Stock Price - Predict future stock prices with randomness</option>
+                            <option value="dice-rolls">🎲 Dice Analysis - See probability patterns in dice rolls</option>
+                            <option value="coin-flips">🪙 Coin Streaks - Find longest streaks in coin flips</option>
+                            <option value="portfolio-risk">💼 Portfolio Risk - Test investment strategies safely</option>
+                        </select>
+                        
+                        <div class="alert alert-info" id="scenarioExplanation">
+                            <h6 class="mb-2"><i class="fas fa-lightbulb me-2"></i>What are we doing?</h6>
+                            <p class="mb-2" id="scenarioDescription">
+                                We throw random dots inside a square and count how many land inside a circle. Since we know the circle and square areas, we can calculate π!
+                            </p>
+                            <small class="text-muted" id="scenarioWhy">
+                                <strong>Why Monte Carlo?</strong> Instead of complex math, we use many random samples to get surprisingly accurate results - just like flipping a coin 1000 times to find it's fair!
+                            </small>
+                        </div>
+                    </div>
+
+                    <div class="mb-4" id="parameterControls">
+                        <h6>Parameters:</h6>
+                        <div class="mb-3">
+                            <label for="iterations" class="form-label">Iterations: <span id="iterationsValue">1000</span></label>
+                            <input type="range" class="form-range" id="iterations" min="100" max="10000" value="1000" step="100">
+                        </div>
+                        <div class="mb-3">
+                            <label for="speed" class="form-label">Animation Speed: <span id="speedValue">50</span></label>
+                            <input type="range" class="form-range" id="speed" min="1" max="100" value="50">
+                        </div>
+                        <div id="scenarioSpecificParams"></div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-success btn-simulation" id="startBtn">
+                            <i class="fas fa-play me-2"></i>Start Simulation
+                        </button>
+                        <button class="btn btn-warning btn-simulation" id="pauseBtn" disabled>
+                            <i class="fas fa-pause me-2"></i>Pause
+                        </button>
+                        <button class="btn btn-danger btn-simulation" id="resetBtn">
+                            <i class="fas fa-stop me-2"></i>Reset
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-8">
+                <div class="simulation-stats mb-3">
+                    <h5><i class="fas fa-chart-bar me-2"></i>Statistics</h5>
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="stat-item">
+                                <span class="stat-value" id="currentIteration">0</span>
+                                <span class="stat-label">Current Step</span>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="stat-item">
+                                <span class="stat-value" id="currentResult">0</span>
+                                <span class="stat-label" id="resultLabel">Result</span>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="stat-item">
+                                <span class="stat-value" id="accuracy">0%</span>
+                                <span class="stat-label">Accuracy</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="simulation-canvas">
+                    <h4 class="mb-3"><i class="fas fa-eye me-2"></i>Visualization</h4>
+                    <canvas id="simulationCanvas"></canvas>
+                    <div class="mt-3">
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" 
+                                 id="progressBar" role="progressbar" style="width: 0%">
+                            </div>
+                        </div>
+                        <small class="text-muted mt-2 d-block">
+                            <span id="progressText">Ready to start simulation...</span>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Copyright Footer -->
+    <footer class="text-center py-4 mt-5">
+        <div class="container">
+            <p class="mb-2">
+                <i class="fas fa-copyright me-2"></i>
+                © 2025 <strong>Aldwin Nunag</strong>. All rights reserved.
+            </p>
+            <div class="mb-2">
+                <i class="fab fa-creative-commons me-1"></i>
+                <i class="fab fa-creative-commons-by me-1"></i>
+                <i class="fab fa-creative-commons-nc me-1"></i>
+                <i class="fab fa-creative-commons-sa me-2"></i>
+                <strong>Open Source Project</strong> - Licensed under 
+                <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" class="text-decoration-none">
+                    CC BY-NC-SA 4.0
+                </a>
+            </div>
+            <small class="text-muted">
+                Free to use, modify, and share for educational purposes only. Commercial use prohibited. 
+                Modified works must retain this license and be shared under the same terms.
+            </small>
+            <br>
+            <small class="text-muted">
+                Monte Carlo Simulation - Part of Modeling & Simulation Hub
+            </small>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="../js/monte-carlo-simulation.js"></script>
+</body>
+</html>

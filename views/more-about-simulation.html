@@ -1,0 +1,1578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>More About Simulation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../css/main.css" rel="stylesheet">
+    <link href="../css/topics.css" rel="stylesheet">
+    <style>
+        /* Presentation Mode Styles */
+        .presentation-mode {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            z-index: 9999;
+            display: none;
+            color: white;
+            overflow: hidden;
+        }
+        
+        .slide {
+            display: none;
+            height: 100vh;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .slide.active {
+            display: flex;
+        }
+        
+        .slide h1, .slide h2 {
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .slide p, .slide li {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            max-width: 80%;
+        }
+        
+        .slide ul {
+            text-align: left;
+            max-width: 60%;
+        }
+
+        /* Enhanced Quiz Styles */
+        #enhancedQuizContainer {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            z-index: 9999;
+            color: white;
+            overflow-y: auto;
+        }
+
+        .quiz-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .quiz-progress {
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            height: 8px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .quiz-progress-bar {
+            background: #28a745;
+            height: 100%;
+            transition: width 0.3s ease;
+            border-radius: 10px;
+        }
+
+        .quiz-question {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            color: #333;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .quiz-question.correct {
+            border-color: #28a745;
+            animation: correctPulse 0.6s ease-in-out;
+        }
+
+        .quiz-question.incorrect {
+            border-color: #dc3545;
+            animation: incorrectShake 0.6s ease-in-out;
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-weight: bold;
+            color: #6c757d;
+        }
+
+        .quiz-option {
+            padding: 15px 20px;
+            margin: 10px 0;
+            background: #f8f9fa;
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .quiz-option:hover {
+            background: #e9ecef;
+            border-color: #007bff;
+        }
+
+        .quiz-option.selected {
+            background: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
+        .quiz-option.correct {
+            background: #28a745;
+            color: white;
+            border-color: #28a745;
+        }
+
+        .quiz-option.incorrect {
+            background: #dc3545;
+            color: white;
+            border-color: #dc3545;
+        }
+
+        .quiz-button {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0 10px;
+        }
+
+        .quiz-button:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+
+        .quiz-button:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Animation styles */
+        @keyframes confetti {
+            0% { transform: translateY(0) rotateZ(0deg); opacity: 1; }
+            100% { transform: translateY(-1000px) rotateZ(720deg); opacity: 0; }
+        }
+
+        @keyframes rainDrop {
+            0% { transform: translateY(-100px); opacity: 1; }
+            100% { transform: translateY(100vh); opacity: 0; }
+        }
+
+        @keyframes correctPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes incorrectShake {
+            0%, 20%, 40%, 60%, 80% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+        }
+
+        .confetti-piece, .rain-drop {
+            position: fixed;
+            pointer-events: none;
+            z-index: 10000;
+        }
+
+        .confetti-piece {
+            width: 10px;
+            height: 10px;
+            animation: confetti 3s linear forwards;
+        }
+
+        .rain-drop {
+            font-size: 30px;
+            animation: rainDrop 2s linear forwards;
+        }
+
+        .results-container {
+            background: white;
+            color: #333;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .score-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: #28a745;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .score-circle.poor {
+            background: #dc3545;
+        }
+
+        .score-circle.fair {
+            background: #ffc107;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-arrow-left me-2"></i>
+                More About Simulation
+            </a>
+            <button class="btn btn-warning me-2" onclick="startPresentation()">
+                <i class="fas fa-presentation me-2"></i>
+                Present
+            </button>
+            <a href="topics.html" class="btn btn-outline-light">
+                <i class="fas fa-book me-2"></i>
+                All Topics
+            </a>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- Real-World Applications Section -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <h2><i class="fas fa-globe me-3"></i>Real-World Systems You Can Simulate</h2>
+            </div>
+            <div class="topic-content">
+                <div class="simple-explanation">
+                    <h4>🌍 Simulation is Everywhere!</h4>
+                    <p><strong>Almost any system with waiting, processing, or random events can be simulated.</strong></p>
+                    <p>Look around you - simulation helps improve everything from your morning coffee shop to the hospital emergency room!</p>
+                </div>
+
+                <div class="simulation-types">
+                    <div class="sim-type-card">
+                        <div class="sim-icon">🏪</div>
+                        <h4>Commercial Systems</h4>
+                        <div class="sim-simple">Everyday businesses and services</div>
+                        <div class="sim-detailed">Places where customers come and go, waiting for service</div>
+                        <div class="sim-uses"><strong>Examples:</strong> Barber shops, banks, supermarkets, gas stations, restaurants</div>
+                    </div>
+
+                    <div class="sim-type-card">
+                        <div class="sim-icon">🚗</div>
+                        <h4>Transportation Systems</h4>
+                        <div class="sim-simple">Moving people and things efficiently</div>
+                        <div class="sim-detailed">Systems that manage traffic, cargo, and passenger flow</div>
+                        <div class="sim-uses"><strong>Examples:</strong> Toll booths, traffic lights, ship loading, parking lots, elevators, bike sharing</div>
+                    </div>
+
+                    <div class="sim-type-card">
+                        <div class="sim-icon">🏭</div>
+                        <h4>Business-to-Business</h4>
+                        <div class="sim-simple">Behind-the-scenes operations</div>
+                        <div class="sim-detailed">Support systems that help other businesses run smoothly</div>
+                        <div class="sim-uses"><strong>Examples:</strong> Machine repair shops, inspection stations, secretarial pools, call centers</div>
+                    </div>
+
+                    <div class="sim-type-card">
+                        <div class="sim-icon">🏥</div>
+                        <h4>Social Services</h4>
+                        <div class="sim-simple">Public systems serving communities</div>
+                        <div class="sim-detailed">Government and community services that help people</div>
+                        <div class="sim-uses"><strong>Examples:</strong> Court systems, legislative processes, healthcare systems, foster care</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- When to Simulate Section -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <h2><i class="fas fa-question-circle me-3"></i>When Should You Use Simulation?</h2>
+            </div>
+            <div class="topic-content">
+                <div class="simple-explanation">
+                    <h4>🤔 The Million-Dollar Question</h4>
+                    <p>Simulation isn't always the answer. Sometimes you need the real thing, sometimes you need math formulas. Here's how to decide:</p>
+                </div>
+
+                <h4>✅ Use Simulation When:</h4>
+                <div class="benefits-grid">
+                    <div class="benefit-card">
+                        <i class="fas fa-ban"></i>
+                        <h4>Real Testing is Impossible</h4>
+                        <p>System doesn't exist yet, would be disruptive, or destructive to test</p>
+                    </div>
+                    <div class="benefit-card">
+                        <i class="fas fa-history"></i>
+                        <h4>You Want to See History</h4>
+                        <p>Need to observe how the process unfolds over time</p>
+                    </div>
+                    <div class="benefit-card">
+                        <i class="fas fa-fast-forward"></i>
+                        <h4>Time Compression Needed</h4>
+                        <p>Real system takes too long to study (years compressed into hours)</p>
+                    </div>
+                    <div class="benefit-card">
+                        <i class="fas fa-calculator"></i>
+                        <h4>No Math Solution Exists</h4>
+                        <p>Problem is too complex for analytical formulas</p>
+                    </div>
+                    <div class="benefit-card">
+                        <i class="fas fa-graduation-cap"></i>
+                        <h4>Training Tool Needed</h4>
+                        <p>Want people to learn and practice in a safe environment</p>
+                    </div>
+                    <div class="benefit-card">
+                        <i class="fas fa-brain"></i>
+                        <h4>Math is Too Hard</h4>
+                        <p>Mathematical solution exists but is more complicated than simulation</p>
+                    </div>
+                </div>
+
+                <div class="real-world-box">
+                    <h5>💡 Real Examples</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <strong>🚀 Space Mission Planning:</strong><br>
+                            <small>Can't practice real launches - too expensive and dangerous!</small>
+                        </div>
+                        <div class="col-md-6">
+                            <strong>🏥 Hospital Design:</strong><br>
+                            <small>Test patient flow before building the actual hospital</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Simulation vs Analytics Section -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <h2><i class="fas fa-balance-scale me-3"></i>Simulation vs Mathematical Solutions</h2>
+            </div>
+            <div class="topic-content">
+                <div class="simple-explanation">
+                    <h4>🤝 Why Not Both?</h4>
+                    <p>Here's the secret: You don't always have to choose! The best approach often combines simulation and mathematical analysis.</p>
+                </div>
+
+                <div class="classification-grid">
+                    <div class="classification-item">
+                        <h4>🔬 Three Ways They Work Together</h4>
+                        <div class="step-item">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h5>Verification</h5>
+                                <p>Use simulation to check if your mathematical model is correct</p>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h5>Accuracy Testing</h5>
+                                <p>Use simulation to test how good your simplified math assumptions are</p>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <h5>Discovery</h5>
+                                <p>Use simulation to discover and suggest new mathematical relationships</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="real-world-box">
+                    <h5>🔬 The Metamodel</h5>
+                    <p><strong>A metamodel is like creating a mathematical "summary" of your simulation results.</strong></p>
+                    <p>Run your simulation thousands of times, then create a simple equation that captures the main patterns. Now you have the best of both worlds!</p>
+                    <div class="row">
+                        <div class="col-md-3"><strong>📊 Sensitivity Analysis</strong></div>
+                        <div class="col-md-3"><strong>❓ What-if Questions</strong></div>
+                        <div class="col-md-3"><strong>🔄 Inverse Questions</strong></div>
+                        <div class="col-md-3"><strong>🧠 Understanding</strong></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Simulation Study Process Section -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <h2><i class="fas fa-project-diagram me-3"></i>The Complete Simulation Study Process</h2>
+            </div>
+            <div class="topic-content">
+                <div class="simple-explanation">
+                    <h4>🗺️ Your Simulation Roadmap</h4>
+                    <p>Professional simulation isn't just "build a model and run it." It's a complete process with many carefully planned steps:</p>
+                </div>
+
+                <div class="steps-container">
+                    <div class="step-group">
+                        <h4>📋 Phase 1: Planning</h4>
+                        <div class="step-item">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h5>Problem Definition</h5>
+                                <p>Define scope, objectives, and boundaries. What exactly are you trying to solve?</p>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h5>System Analysis & Design</h5>
+                                <p>Study the real system, collect data, identify variables and performance measures</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-group">
+                        <h4>🛠️ Phase 2: Building</h4>
+                        <div class="step-item">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <h5>Model Design</h5>
+                                <p>Create flowcharts and abstract designs. Test for face validity with experts</p>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">4</div>
+                            <div class="step-content">
+                                <h5>Model Building</h5>
+                                <p>Choose programming language, write code, debug and verify the program</p>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">5</div>
+                            <div class="step-content">
+                                <h5>Model Validation</h5>
+                                <p>Prove the model accurately represents the real system</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-group">
+                        <h4>🧪 Phase 3: Experimenting</h4>
+                        <div class="step-item">
+                            <div class="step-number">6</div>
+                            <div class="step-content">
+                                <h5>Experimental Design</h5>
+                                <p>Plan how many runs, what scenarios, run length, statistical methods</p>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">7</div>
+                            <div class="step-content">
+                                <h5>Run Simulation</h5>
+                                <p>Execute the experiments according to your design plan</p>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">8</div>
+                            <div class="step-content">
+                                <h5>Statistical Analysis</h5>
+                                <p>Analyze results, draw inferences, create metamodels if needed</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-group">
+                        <h4>💼 Phase 4: Implementation</h4>
+                        <div class="step-item">
+                            <div class="step-number">9</div>
+                            <div class="step-content">
+                                <h5>Decision Making</h5>
+                                <p>Transform simulation data into actionable business information</p>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">10</div>
+                            <div class="step-content">
+                                <h5>Implementation</h5>
+                                <p>Put results to use! Deploy models or recommendations in the real world</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Simulation Goals Section -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <h2><i class="fas fa-bullseye me-3"></i>Common Simulation Study Goals</h2>
+            </div>
+            <div class="topic-content">
+                <div class="simple-explanation">
+                    <h4>🎯 What Are You Trying to Achieve?</h4>
+                    <p>Different simulation studies have different goals. Here are the most common ones:</p>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="model-type-card">
+                            <h4>🧠 Better Understanding</h4>
+                            <p>Learn how system processes actually work</p>
+                            <div class="example-box">
+                                <strong>Example:</strong> Why do traffic jams happen at this intersection?
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="model-type-card">
+                            <h4>🏆 Selecting the Best</h4>
+                            <p>Find the single best option among many alternatives</p>
+                            <div class="example-box">
+                                <strong>Example:</strong> Which hospital layout minimizes patient wait times?
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="model-type-card">
+                            <h4>📊 Parameter Estimation</h4>
+                            <p>Figure out the right values for system parameters</p>
+                            <div class="example-box">
+                                <strong>Example:</strong> How many servers do we need for good service?
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="model-type-card">
+                            <h4>🔍 Comparing Alternatives</h4>
+                            <p>Test multiple options to see which works better</p>
+                            <div class="example-box">
+                                <strong>Example:</strong> Is it better to have 3 fast servers or 5 slow ones?
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="model-type-card">
+                            <h4>📈 Ranking Systems</h4>
+                            <p>Put multiple alternatives in order from best to worst</p>
+                            <div class="example-box">
+                                <strong>Example:</strong> Rank 10 different factory layouts by efficiency
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="model-type-card">
+                            <h4>🔮 Prediction</h4>
+                            <p>Forecast what will happen in the future</p>
+                            <div class="example-box">
+                                <strong>Example:</strong> How will customer satisfaction change with growth?
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="model-type-card">
+                            <h4>⚡ Optimization</h4>
+                            <p>Find the absolute best configuration possible</p>
+                            <div class="example-box">
+                                <strong>Example:</strong> What's the optimal mix of staff and equipment?
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="model-type-card">
+                            <h4>🎛️ Factor Screening</h4>
+                            <p>Identify which factors matter most for performance</p>
+                            <div class="example-box">
+                                <strong>Example:</strong> Does server speed or arrival rate affect wait time more?
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Good Simulation Qualities Section -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <h2><i class="fas fa-star me-3"></i>What Makes a Good Simulation?</h2>
+            </div>
+            <div class="topic-content">
+                <div class="simple-explanation">
+                    <h4>⭐ The Seven Pillars of Simulation Excellence</h4>
+                    <p>A good simulation isn't just accurate - it needs to be usable, reliable, and valuable to the people who will use it:</p>
+                </div>
+
+                <div class="benefits-grid">
+                    <div class="benefit-card">
+                        <i class="fas fa-user-check"></i>
+                        <h4>Simple to Understand</h4>
+                        <p>Users can grasp how it works without a PhD in mathematics</p>
+                    </div>
+                    <div class="benefit-card">
+                        <i class="fas fa-bullseye"></i>
+                        <h4>Goal-Directed</h4>
+                        <p>Clearly focused on solving specific, well-defined problems</p>
+                    </div>
+                    <div class="benefit-card">
+                        <i class="fas fa-shield-alt"></i>
+                        <h4>Robust</h4>
+                        <p>Doesn't crash or give ridiculous answers when pushed to extremes</p>
+                    </div>
+                    <div class="benefit-card">
+                        <i class="fas fa-sliders-h"></i>
+                        <h4>Easy to Control</h4>
+                        <p>Users can easily change inputs and settings to test different scenarios</p>
+                    </div>
+                    <div class="benefit-card">
+                        <i class="fas fa-check-circle"></i>
+                        <h4>Complete on Important Issues</h4>
+                        <p>Covers all the critical aspects needed for good decision-making</p>
+                    </div>
+                    <div class="benefit-card">
+                        <i class="fas fa-edit"></i>
+                        <h4>Adaptive</h4>
+                        <p>Easy to modify and update as requirements change</p>
+                    </div>
+                    <div class="benefit-card">
+                        <i class="fas fa-seedling"></i>
+                        <h4>Evolutionary</h4>
+                        <p>Starts simple and grows more complex as understanding develops</p>
+                    </div>
+                </div>
+
+                <div class="try-it-box">
+                    <p><strong>🎯 Remember:</strong> The best simulation is one that people actually use to make better decisions. Technical perfection means nothing if it sits on a shelf!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Key Takeaways Section -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <h2><i class="fas fa-lightbulb me-3"></i>Key Takeaways</h2>
+            </div>
+            <div class="topic-content">
+                <div class="benefits-grid">
+                    <div class="benefit-card">
+                        <i class="fas fa-globe"></i>
+                        <h4>Simulation is Everywhere</h4>
+                        <p>From coffee shops to space missions, simulation helps optimize systems across all industries</p>
+                    </div>
+                    <div class="benefit-card">
+                        <i class="fas fa-handshake"></i>
+                        <h4>Simulation + Math = Power</h4>
+                        <p>The best approach often combines simulation with mathematical analysis (metamodels)</p>
+                    </div>
+                    <div class="benefit-card">
+                        <i class="fas fa-route"></i>
+                        <h4>Follow the Process</h4>
+                        <p>Professional simulation studies follow a structured 10-step process from planning to implementation</p>
+                    </div>
+                </div>
+
+                <div class="try-it-box">
+                    <p><strong>💡 Final Thought:</strong> Simulation is not just about building models - it's about creating tools that help people make better decisions in the real world!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quiz Section -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <h2><i class="fas fa-question-circle me-3"></i>Test Your Understanding</h2>
+            </div>
+            <div class="topic-content">
+                <div class="interactive-question">
+                    <h5>📝 Multiple Choice Quiz</h5>
+                    <div class="question-content">
+                        <p><strong>Question 1:</strong> Which is NOT a good reason to use simulation instead of real experimentation?</p>
+                        <div class="quiz-options">
+                            <label class="option-label">
+                                <input type="radio" name="q1" value="a"> 
+                                A) The real system doesn't exist yet
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q1" value="b"> 
+                                B) Real testing would be destructive
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q1" value="c"> 
+                                C) You want to see the process over time
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q1" value="d"> 
+                                D) Simulation is always cheaper than real testing
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question-content mt-4">
+                        <p><strong>Question 2:</strong> A metamodel is:</p>
+                        <div class="quiz-options">
+                            <label class="option-label">
+                                <input type="radio" name="q2" value="a"> 
+                                A) A model of a model
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q2" value="b"> 
+                                B) An analytical model developed from simulation data
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q2" value="c"> 
+                                C) A very large simulation model
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q2" value="d"> 
+                                D) A model that simulates other models
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question-content mt-4">
+                        <p><strong>Question 3:</strong> What is the first step in a professional simulation study?</p>
+                        <div class="quiz-options">
+                            <label class="option-label">
+                                <input type="radio" name="q3" value="a"> 
+                                A) Model building
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q3" value="b"> 
+                                B) Data collection
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q3" value="c"> 
+                                C) Problem definition
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q3" value="d"> 
+                                D) Programming the simulation
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question-content mt-4">
+                        <p><strong>Question 4:</strong> Which quality is NOT mentioned as characteristic of a good simulation?</p>
+                        <div class="quiz-options">
+                            <label class="option-label">
+                                <input type="radio" name="q4" value="a"> 
+                                A) Simple to understand by users
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q4" value="b"> 
+                                B) Robust (doesn't give absurd answers)
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q4" value="c"> 
+                                C) Uses the most advanced technology available
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q4" value="d"> 
+                                D) Evolutionary (starts simple, becomes complex)
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question-content mt-4">
+                        <p><strong>Question 5:</strong> Simulation is described as being "an experimental methodology" because:</p>
+                        <div class="quiz-options">
+                            <label class="option-label">
+                                <input type="radio" name="q5" value="a"> 
+                                A) It always uses laboratory equipment
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q5" value="b"> 
+                                B) It requires careful experimental design and statistical analysis
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q5" value="c"> 
+                                C) It only works with scientific problems
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q5" value="d"> 
+                                D) It must be conducted by scientists
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <button class="btn btn-primary" onclick="checkQuizAnswers()">
+                            <i class="fas fa-check me-2"></i>Check My Answers
+                        </button>
+                    </div>
+
+                    <div id="quizResults" class="quiz-results mt-3" style="display: none;">
+                        <!-- Results will be inserted here -->
+                    </div>
+                    
+                    <!-- Enhanced Quiz Button -->
+                    <div class="text-center mt-4">
+                        <div class="alert alert-info">
+                            <h5><i class="fas fa-star me-2"></i>Want a More Interactive Experience?</h5>
+                            <p class="mb-3">Try our enhanced quiz with animations, random questions, and immediate feedback!</p>
+                            <button class="btn btn-warning btn-lg" onclick="startEnhancedQuiz()">
+                                <i class="fas fa-rocket me-2"></i>Take Enhanced Quiz
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Presentation Mode -->
+    <div id="presentationMode" class="presentation-mode">
+        <!-- Slides will be dynamically generated here -->
+    </div>
+
+    <!-- Enhanced Quiz Container -->
+    <div id="enhancedQuizContainer">
+        <div class="quiz-container">
+            <div class="quiz-progress">
+                <div class="quiz-progress-bar" id="enhancedProgressBar"></div>
+            </div>
+            <div class="quiz-question" id="enhancedQuizQuestion">
+                <!-- Questions will be loaded here -->
+            </div>
+            <div class="text-center mt-4">
+                <button class="quiz-button" id="enhancedCheckBtn" onclick="checkEnhancedAnswer()">
+                    <i class="fas fa-check me-2"></i>Check Answer
+                </button>
+                <button class="quiz-button" id="enhancedNextBtn" onclick="nextEnhancedQuestion()" style="display: none;">
+                    <i class="fas fa-arrow-right me-2"></i>Next Question
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Container -->
+    <div id="resultsContainer" style="display: none;">
+        <div class="quiz-container">
+            <div class="results-container">
+                <div class="score-circle" id="scoreCircle">
+                    <span id="scorePercentage">0%</span>
+                </div>
+                <h2 id="resultTitle">Quiz Complete!</h2>
+                <p id="resultMessage"></p>
+                <div id="resultsSummary"></div>
+                <div class="text-center mt-4">
+                    <button class="quiz-button" onclick="restartQuiz()">
+                        <i class="fas fa-redo me-2"></i>Try Again
+                    </button>
+                    <button class="quiz-button" onclick="exitQuiz()">
+                        <i class="fas fa-home me-2"></i>Back to Content
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Copyright Footer -->
+    <footer class="text-center py-4 mt-5">
+        <div class="container">
+            <p class="mb-2">
+                <i class="fas fa-copyright me-2"></i>
+                © 2025 <strong>Aldwin Nunag</strong>. All rights reserved.
+            </p>
+            <div class="mb-2">
+                <i class="fab fa-creative-commons me-1"></i>
+                <i class="fab fa-creative-commons-by me-1"></i>
+                <i class="fab fa-creative-commons-nc me-1"></i>
+                <i class="fab fa-creative-commons-sa me-2"></i>
+                <strong>Open Source Project</strong> - Licensed under 
+                <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" class="text-decoration-none">
+                    CC BY-NC-SA 4.0
+                </a>
+            </div>
+            <small class="text-muted">
+                Free to use, modify, and share for educational purposes only. Commercial use prohibited. 
+                Modified works must retain this license and be shared under the same terms.
+            </small>
+            <br>
+            <small class="text-muted">
+                More About Simulation - Educational Content
+            </small>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        function checkQuizAnswers() {
+            const answers = {
+                q1: 'd', // Simulation is always cheaper than real testing
+                q2: 'b', // An analytical model developed from simulation data
+                q3: 'c', // Problem definition
+                q4: 'c', // Uses the most advanced technology available
+                q5: 'b'  // It requires careful experimental design and statistical analysis
+            };
+
+            let score = 0;
+            let total = Object.keys(answers).length;
+            let results = [];
+
+            for (let question in answers) {
+                const userAnswer = document.querySelector(`input[name="${question}"]:checked`);
+                const correctAnswer = answers[question];
+                
+                if (userAnswer && userAnswer.value === correctAnswer) {
+                    score++;
+                    results.push(`<li class="text-success">Question ${question.slice(1)}: Correct! ✓</li>`);
+                } else {
+                    const questionNum = question.slice(1);
+                    const correctText = document.querySelector(`input[name="${question}"][value="${correctAnswer}"]`).parentElement.textContent.trim();
+                    results.push(`<li class="text-danger">Question ${questionNum}: Incorrect. Correct answer: ${correctText}</li>`);
+                }
+            }
+
+            const percentage = Math.round((score / total) * 100);
+            let alertClass = percentage >= 80 ? 'alert-success' : percentage >= 60 ? 'alert-warning' : 'alert-danger';
+            let message = percentage >= 80 ? 'Excellent work!' : percentage >= 60 ? 'Good job!' : 'Keep studying!';
+
+            const resultsHTML = `
+                <div class="alert ${alertClass}">
+                    <h6><i class="fas fa-chart-bar me-2"></i>Quiz Results: ${score}/${total} (${percentage}%)</h6>
+                    <p>${message}</p>
+                </div>
+                <ul class="list-unstyled">${results.join('')}</ul>
+            `;
+
+            document.getElementById('quizResults').innerHTML = resultsHTML;
+            document.getElementById('quizResults').style.display = 'block';
+            
+            // Scroll to results
+            document.getElementById('quizResults').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Auto-save quiz answers
+        document.addEventListener('change', function(e) {
+            if (e.target.type === 'radio') {
+                localStorage.setItem('sim_quiz_' + e.target.name, e.target.value);
+            }
+        });
+
+        // Load saved answers
+        document.addEventListener('DOMContentLoaded', function() {
+            const questions = ['q1', 'q2', 'q3', 'q4', 'q5'];
+            questions.forEach(question => {
+                const saved = localStorage.getItem('sim_quiz_' + question);
+                if (saved) {
+                    const radio = document.querySelector(`input[name="${question}"][value="${saved}"]`);
+                    if (radio) radio.checked = true;
+                }
+            });
+        });
+
+        // Presentation Mode Data for Simulation
+        const presentationData = [
+            {
+                type: 'title',
+                content: {
+                    title: 'More About Simulation',
+                    subtitle: 'Exploring Real-World Applications and Advanced Concepts'
+                }
+            },
+            {
+                type: 'content',
+                content: {
+                    title: 'Simulation in the Real World',
+                    text: 'From predicting weather patterns to testing new aircraft designs, simulation powers critical decisions across every industry. It\'s the bridge between theory and reality.'
+                }
+            },
+            {
+                type: 'list',
+                content: {
+                    title: 'Why Organizations Use Simulation',
+                    items: [
+                        'Test expensive systems safely and cheaply',
+                        'Explore "what if" scenarios without risk',
+                        'Optimize performance before implementation',
+                        'Train personnel in realistic environments',
+                        'Validate theories and designs'
+                    ]
+                }
+            },
+            {
+                type: 'content',
+                content: {
+                    title: 'The Five-Step Simulation Process',
+                    text: 'Every successful simulation follows a structured approach: Problem Definition, Model Development, Verification & Validation, Experimentation, and Implementation.'
+                }
+            },
+            {
+                type: 'list',
+                content: {
+                    title: 'Simulation Across Industries',
+                    items: [
+                        'Healthcare - Patient flow and treatment optimization',
+                        'Manufacturing - Production line efficiency',
+                        'Transportation - Traffic flow and logistics',
+                        'Finance - Risk analysis and portfolio management',
+                        'Entertainment - Realistic game environments'
+                    ]
+                }
+            },
+            {
+                type: 'content',
+                content: {
+                    title: 'Types of Simulation Models',
+                    text: 'Each simulation type serves different purposes: Descriptive models explain what happened, Predictive models forecast future states, and Prescriptive models recommend optimal actions.'
+                }
+            },
+            {
+                type: 'list',
+                content: {
+                    title: 'Simulation vs. Real Testing',
+                    items: [
+                        'Cost - Much cheaper than real experiments',
+                        'Safety - No risk to people or equipment',
+                        'Speed - Faster than real-time testing',
+                        'Control - Perfect experimental conditions',
+                        'Repeatability - Exact replication possible'
+                    ]
+                }
+            },
+            {
+                type: 'content',
+                content: {
+                    title: 'Validation and Verification',
+                    text: 'Verification asks "Did we build the model right?" while Validation asks "Did we build the right model?" Both are crucial for simulation credibility.'
+                }
+            },
+            {
+                type: 'list',
+                content: {
+                    title: 'Simulation Limitations',
+                    items: [
+                        'Models are simplifications of reality',
+                        'Quality depends on input data accuracy',
+                        'Requires specialized knowledge to build',
+                        'Can be computationally intensive',
+                        'Results need careful interpretation'
+                    ]
+                }
+            },
+            {
+                type: 'content',
+                content: {
+                    title: 'Future of Simulation',
+                    text: 'AI-powered simulations, real-time digital twins, and cloud-based modeling are revolutionizing how we understand and optimize complex systems.'
+                }
+            },
+            {
+                type: 'quiz_start',
+                content: {
+                    title: 'Test Your Simulation Knowledge!',
+                    text: 'Ready to test your understanding of simulation applications and concepts? Take our interactive quiz!'
+                }
+            }
+        ];
+
+        // Enhanced Quiz Question Pool (30 questions)
+        const questionPool = [
+            {
+                question: "What is the primary advantage of simulation over real-world testing?",
+                options: ["It's always more accurate", "It's safer and less expensive", "It takes longer to complete", "It requires no expertise"],
+                correct: 1,
+                explanation: "Simulation allows safe, cost-effective testing without risking people, equipment, or resources."
+            },
+            {
+                question: "Which step comes FIRST in the simulation process?",
+                options: ["Model development", "Experimentation", "Problem definition", "Implementation"],
+                correct: 2,
+                explanation: "Problem definition is the crucial first step - you must clearly understand what you're trying to solve."
+            },
+            {
+                question: "What does 'verification' mean in simulation?",
+                options: ["Did we build the right model?", "Did we build the model right?", "Is the model useful?", "Is the model expensive?"],
+                correct: 1,
+                explanation: "Verification asks 'Did we build the model right?' - checking if the model was implemented correctly."
+            },
+            {
+                question: "What does 'validation' mean in simulation?",
+                options: ["Did we build the model right?", "Did we build the right model?", "Is the model fast?", "Is the model simple?"],
+                correct: 1,
+                explanation: "Validation asks 'Did we build the right model?' - checking if the model represents the real system accurately."
+            },
+            {
+                question: "A descriptive simulation model is used to:",
+                options: ["Predict the future", "Explain what happened", "Recommend actions", "Control systems"],
+                correct: 1,
+                explanation: "Descriptive models help explain and understand what happened in past events or current situations."
+            },
+            {
+                question: "Which industry commonly uses simulation for patient flow optimization?",
+                options: ["Manufacturing", "Healthcare", "Entertainment", "Agriculture"],
+                correct: 1,
+                explanation: "Healthcare uses simulation extensively to optimize patient flow, staffing, and treatment processes."
+            },
+            {
+                question: "What is a major limitation of simulation models?",
+                options: ["They're too expensive", "They're simplifications of reality", "They're too fast", "They're too accurate"],
+                correct: 1,
+                explanation: "All models are simplifications - they cannot capture every aspect of complex real-world systems."
+            },
+            {
+                question: "Prescriptive simulation models are designed to:",
+                options: ["Explain past events", "Predict future outcomes", "Recommend optimal actions", "Collect data"],
+                correct: 2,
+                explanation: "Prescriptive models go beyond prediction to recommend the best course of action."
+            },
+            {
+                question: "What does a digital twin represent?",
+                options: ["A backup computer", "A real-time virtual replica of a physical system", "A simple model", "A gaming system"],
+                correct: 1,
+                explanation: "A digital twin is a real-time virtual replica that mirrors and synchronizes with a physical system."
+            },
+            {
+                question: "Why is repeatability important in simulation?",
+                options: ["It makes models faster", "It allows exact replication of experiments", "It reduces costs", "It simplifies models"],
+                correct: 1,
+                explanation: "Repeatability allows researchers to replicate experiments exactly, which is crucial for validation and comparison."
+            },
+            {
+                question: "What drives the quality of simulation results?",
+                options: ["Computer speed", "Input data accuracy", "Model complexity", "User interface design"],
+                correct: 1,
+                explanation: "Garbage in, garbage out - the accuracy of input data largely determines the quality of simulation results."
+            },
+            {
+                question: "Simulation is particularly valuable when real testing would be:",
+                options: ["Quick and easy", "Dangerous or expensive", "Simple", "Unnecessary"],
+                correct: 1,
+                explanation: "Simulation shines when real testing would be dangerous, expensive, time-consuming, or impossible."
+            },
+            {
+                question: "In manufacturing, simulation is commonly used for:",
+                options: ["Product design only", "Production line optimization", "Marketing analysis", "Customer service"],
+                correct: 1,
+                explanation: "Manufacturing uses simulation extensively for optimizing production lines, scheduling, and resource allocation."
+            },
+            {
+                question: "What characterizes a predictive simulation model?",
+                options: ["It explains past events", "It forecasts future states", "It recommends actions", "It collects data"],
+                correct: 1,
+                explanation: "Predictive models use current data and relationships to forecast what will happen in the future."
+            },
+            {
+                question: "Monte Carlo simulation is particularly useful for:",
+                options: ["Deterministic systems", "Systems with uncertainty and randomness", "Simple calculations", "Data storage"],
+                correct: 1,
+                explanation: "Monte Carlo simulation excels at modeling systems with uncertainty by using random sampling."
+            },
+            {
+                question: "What is an advantage of simulation over analytical methods?",
+                options: ["Always faster", "Can handle complex, realistic systems", "Requires no data", "Always more accurate"],
+                correct: 1,
+                explanation: "Simulation can model complex, realistic systems that would be impossible to solve analytically."
+            },
+            {
+                question: "Training simulations are valuable because they:",
+                options: ["Replace all real training", "Provide safe, realistic practice environments", "Are always cheaper", "Require no instructors"],
+                correct: 1,
+                explanation: "Training simulations provide safe environments where people can practice and learn without real-world consequences."
+            },
+            {
+                question: "What should you do before implementing simulation results?",
+                options: ["Implement immediately", "Carefully validate and interpret results", "Ignore the results", "Make the model more complex"],
+                correct: 1,
+                explanation: "Results must be carefully validated and interpreted within the context of model limitations and assumptions."
+            },
+            {
+                question: "Discrete-event simulation is best for modeling:",
+                options: ["Continuous processes", "Systems where events occur at specific times", "Static systems", "Simple calculations"],
+                correct: 1,
+                explanation: "Discrete-event simulation models systems where state changes occur at specific points in time."
+            },
+            {
+                question: "What makes simulation 'computationally intensive'?",
+                options: ["Simple models", "Complex calculations and many iterations", "Small datasets", "Basic graphics"],
+                correct: 1,
+                explanation: "Complex models with many variables and iterations can require significant computational resources."
+            },
+            {
+                question: "System dynamics simulation is particularly good for modeling:",
+                options: ["Individual events", "Feedback loops and system behavior over time", "Static relationships", "Simple processes"],
+                correct: 1,
+                explanation: "System dynamics excels at modeling complex systems with feedback loops and behavior changes over time."
+            },
+            {
+                question: "What is agent-based modeling best suited for?",
+                options: ["Single entity systems", "Systems with many interacting autonomous agents", "Static analysis", "Simple calculations"],
+                correct: 1,
+                explanation: "Agent-based models excel when you need to model many individual agents interacting in complex ways."
+            },
+            {
+                question: "Sensitivity analysis in simulation helps you understand:",
+                options: ["How changes in inputs affect outputs", "Computer requirements", "User interfaces", "Data storage needs"],
+                correct: 0,
+                explanation: "Sensitivity analysis shows how sensitive your results are to changes in model inputs and assumptions."
+            },
+            {
+                question: "What is the main purpose of simulation experimentation?",
+                options: ["To collect data", "To explore different scenarios and find optimal solutions", "To build computers", "To create graphics"],
+                correct: 1,
+                explanation: "Experimentation uses the validated model to explore scenarios and find optimal solutions to the original problem."
+            },
+            {
+                question: "Real-time simulation is important for:",
+                options: ["Historical analysis", "Live decision support and control systems", "Data storage", "Simple calculations"],
+                correct: 1,
+                explanation: "Real-time simulation provides immediate insights for live decision-making and system control."
+            },
+            {
+                question: "What does 'model fidelity' refer to?",
+                options: ["Model speed", "How accurately the model represents reality", "Model cost", "Model size"],
+                correct: 1,
+                explanation: "Model fidelity refers to how accurately and completely the model represents the real system."
+            },
+            {
+                question: "Hybrid simulation combines:",
+                options: ["Only discrete events", "Multiple simulation methodologies", "Only continuous processes", "Only agent-based approaches"],
+                correct: 1,
+                explanation: "Hybrid simulation combines different simulation methodologies (like discrete-event and continuous) in one model."
+            },
+            {
+                question: "What is a key benefit of cloud-based simulation?",
+                options: ["Always cheaper", "Scalable computing resources and accessibility", "Simpler models only", "No internet required"],
+                correct: 1,
+                explanation: "Cloud-based simulation provides scalable computing resources and makes simulation accessible from anywhere."
+            },
+            {
+                question: "Simulation model documentation is important for:",
+                options: ["Making models slower", "Ensuring reproducibility and understanding", "Increasing complexity", "Hiding assumptions"],
+                correct: 1,
+                explanation: "Good documentation ensures others can understand, reproduce, and properly use the simulation model."
+            },
+            {
+                question: "What drives the future of simulation technology?",
+                options: ["Slower computers", "AI, real-time data, and increased computing power", "Simpler problems", "Less data"],
+                correct: 1,
+                explanation: "AI integration, real-time data streams, and powerful computing are driving simulation toward more intelligent and responsive systems."
+            }
+        ];
+
+        // Enhanced Quiz Variables
+        let currentSlide = 0;
+        let slides = [];
+        let currentQuestions = [];
+        let currentQuestionIndex = 0;
+        let userAnswers = [];
+
+        // Presentation Functions
+        function startPresentation() {
+            createSlides();
+            document.getElementById('presentationMode').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            showSlide(0);
+            
+            // Remove any existing event listeners first
+            document.getElementById('presentationMode').removeEventListener('click', nextSlide);
+            
+            // Click to advance slides - use event delegation
+            document.getElementById('presentationMode').addEventListener('click', function(e) {
+                console.log('Presentation clicked, target:', e.target);
+                
+                // Don't advance slide if clicking on interactive elements
+                if (e.target.closest('.exit-btn') || 
+                    e.target.closest('button') || 
+                    e.target.closest('input') || 
+                    e.target.closest('canvas') ||
+                    e.target.closest('.interactive-demo')) {
+                    console.log('Interactive element clicked, not advancing slide');
+                    return;
+                }
+                
+                // Only advance slide if clicking on empty space or text
+                console.log('Empty space clicked, advancing slide');
+                nextSlide();
+            });
+        }
+
+        function createSlides() {
+            const presentationMode = document.getElementById('presentationMode');
+            presentationMode.innerHTML = '';
+            
+            presentationData.forEach((slideData, index) => {
+                const slide = document.createElement('div');
+                slide.className = 'slide';
+                
+                let content = '';
+                switch(slideData.type) {
+                    case 'title':
+                        content = `<h1>${slideData.content.title}</h1><p style="font-size: 1.5rem; opacity: 0.8;">${slideData.content.subtitle}</p>`;
+                        break;
+                    case 'content':
+                        content = `<h2>${slideData.content.title}</h2><p>${slideData.content.text}</p>`;
+                        break;
+                    case 'list':
+                        content = `<h2>${slideData.content.title}</h2><ul style="text-align: left; max-width: 80%;">${slideData.content.items.map(item => `<li>${item}</li>`).join('')}</ul>`;
+                        break;
+                    case 'quiz_start':
+                        content = `<h2>${slideData.content.title}</h2><p>${slideData.content.text}</p><button class="btn btn-warning btn-lg" onclick="startPresentationQuiz()"><i class="fas fa-play me-2"></i>Start Quiz</button>`;
+                        break;
+                }
+                
+                slide.innerHTML = content;
+                presentationMode.appendChild(slide);
+            });
+            slides = document.querySelectorAll('.slide');
+        }
+
+        function showSlide(index) {
+            slides.forEach(slide => slide.classList.remove('active'));
+            if (slides[index]) {
+                slides[index].classList.add('active');
+                currentSlide = index;
+            }
+        }
+
+        function nextSlide() {
+            console.log('nextSlide called, current:', currentSlide, 'total:', slides.length);
+            if (currentSlide < slides.length - 1) {
+                showSlide(currentSlide + 1);
+            } else {
+                console.log('Reached end of slides, exiting presentation');
+                exitPresentation();
+            }
+        }
+
+        function exitPresentation() {
+            document.getElementById('presentationMode').style.display = 'none';
+            document.body.style.overflow = 'auto';
+            document.getElementById('presentationMode').removeEventListener('click', nextSlide);
+        }
+
+        // Enhanced Quiz Functions
+        function startEnhancedQuiz() {
+            document.querySelector('.container').style.display = 'none';
+            document.getElementById('enhancedQuizContainer').style.display = 'block';
+            currentQuestions = selectRandomQuestions(5);
+            currentQuestionIndex = 0;
+            userAnswers = [];
+            showQuestion();
+        }
+
+        function startPresentationQuiz() {
+            exitPresentation();
+            setTimeout(() => startEnhancedQuiz(), 500);
+        }
+
+        function selectRandomQuestions(count) {
+            const shuffled = [...questionPool].sort(() => 0.5 - Math.random());
+            return shuffled.slice(0, count);
+        }
+
+        function showQuestion() {
+            const question = currentQuestions[currentQuestionIndex];
+            const progressPercent = ((currentQuestionIndex + 1) / currentQuestions.length) * 100;
+            
+            document.getElementById('enhancedProgressBar').style.width = progressPercent + '%';
+            
+            const questionHtml = `
+                <div class="question-header">
+                    <div class="question-number">Question ${currentQuestionIndex + 1}</div>
+                    <div>${currentQuestions.length} Questions Total</div>
+                </div>
+                <h4 class="mb-4">${question.question}</h4>
+                <div class="options-container">
+                    ${question.options.map((option, index) => `
+                        <div class="quiz-option" data-option="${index}" onclick="selectOption(${index})">
+                            ${String.fromCharCode(65 + index)}. ${option}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            
+            document.getElementById('enhancedQuizQuestion').innerHTML = questionHtml;
+            document.getElementById('enhancedCheckBtn').style.display = 'inline-block';
+            document.getElementById('enhancedNextBtn').style.display = 'none';
+        }
+
+        function selectOption(optionIndex) {
+            document.querySelectorAll('.quiz-option').forEach(opt => opt.classList.remove('selected'));
+            document.querySelector(`[data-option="${optionIndex}"]`).classList.add('selected');
+        }
+
+        function checkEnhancedAnswer() {
+            const selectedOption = document.querySelector('.quiz-option.selected');
+            if (!selectedOption) return;
+            
+            const userAnswer = parseInt(selectedOption.dataset.option);
+            const correctAnswer = currentQuestions[currentQuestionIndex].correct;
+            const isCorrect = userAnswer === correctAnswer;
+            
+            userAnswers.push({
+                questionIndex: currentQuestionIndex,
+                userAnswer: userAnswer,
+                correct: isCorrect,
+                question: currentQuestions[currentQuestionIndex]
+            });
+            
+            document.querySelectorAll('.quiz-option').forEach((opt, index) => {
+                if (index === correctAnswer) {
+                    opt.classList.add('correct');
+                } else if (index === userAnswer && !isCorrect) {
+                    opt.classList.add('incorrect');
+                }
+            });
+            
+            const questionContainer = document.getElementById('enhancedQuizQuestion');
+            questionContainer.classList.add(isCorrect ? 'correct' : 'incorrect');
+            
+            if (isCorrect) {
+                createConfetti();
+            } else {
+                createRain();
+            }
+            
+            const explanationHtml = `
+                <div class="mt-3 p-3 ${isCorrect ? 'bg-success' : 'bg-danger'} text-white rounded">
+                    <i class="fas ${isCorrect ? 'fa-check-circle' : 'fa-times-circle'} me-2"></i>
+                    ${isCorrect ? 'Correct!' : 'Incorrect'} ${currentQuestions[currentQuestionIndex].explanation}
+                </div>
+            `;
+            
+            questionContainer.insertAdjacentHTML('beforeend', explanationHtml);
+            document.getElementById('enhancedCheckBtn').style.display = 'none';
+            
+            if (currentQuestionIndex < currentQuestions.length - 1) {
+                document.getElementById('enhancedNextBtn').style.display = 'inline-block';
+            } else {
+                document.getElementById('enhancedNextBtn').innerHTML = '<i class="fas fa-flag-checkered me-2"></i>See Results';
+                document.getElementById('enhancedNextBtn').style.display = 'inline-block';
+            }
+        }
+
+        function nextEnhancedQuestion() {
+            document.getElementById('enhancedQuizQuestion').classList.remove('correct', 'incorrect');
+            
+            if (currentQuestionIndex < currentQuestions.length - 1) {
+                currentQuestionIndex++;
+                showQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('enhancedQuizContainer').style.display = 'none';
+            document.getElementById('resultsContainer').style.display = 'block';
+            
+            const correctCount = userAnswers.filter(answer => answer.correct).length;
+            const totalQuestions = userAnswers.length;
+            const percentage = Math.round((correctCount / totalQuestions) * 100);
+            
+            document.getElementById('scorePercentage').textContent = percentage + '%';
+            
+            const scoreCircle = document.getElementById('scoreCircle');
+            scoreCircle.className = 'score-circle';
+            if (percentage >= 80) {
+                scoreCircle.classList.add('excellent');
+                document.getElementById('resultTitle').textContent = 'Simulation Expert!';
+                document.getElementById('resultMessage').textContent = 'You have mastered simulation concepts and applications!';
+            } else if (percentage >= 60) {
+                scoreCircle.classList.add('good');
+                document.getElementById('resultTitle').textContent = 'Good Progress!';
+                document.getElementById('resultMessage').textContent = 'You\'re developing strong simulation knowledge. Review the missed topics and try again!';
+            } else if (percentage >= 40) {
+                scoreCircle.classList.add('fair');
+                document.getElementById('resultTitle').textContent = 'Keep Learning!';
+                document.getElementById('resultMessage').textContent = 'You\'re on the right track. Review the material and practice more.';
+            } else {
+                scoreCircle.classList.add('poor');
+                document.getElementById('resultTitle').textContent = 'More Practice Needed';
+                document.getElementById('resultMessage').textContent = 'Consider reviewing the simulation content and trying again.';
+            }
+            
+            const summaryHtml = `
+                <div class="mt-4">
+                    <h5>Question Summary:</h5>
+                    ${userAnswers.map((answer, index) => `
+                        <div class="text-left mb-2 p-2 rounded ${answer.correct ? 'bg-light border-success' : 'bg-light border-danger'}" style="border-left: 4px solid;">
+                            <strong>Q${index + 1}:</strong> ${answer.question.question}<br>
+                            <small>
+                                Your answer: ${answer.question.options[answer.userAnswer]} 
+                                ${answer.correct ? '✓' : '✗ Correct: ' + answer.question.options[answer.question.correct]}
+                            </small>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            
+            document.getElementById('resultsSummary').innerHTML = summaryHtml;
+        }
+
+        function createConfetti() {
+            const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#ffeaa7', '#dda0dd', '#98d8c8'];
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti-piece';
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.animationDelay = Math.random() * 3 + 's';
+                    document.body.appendChild(confetti);
+                    
+                    setTimeout(() => confetti.remove(), 3000);
+                }, i * 10);
+            }
+        }
+
+        function createRain() {
+            const sadEmojis = ['😢', '😞', '😔', '😟', '😿'];
+            for (let i = 0; i < 20; i++) {
+                setTimeout(() => {
+                    const rain = document.createElement('div');
+                    rain.className = 'rain-drop';
+                    rain.textContent = sadEmojis[Math.floor(Math.random() * sadEmojis.length)];
+                    rain.style.left = Math.random() * 100 + 'vw';
+                    rain.style.animationDelay = Math.random() * 2 + 's';
+                    document.body.appendChild(rain);
+                    
+                    setTimeout(() => rain.remove(), 2000);
+                }, i * 50);
+            }
+        }
+
+        function restartQuiz() {
+            document.getElementById('resultsContainer').style.display = 'none';
+            startEnhancedQuiz();
+        }
+
+        function exitQuiz() {
+            document.getElementById('resultsContainer').style.display = 'none';
+            document.getElementById('enhancedQuizContainer').style.display = 'none';
+            document.querySelector('.container').style.display = 'block';
+            document.body.style.overflow = 'auto';
+        }
+    </script>
+</body>
+</html>

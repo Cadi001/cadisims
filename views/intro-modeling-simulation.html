@@ -1,0 +1,2087 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Introduction to Modeling & Simulation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../css/main.css" rel="stylesheet">
+    <link href="../css/topics.css" rel="stylesheet">
+    <style>
+        /* Presentation Mode Styles */
+        .presentation-mode {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            z-index: 9999;
+            display: none;
+            color: white;
+            overflow: hidden;
+        }
+        
+        .slide {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            padding: 40px;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            z-index: 1;
+        }
+        
+        .slide.active {
+            display: flex;
+            z-index: 10;
+        }
+        
+        .slide h1, .slide h2 {
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .slide p, .slide li {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            max-width: 80%;
+        }
+        
+        .slide-number {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            font-size: 1rem;
+            opacity: 0.7;
+            z-index: 20;
+        }
+        
+        .exit-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            z-index: 20;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        /* Enhanced Quiz Styles */
+        .quiz-container {
+            display: none;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .quiz-question {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            border: 3px solid #e9ecef;
+        }
+        
+        .quiz-question.correct {
+            border-color: #28a745;
+            animation: correctPulse 0.6s ease-in-out;
+        }
+        
+        .quiz-question.incorrect {
+            border-color: #dc3545;
+            animation: incorrectShake 0.6s ease-in-out;
+        }
+        
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .question-number {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+        
+        .quiz-option {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 15px 20px;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .quiz-option:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+        
+        .quiz-option.selected {
+            background: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+        
+        .quiz-option.correct {
+            background: #28a745;
+            color: white;
+            border-color: #28a745;
+        }
+        
+        .quiz-option.incorrect {
+            background: #dc3545;
+            color: white;
+            border-color: #dc3545;
+        }
+        
+        .quiz-controls {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .quiz-progress {
+            background: #e9ecef;
+            height: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        
+        .quiz-progress-bar {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            height: 100%;
+            transition: width 0.5s ease;
+        }
+        
+        /* Animations */
+        @keyframes correctPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes incorrectShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        
+        @keyframes confetti {
+            0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
+        
+        @keyframes rainDrop {
+            0% { transform: translateY(-100vh); opacity: 1; }
+            100% { transform: translateY(100vh); opacity: 0; }
+        }
+        
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #f39c12;
+            animation: confetti 3s linear infinite;
+            z-index: 1000;
+        }
+        
+        .rain-drop {
+            position: fixed;
+            font-size: 20px;
+            animation: rainDrop 2s linear infinite;
+            z-index: 1000;
+        }
+        
+        .quiz-results {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .score-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .score-excellent { background: #28a745; }
+        .score-good { background: #ffc107; color: #333; }
+        .score-needs-improvement { background: #dc3545; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-arrow-left me-2"></i>
+                Introduction to Modeling & Simulation
+            </a>
+            <div>
+                <button class="btn btn-warning me-2" onclick="startPresentation()">
+                    <i class="fas fa-presentation me-2"></i>
+                    Present
+                </button>
+                <a href="topics.html" class="btn btn-outline-light">
+                    <i class="fas fa-book me-2"></i>
+                    All Topics
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- Introduction Section -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <h2><i class="fas fa-play-circle me-3"></i>What is Simulation?</h2>
+            </div>
+            <div class="topic-content">
+                <div class="simple-explanation">
+                    <h4>🎯 Simple Definition</h4>
+                    <p><strong>Simulation is like playing with a digital twin of the real world!</strong></p>
+                    <p>Think of it as creating a safe playground where you can test ideas without real consequences - like a flight simulator for pilots or a video game version of a city.</p>
+                </div>
+
+                <p>Simulation involves two main steps:</p>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="step-item">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h5>Design a Model</h5>
+                                <p>Create a simplified version of a real system - like building a LEGO version of your house</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="step-item">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h5>Run Experiments</h5>
+                                <p>Test different scenarios - like seeing what happens if you rearrange the rooms</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="real-world-box">
+                    <h5>🎮 Real World Example</h5>
+                    <p><strong>SimCity Video Game:</strong> You build a virtual city, make decisions about roads and buildings, and see how your city grows. This is simulation! You're experimenting with city planning without affecting a real city.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Why Simulate Section -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <h2><i class="fas fa-question-circle me-3"></i>Why Do We Simulate?</h2>
+            </div>
+            <div class="topic-content">
+                <div class="simple-explanation">
+                    <h4>🤔 Think of it like...</h4>
+                    <p>Why do pilots use flight simulators? Because crashing a real plane is expensive and dangerous! Same reason we use simulation everywhere else.</p>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="reason-card">
+                            <i class="fas fa-calculator"></i>
+                            <h6>Measure Things</h6>
+                            <p>Find out numbers we need - like "How many customers will we serve in a day?"</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="reason-card">
+                            <i class="fas fa-brain"></i>
+                            <h6>Understand Behavior</h6>
+                            <p>Learn how systems work - like "Why do traffic jams happen?"</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="reason-card">
+                            <i class="fas fa-balance-scale"></i>
+                            <h6>Compare Options</h6>
+                            <p>Test different strategies - like "Should we open one big store or three small ones?"</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- What is a Model Section -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <h2><i class="fas fa-cube me-3"></i>What is a Model?</h2>
+            </div>
+            <div class="topic-content">
+                <div class="simple-explanation">
+                    <h4>🏠 Easy Way to Think About It</h4>
+                    <p><strong>A model is like a copy or representation of something real, but it's NOT the real thing itself.</strong></p>
+                    <p>Think of a model airplane - it looks like a real plane, but you can't fly in it!</p>
+                </div>
+
+                <h4>Examples of Models You See Every Day:</h4>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="example-box">
+                            <h6>📋 Blueprint</h6>
+                            <p>A drawing that shows how to build a house - it represents the house but isn't the actual house</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="example-box">
+                            <h6>🧬 Molecule Model</h6>
+                            <p>Those colorful ball-and-stick models in chemistry class that show how atoms connect</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="example-box">
+                            <h6>🎮 Video Games</h6>
+                            <p>Virtual worlds that represent reality - like FIFA representing real soccer</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="example-box">
+                            <h6>📊 Mathematical Equation</h6>
+                            <p>Like Y = 2X + 1 - this represents a relationship using symbols</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Types of Models Section -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <h2><i class="fas fa-layer-group me-3"></i>Types of Models: From Real to Abstract</h2>
+            </div>
+            <div class="topic-content">
+                <div class="simple-explanation">
+                    <h4>🎯 Think of it as a Scale</h4>
+                    <p>Models go from very real-looking (concrete) to very symbolic (abstract) - like going from a toy car to a math equation about speed.</p>
+                </div>
+
+                <div class="classification-grid">
+                    <div class="classification-item">
+                        <h4>🏗️ Concrete Models (Look Like the Real Thing)</h4>
+                        <ul>
+                            <li><strong>Physical Models:</strong> Full-size airplane cockpit for pilot training</li>
+                            <li><strong>Scaled Models:</strong> Model trains, dollhouses, architectural models</li>
+                            <li><strong>Analog Models:</strong> Speedometer (needle position represents speed)</li>
+                        </ul>
+                    </div>
+
+                    <div class="classification-item">
+                        <h4>🖼️ Visual Models (Pictures and Diagrams)</h4>
+                        <ul>
+                            <li><strong>Schematic Models:</strong> Building blueprints, flowcharts, maps</li>
+                            <li><strong>Games:</strong> Business simulations, war games, role-playing</li>
+                        </ul>
+                    </div>
+
+                    <div class="classification-item">
+                        <h4>💻 Abstract Models (Symbols and Math)</h4>
+                        <ul>
+                            <li><strong>Computer Simulations:</strong> Weather forecasting, traffic simulation</li>
+                            <li><strong>Mathematical Models:</strong> Equations that represent relationships</li>
+                            <li><strong>Heuristic Models:</strong> Decision rules programmed into computers</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- What Makes a Model Section -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <h2><i class="fas fa-cogs me-3"></i>What Makes a Good Model?</h2>
+            </div>
+            <div class="topic-content">
+                <div class="simple-explanation">
+                    <h4>🎨 Think of Models Like Art</h4>
+                    <p>A good painting doesn't show every single detail of a person - it shows the important parts that make you recognize them. Models work the same way!</p>
+                </div>
+
+                <div class="benefits-grid">
+                    <div class="benefit-card">
+                        <i class="fas fa-eye"></i>
+                        <h4>Has a View of Reality</h4>
+                        <p>Shows one specific aspect of the real world - like how a map shows roads but not every tree</p>
+                    </div>
+                    <div class="benefit-card">
+                        <i class="fas fa-bullseye"></i>
+                        <h4>Has a Purpose</h4>
+                        <p>Made for a specific reason - a weather model predicts rain, a video game entertains</p>
+                    </div>
+                    <div class="benefit-card">
+                        <i class="fas fa-filter"></i>
+                        <h4>Uses Abstraction</h4>
+                        <p>Leaves out unnecessary details - like how a subway map shows stations but not every building</p>
+                    </div>
+                </div>
+
+                <div class="real-world-box">
+                    <h5>📱 Black Box Example</h5>
+                    <p><strong>Your Phone:</strong> You press the power button (input) and the screen turns on (output). You don't need to know about the circuits inside - that's abstraction and information hiding!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Model Characteristics Section -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <h2><i class="fas fa-chart-line me-3"></i>Different Flavors of Models</h2>
+            </div>
+            <div class="topic-content">
+                <div class="simple-explanation">
+                    <h4>🍦 Like Ice Cream Flavors</h4>
+                    <p>Models come in different "flavors" depending on what you want to study. Each combination tells us something different about the model!</p>
+                </div>
+
+                <div class="vs-comparison">
+                    <div class="vs-left">
+                        <h5>📸 Static Models</h5>
+                        <p><strong>Like a Photograph</strong></p>
+                        <ul>
+                            <li>Shows one moment in time</li>
+                            <li>Doesn't change or move</li>
+                            <li>Example: A map of your city</li>
+                        </ul>
+                    </div>
+                    <div class="vs-vs">VS</div>
+                    <div class="vs-right">
+                        <h5>🎬 Dynamic Models</h5>
+                        <p><strong>Like a Movie</strong></p>
+                        <ul>
+                            <li>Changes over time</li>
+                            <li>Shows how things evolve</li>
+                            <li>Example: Weather forecast</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="vs-comparison">
+                    <div class="vs-left">
+                        <h5>🎯 Deterministic Models</h5>
+                        <p><strong>Always Same Result</strong></p>
+                        <ul>
+                            <li>Same input = same output</li>
+                            <li>Predictable like a calculator</li>
+                            <li>Example: 2 + 2 always equals 4</li>
+                        </ul>
+                    </div>
+                    <div class="vs-vs">VS</div>
+                    <div class="vs-right">
+                        <h5>🎲 Stochastic Models</h5>
+                        <p><strong>Random Elements</strong></p>
+                        <ul>
+                            <li>Includes chance and randomness</li>
+                            <li>Like rolling dice</li>
+                            <li>Example: Stock market prediction</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="vs-comparison">
+                    <div class="vs-left">
+                        <h5>🔢 Discrete Models</h5>
+                        <p><strong>Countable Steps</strong></p>
+                        <ul>
+                            <li>Changes happen at specific times</li>
+                            <li>Like counting people in line</li>
+                            <li>Example: Number of customers served</li>
+                        </ul>
+                    </div>
+                    <div class="vs-vs">VS</div>
+                    <div class="vs-right">
+                        <h5>🌊 Continuous Models</h5>
+                        <p><strong>Smooth Changes</strong></p>
+                        <ul>
+                            <li>Changes happen gradually</li>
+                            <li>Like water flowing</li>
+                            <li>Example: Temperature throughout the day</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Types of Simulations Section -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <h2><i class="fas fa-laptop-code me-3"></i>Types of Simulations</h2>
+            </div>
+            <div class="topic-content">
+                <div class="simple-explanation">
+                    <h4>🎮 Different Types of Simulation "Games"</h4>
+                    <p>Just like there are different types of video games, there are different types of simulations for different purposes!</p>
+                </div>
+
+                <div class="simulation-types">
+                    <div class="sim-type-card">
+                        <div class="sim-icon">✈️</div>
+                        <h4>Analog Simulation</h4>
+                        <div class="sim-simple">Physical models that feel real</div>
+                        <div class="sim-detailed">Uses real physical equipment to simulate the experience</div>
+                        <div class="sim-uses"><strong>Examples:</strong> Flight simulators, driving simulators, VR training</div>
+                    </div>
+
+                    <div class="sim-type-card">
+                        <div class="sim-icon">🌊</div>
+                        <h4>Continuous Simulation</h4>
+                        <div class="sim-simple">For things that flow smoothly</div>
+                        <div class="sim-detailed">Uses math equations to model smoothly changing systems</div>
+                        <div class="sim-uses"><strong>Examples:</strong> Water flow, population growth, economic models</div>
+                    </div>
+
+                    <div class="sim-type-card">
+                        <div class="sim-icon">🎫</div>
+                        <h4>Discrete-Event Simulation</h4>
+                        <div class="sim-simple">For things that happen in steps</div>
+                        <div class="sim-detailed">Models systems where events happen at specific times</div>
+                        <div class="sim-uses"><strong>Examples:</strong> Bank queues, hospital patient flow, factory production</div>
+                    </div>
+
+                    <div class="sim-type-card">
+                        <div class="sim-icon">🔄</div>
+                        <h4>Hybrid Simulation</h4>
+                        <div class="sim-simple">Mix of smooth and step-by-step</div>
+                        <div class="sim-detailed">Combines continuous and discrete elements</div>
+                        <div class="sim-uses"><strong>Examples:</strong> Smart city models, supply chain with both flows and events</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Key Takeaways Section -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <h2><i class="fas fa-lightbulb me-3"></i>Key Takeaways</h2>
+            </div>
+            <div class="topic-content">
+                <div class="benefits-grid">
+                    <div class="benefit-card">
+                        <i class="fas fa-copy"></i>
+                        <h4>Models are Simplified Copies</h4>
+                        <p>All models are simplified representations of reality - they're not the real thing, just useful copies</p>
+                    </div>
+                    <div class="benefit-card">
+                        <i class="fas fa-flask"></i>
+                        <h4>Simulation = Model + Experiments</h4>
+                        <p>Simulation is a special type of model where we run experiments to learn something</p>
+                    </div>
+                    <div class="benefit-card">
+                        <i class="fas fa-clock"></i>
+                        <h4>DES is Dynamic, Random, and Step-by-Step</h4>
+                        <p>Discrete-Event Simulation models things that change over time in measurable steps with some randomness</p>
+                    </div>
+                </div>
+
+                <div class="try-it-box">
+                    <p><strong>🎯 Remember:</strong> Simulation is like having a safe sandbox where you can test ideas, make mistakes, and learn - all without real-world consequences!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quiz Section -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <h2><i class="fas fa-question-circle me-3"></i>Test Your Understanding</h2>
+            </div>
+            <div class="topic-content">
+                <div class="interactive-question">
+                    <h5>📝 Multiple Choice Quiz</h5>
+                    <div class="question-content">
+                        <p><strong>Question 1:</strong> What are the two main steps involved in simulation?</p>
+                        <div class="quiz-options">
+                            <label class="option-label">
+                                <input type="radio" name="q1" value="a"> 
+                                A) Collect data and analyze results
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q1" value="b"> 
+                                B) Design a model and conduct experiments
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q1" value="c"> 
+                                C) Build hardware and write software
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q1" value="d"> 
+                                D) Create variables and run calculations
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question-content mt-4">
+                        <p><strong>Question 2:</strong> Which of these is NOT a reason why we use simulation?</p>
+                        <div class="quiz-options">
+                            <label class="option-label">
+                                <input type="radio" name="q2" value="a"> 
+                                A) To estimate quantities or measure effectiveness
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q2" value="b"> 
+                                B) To understand system behavior
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q2" value="c"> 
+                                C) To replace real systems completely
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q2" value="d"> 
+                                D) To evaluate different strategies
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question-content mt-4">
+                        <p><strong>Question 3:</strong> What makes a model "abstract" rather than "concrete"?</p>
+                        <div class="quiz-options">
+                            <label class="option-label">
+                                <input type="radio" name="q3" value="a"> 
+                                A) It's more expensive to build
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q3" value="b"> 
+                                B) It uses symbols and mathematics instead of physical resemblance
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q3" value="c"> 
+                                C) It's newer technology
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q3" value="d"> 
+                                D) It's used only by experts
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question-content mt-4">
+                        <p><strong>Question 4:</strong> A Discrete-Event Simulation (DES) model is characterized as:</p>
+                        <div class="quiz-options">
+                            <label class="option-label">
+                                <input type="radio" name="q4" value="a"> 
+                                A) Static, deterministic, and continuous
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q4" value="b"> 
+                                B) Dynamic, stochastic, and discrete
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q4" value="c"> 
+                                C) Physical, analog, and scaled
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q4" value="d"> 
+                                D) Mathematical, theoretical, and abstract only
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question-content mt-4">
+                        <p><strong>Question 5:</strong> Which example best represents the "black box" concept in modeling?</p>
+                        <div class="quiz-options">
+                            <label class="option-label">
+                                <input type="radio" name="q5" value="a"> 
+                                A) A transparent glass container
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q5" value="b"> 
+                                B) Using a microwave - you put food in, press buttons, and get heated food out
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q5" value="c"> 
+                                C) A detailed blueprint showing every component
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q5" value="d"> 
+                                D) A scientific experiment with visible steps
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <button class="btn btn-primary me-3" onclick="checkQuizAnswers()">
+                            <i class="fas fa-check me-2"></i>Check My Answers
+                        </button>
+                        <button class="btn btn-success" onclick="startEnhancedQuiz()">
+                            <i class="fas fa-rocket me-2"></i>Enhanced Quiz (5 Random Questions)
+                        </button>
+                    </div>
+
+                    <div id="quizResults" class="quiz-results mt-3" style="display: none;">
+                        <!-- Results will be inserted here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Copyright Footer -->
+    <footer class="text-center py-4 mt-5">
+        <div class="container">
+            <p class="mb-2">
+                <i class="fas fa-copyright me-2"></i>
+                © 2025 <strong>Aldwin Nunag</strong>. All rights reserved.
+            </p>
+            <div class="mb-2">
+                <i class="fab fa-creative-commons me-1"></i>
+                <i class="fab fa-creative-commons-by me-1"></i>
+                <i class="fab fa-creative-commons-nc me-1"></i>
+                <i class="fab fa-creative-commons-sa me-2"></i>
+                <strong>Open Source Project</strong> - Licensed under 
+                <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" class="text-decoration-none">
+                    CC BY-NC-SA 4.0
+                </a>
+            </div>
+            <small class="text-muted">
+                Free to use, modify, and share for educational purposes only. Commercial use prohibited. 
+                Modified works must retain this license and be shared under the same terms.
+            </small>
+            <br>
+            <small class="text-muted">
+                Introduction to Modeling & Simulation - Educational Content
+            </small>
+        </div>
+    </footer>
+
+    <!-- Presentation Mode -->
+    <div class="presentation-mode" id="presentationMode">
+        <button class="exit-btn" onclick="exitPresentation()">
+            <i class="fas fa-times"></i> Exit
+        </button>
+        <div class="slide-number" id="slideNumber">1 / 15</div>
+        <!-- Slides will be dynamically created -->
+    </div>
+
+    <!-- Enhanced Quiz Container -->
+    <div class="quiz-container" id="enhancedQuizContainer">
+        <div class="quiz-progress">
+            <div class="quiz-progress-bar" id="enhancedProgressBar"></div>
+        </div>
+        
+        <div class="quiz-question" id="enhancedQuizQuestion">
+            <!-- Question content will be inserted here -->
+        </div>
+        
+        <div class="quiz-controls">
+            <button class="btn btn-success" id="enhancedCheckBtn" onclick="checkEnhancedAnswer()" style="display: none;">
+                <i class="fas fa-check me-2"></i>Check Answer
+            </button>
+            <button class="btn btn-primary" id="enhancedNextBtn" onclick="nextEnhancedQuestion()" style="display: none;">
+                Next Question <i class="fas fa-arrow-right ms-2"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Enhanced Quiz Results -->
+    <div class="quiz-results" id="enhancedQuizResults" style="display: none;">
+        <!-- Results will be shown here -->
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        // Enhanced Quiz System with 30 Question Pool
+        const questionPool = [
+            {
+                question: "What are the two main steps involved in simulation?",
+                options: ["Collect data and analyze results", "Design a model and conduct experiments", "Build hardware and write software", "Interview experts and read documentation"],
+                correct: 1,
+                explanation: "Simulation involves designing a model of the system and then conducting experiments on that model."
+            },
+            {
+                question: "When should you NOT use simulation?",
+                options: ["When the problem is too simple", "When direct observation is impossible", "To replace real systems completely", "When time compression is needed"],
+                correct: 2,
+                explanation: "Simulation should complement, not replace real systems. It's a tool for understanding and analysis."
+            },
+            {
+                question: "What makes a mathematical model different from a physical model?",
+                options: ["It's more expensive to build", "It uses symbols and mathematics instead of physical resemblance", "It can only represent simple systems", "It requires special software to create"],
+                correct: 1,
+                explanation: "Mathematical models use equations and symbols rather than physical resemblance to represent reality."
+            },
+            {
+                question: "What are the three key characteristics of Discrete-Event Simulation (DES)?",
+                options: ["Fast, accurate, and cheap", "Dynamic, stochastic, and discrete", "Simple, complex, and medium", "Input, process, and output"],
+                correct: 1,
+                explanation: "DES is Dynamic (changes over time), Stochastic (involves randomness), and Discrete (events happen at specific points in time)."
+            },
+            {
+                question: "Which is an example of simulation in everyday life?",
+                options: ["Reading a book", "Using a microwave", "Writing a letter", "Playing a board game"],
+                correct: 1,
+                explanation: "A microwave uses sensors and timers to simulate cooking conditions and adjust heating automatically."
+            },
+            {
+                question: "What is the primary purpose of a model?",
+                options: ["To be as complex as possible", "To represent reality in a simplified way", "To replace the real system", "To be perfectly accurate"],
+                correct: 1,
+                explanation: "Models are simplified representations that capture the essential features of a system for study."
+            },
+            {
+                question: "In simulation, what does 'stochastic' mean?",
+                options: ["Predictable", "Random or probabilistic", "Fast", "Simple"],
+                correct: 1,
+                explanation: "Stochastic refers to processes that involve randomness or probability."
+            },
+            {
+                question: "What is Monte Carlo simulation primarily used for?",
+                options: ["Calculating exact answers", "Estimating probabilities through random sampling", "Building physical models", "Creating databases"],
+                correct: 1,
+                explanation: "Monte Carlo simulation uses random sampling to estimate probabilities and solve complex problems."
+            },
+            {
+                question: "Why might you choose simulation over experimentation on the real system?",
+                options: ["It's always cheaper", "The real system might be dangerous or expensive to experiment with", "Simulation is always more accurate", "Real systems are too simple"],
+                correct: 1,
+                explanation: "Simulation allows safe, cost-effective experimentation when real-world testing is dangerous, expensive, or impossible."
+            },
+            {
+                question: "What does 'discrete' mean in Discrete-Event Simulation?",
+                options: ["Hidden or secret", "Events happen at specific points in time", "Continuous flow", "Very small"],
+                correct: 1,
+                explanation: "Discrete means events occur at distinct, separate points in time rather than continuously."
+            },
+            {
+                question: "What is a key advantage of computer simulation?",
+                options: ["It never makes mistakes", "It can compress or expand time", "It's always free", "It doesn't require any input data"],
+                correct: 1,
+                explanation: "Simulation can run much faster or slower than real-time, allowing us to study long-term effects quickly or examine fast processes in detail."
+            },
+            {
+                question: "In modeling, what is 'abstraction'?",
+                options: ["Making things more complex", "Ignoring irrelevant details", "Using only pictures", "Avoiding mathematics"],
+                correct: 1,
+                explanation: "Abstraction means focusing on essential features while ignoring irrelevant details."
+            },
+            {
+                question: "What type of model is a weather map?",
+                options: ["Physical model", "Mathematical model", "Conceptual model", "All of the above"],
+                correct: 2,
+                explanation: "A weather map is a conceptual model that represents weather patterns and conditions visually."
+            },
+            {
+                question: "What is the difference between a model and a simulation?",
+                options: ["There is no difference", "A model is static, simulation involves running experiments", "Models are always physical", "Simulations don't use models"],
+                correct: 1,
+                explanation: "A model is a representation, while simulation is the process of experimenting with that model."
+            },
+            {
+                question: "What does 'validation' mean in simulation?",
+                options: ["Making the model run faster", "Checking if the model represents reality accurately", "Adding more features", "Removing bugs"],
+                correct: 1,
+                explanation: "Validation ensures the simulation model accurately represents the real-world system it's meant to study."
+            },
+            {
+                question: "Why is randomness important in many simulations?",
+                options: ["To make them unpredictable", "Real-world systems often have random elements", "To make them more complex", "It's not important"],
+                correct: 1,
+                explanation: "Many real-world systems have inherent randomness, so simulations need random elements to be realistic."
+            },
+            {
+                question: "What is a queue in simulation?",
+                options: ["A type of computer", "A waiting line", "A mathematical formula", "A software bug"],
+                correct: 1,
+                explanation: "A queue represents a waiting line where entities wait for service."
+            },
+            {
+                question: "What does 'steady state' mean in simulation?",
+                options: ["The simulation has stopped", "The system has reached stable, long-term behavior", "There are no random elements", "The model is broken"],
+                correct: 1,
+                explanation: "Steady state is when a system reaches stable, long-term behavior patterns."
+            },
+            {
+                question: "What is the purpose of running multiple replications of a simulation?",
+                options: ["To find bugs", "To account for randomness and get reliable results", "To make it run slower", "To use more computer memory"],
+                correct: 1,
+                explanation: "Multiple replications help account for randomness and provide more reliable statistical results."
+            },
+            {
+                question: "What is sensitivity analysis in simulation?",
+                options: ["Testing how emotional the model is", "Studying how changes in inputs affect outputs", "Making the model more complex", "Removing random elements"],
+                correct: 1,
+                explanation: "Sensitivity analysis examines how changes in input parameters affect simulation outputs."
+            },
+            {
+                question: "What is the first step in a simulation study?",
+                options: ["Writing code", "Defining the problem and objectives", "Buying software", "Collecting data"],
+                correct: 1,
+                explanation: "You must first clearly define what problem you're trying to solve and what you want to learn."
+            },
+            {
+                question: "What is 'warm-up period' in simulation?",
+                options: ["Time to start the computer", "Initial period to let the system reach steady state", "Time to write the code", "Break time for programmers"],
+                correct: 1,
+                explanation: "The warm-up period allows the simulation to reach realistic operating conditions before collecting data."
+            },
+            {
+                question: "What is the difference between verification and validation?",
+                options: ["They are the same thing", "Verification checks code correctness, validation checks model accuracy", "Verification is easier", "Validation uses more data"],
+                correct: 1,
+                explanation: "Verification ensures the code works correctly; validation ensures the model represents reality accurately."
+            },
+            {
+                question: "What is a bottleneck in system simulation?",
+                options: ["A type of software", "The part of the system that limits overall performance", "A bug in the code", "A type of queue"],
+                correct: 1,
+                explanation: "A bottleneck is the slowest part of a system that limits the overall performance."
+            },
+            {
+                question: "What is the purpose of output analysis in simulation?",
+                options: ["To make graphs look pretty", "To extract meaningful conclusions from simulation results", "To find programming errors", "To speed up the simulation"],
+                correct: 1,
+                explanation: "Output analysis helps extract meaningful insights and draw valid conclusions from simulation results."
+            },
+            {
+                question: "What is 'utilization' in service system simulation?",
+                options: ["How useful the simulation is", "The percentage of time a server is busy", "The number of customers served", "The cost of running the simulation"],
+                correct: 1,
+                explanation: "Utilization measures what percentage of time a server or resource is busy serving customers."
+            },
+            {
+                question: "What is a confidence interval in simulation results?",
+                options: ["How confident we are in our model", "A range that likely contains the true value", "The time needed to run the simulation", "The number of random numbers used"],
+                correct: 1,
+                explanation: "A confidence interval provides a range of values that likely contains the true system performance measure."
+            },
+            {
+                question: "What is the main goal of simulation optimization?",
+                options: ["Making simulation run faster", "Finding the best system configuration", "Using less memory", "Writing less code"],
+                correct: 1,
+                explanation: "Simulation optimization seeks to find the best system configuration or operating policy."
+            },
+            {
+                question: "What is 'arrival process' in queuing simulation?",
+                options: ["How customers enter the system", "How servers work", "How the simulation starts", "How results are calculated"],
+                correct: 0,
+                explanation: "The arrival process describes how and when customers or entities enter the system."
+            },
+            {
+                question: "What is the law of large numbers in simulation?",
+                options: ["Use big computers", "Results become more accurate with more observations", "Simulations should be complex", "Random numbers should be large"],
+                correct: 1,
+                explanation: "The law of large numbers states that results become more accurate as the number of observations increases."
+            }
+        ];
+
+        // Presentation Mode Variables
+        let currentSlide = 0;
+        let slides = [];
+        let presentationData = [];
+
+        // Quiz Variables
+        let currentQuestions = [];
+        let currentQuestionIndex = 0;
+        let userAnswers = [];
+        let quizStarted = false;
+
+        // Presentation Mode Functions
+        function startPresentation() {
+            preparePresentationData();
+            createSlides();
+            document.getElementById('presentationMode').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            showSlide(0);
+            
+            // Remove any existing event listeners first
+            document.getElementById('presentationMode').removeEventListener('click', nextSlide);
+            
+            // Click to advance slides - use event delegation
+            document.getElementById('presentationMode').addEventListener('click', function(e) {
+                console.log('Presentation clicked, target:', e.target);
+                
+                // Don't advance slide if clicking on interactive elements
+                if (e.target.closest('.exit-btn') || 
+                    e.target.closest('button') || 
+                    e.target.closest('input') || 
+                    e.target.closest('canvas') ||
+                    e.target.closest('.interactive-demo')) {
+                    console.log('Interactive element clicked, not advancing slide');
+                    return;
+                }
+                
+                // Only advance slide if clicking on empty space or text
+                console.log('Empty space clicked, advancing slide');
+                nextSlide();
+            });
+        }
+
+        function preparePresentationData() {
+            presentationData = [
+                {
+                    type: 'title',
+                    content: {
+                        title: 'Introduction to Modeling & Simulation',
+                        subtitle: 'Understanding the Fundamentals with Interactive Examples'
+                    }
+                },
+                {
+                    type: 'interactive_demo',
+                    content: {
+                        title: 'What is Simulation? - Try It!',
+                        text: 'Let\'s start with a simple coin flip simulation. Click the button to see randomness in action!',
+                        demoId: 'coinFlipDemo'
+                    }
+                },
+                {
+                    type: 'interactive_demo',
+                    content: {
+                        title: 'Why Do We Simulate? - Real Example',
+                        text: 'Here\'s a traffic light simulation. See how changing timing affects traffic flow!',
+                        demoId: 'trafficDemo'
+                    }
+                },
+                {
+                    type: 'interactive_demo',
+                    content: {
+                        title: 'Population Growth Model',
+                        text: 'Watch how population changes over time with different growth rates. Adjust the slider!',
+                        demoId: 'populationDemo'
+                    }
+                },
+                {
+                    type: 'interactive_demo',
+                    content: {
+                        title: 'Queue Simulation Example',
+                        text: 'Experience a simple queue system. See how arrival rate affects waiting time!',
+                        demoId: 'queueDemo'
+                    }
+                },
+                {
+                    type: 'interactive_demo',
+                    content: {
+                        title: 'Types of Models - Interactive Examples',
+                        text: 'Explore different model types through interactive demonstrations!',
+                        demoId: 'modelTypesDemo'
+                    }
+                },
+                {
+                    type: 'interactive_demo',
+                    content: {
+                        title: 'Discrete-Event Simulation in Action',
+                        text: 'Watch customers flow through a service system. Adjust parameters and see results!',
+                        demoId: 'desDemo'
+                    }
+                },
+                {
+                    type: 'interactive_demo',
+                    content: {
+                        title: 'Monte Carlo Method Demo',
+                        text: 'Estimate π by throwing random darts at a circle. See probability in action!',
+                        demoId: 'monteCarloDemo'
+                    }
+                },
+                {
+                    type: 'interactive_demo',
+                    content: {
+                        title: 'System Dynamics Example',
+                        text: 'Explore predator-prey relationships. See how populations interact over time!',
+                        demoId: 'systemDynamicsDemo'
+                    }
+                },
+                {
+                    type: 'interactive_demo',
+                    content: {
+                        title: 'Agent-Based Model Demo',
+                        text: 'Watch agents interact in a simple social network. Each agent follows simple rules!',
+                        demoId: 'agentBasedDemo'
+                    }
+                },
+                {
+                    type: 'interactive_demo',
+                    content: {
+                        title: 'Simulation Process Walkthrough',
+                        text: 'Follow a complete simulation project from start to finish with guided examples!',
+                        demoId: 'processDemo'
+                    }
+                },
+                {
+                    type: 'interactive_demo',
+                    content: {
+                        title: 'Real-World Applications Showcase',
+                        text: 'Explore how simulation is used in various industries. Click to see examples!',
+                        demoId: 'applicationsDemo'
+                    }
+                },
+                {
+                    type: 'interactive_demo',
+                    content: {
+                        title: 'Model Validation & Verification',
+                        text: 'Learn how to test if your model is working correctly with interactive tests!',
+                        demoId: 'validationDemo'
+                    }
+                },
+                {
+                    type: 'quiz_start',
+                    content: {
+                        title: 'Ready for the Quiz?',
+                        text: 'Test your understanding with 5 random questions from our pool of 30!'
+                    }
+                }
+            ];
+        }
+
+        function createSlides() {
+            const presentationMode = document.getElementById('presentationMode');
+            
+            // Clear any existing slides first
+            const existingSlides = presentationMode.querySelectorAll('.slide');
+            existingSlides.forEach(slide => slide.remove());
+            console.log('Cleared', existingSlides.length, 'existing slides');
+            
+            console.log('Creating slides from presentationData:', presentationData.length, 'slides');
+            presentationData.forEach((slideData, index) => {
+                const slide = document.createElement('div');
+                slide.className = 'slide';
+                slide.id = `slide-${index}`;
+                
+                console.log('Creating slide', index, 'type:', slideData.type, 'title:', slideData.content.title);
+                
+                let content = '';
+                switch(slideData.type) {
+                    case 'title':
+                        content = `
+                            <h1>${slideData.content.title}</h1>
+                            <h3>${slideData.content.subtitle}</h3>
+                        `;
+                        break;
+                    case 'content':
+                        content = `
+                            <h2>${slideData.content.title}</h2>
+                            <p>${slideData.content.text}</p>
+                        `;
+                        break;
+                    case 'list':
+                        content = `
+                            <h2>${slideData.content.title}</h2>
+                            <ul style="text-align: left; max-width: 80%;">
+                                ${slideData.content.items.map(item => `<li>${item}</li>`).join('')}
+                            </ul>
+                        `;
+                        break;
+                    case 'interactive_demo':
+                        content = `
+                            <h2>${slideData.content.title}</h2>
+                            <p>${slideData.content.text}</p>
+                            <div class="interactive-demo" id="${slideData.content.demoId}" style="margin: 20px 0;">
+                                <!-- Demo content will be loaded here -->
+                            </div>
+                        `;
+                        break;
+                    case 'quiz_start':
+                        content = `
+                            <h2>${slideData.content.title}</h2>
+                            <p>${slideData.content.text}</p>
+                            <button class="btn btn-warning btn-lg" onclick="startPresentationQuiz()">
+                                <i class="fas fa-play me-2"></i>Start Quiz
+                            </button>
+                        `;
+                        break;
+                }
+                
+                slide.innerHTML = content;
+                presentationMode.appendChild(slide);
+                console.log('Added slide', index, 'to DOM');
+            });
+            
+            slides = document.querySelectorAll('.slide');
+            console.log('Total slides created and found:', slides.length);
+        }
+
+        function showSlide(index) {
+            console.log('showSlide called with index:', index, 'total slides:', slides.length);
+            slides.forEach(slide => slide.classList.remove('active'));
+            if (slides[index]) {
+                slides[index].classList.add('active');
+                currentSlide = index;
+                document.getElementById('slideNumber').textContent = `${index + 1} / ${slides.length}`;
+                console.log('Activated slide:', index, 'content preview:', slides[index].innerHTML.substring(0, 100));
+                
+                // Initialize interactive demo if this slide has one
+                const demoContainer = slides[index].querySelector('.interactive-demo');
+                if (demoContainer) {
+                    initializeDemo(demoContainer.id);
+                }
+            } else {
+                console.log('No slide found at index:', index);
+            }
+        }
+
+        function nextSlide() {
+            console.log('nextSlide called, current:', currentSlide, 'total:', slides.length);
+            if (currentSlide < slides.length - 1) {
+                showSlide(currentSlide + 1);
+            } else {
+                console.log('Reached end of slides');
+                // Optionally exit presentation or show a message
+            }
+        }
+
+        // Interactive Demo Initialization Function
+        function initializeDemo(demoId) {
+            const container = document.getElementById(demoId);
+            if (!container) return;
+            
+            console.log('Initializing demo:', demoId);
+            
+            switch(demoId) {
+                case 'coinFlipDemo':
+                    initCoinFlipDemo(container);
+                    break;
+                case 'trafficDemo':
+                    initTrafficDemo(container);
+                    break;
+                case 'populationDemo':
+                    initPopulationDemo(container);
+                    break;
+                case 'queueDemo':
+                    initQueueDemo(container);
+                    break;
+                case 'modelTypesDemo':
+                    initModelTypesDemo(container);
+                    break;
+                case 'desDemo':
+                    initDESDemo(container);
+                    break;
+                case 'monteCarloDemo':
+                    initMonteCarloDemo(container);
+                    break;
+                case 'systemDynamicsDemo':
+                    initSystemDynamicsDemo(container);
+                    break;
+                case 'agentBasedDemo':
+                    initAgentBasedDemo(container);
+                    break;
+                case 'processDemo':
+                    initProcessDemo(container);
+                    break;
+                case 'applicationsDemo':
+                    initApplicationsDemo(container);
+                    break;
+                case 'validationDemo':
+                    initValidationDemo(container);
+                    break;
+                default:
+                    container.innerHTML = '<p>Demo coming soon...</p>';
+            }
+        }
+
+        // Interactive Demo Implementation Functions
+        
+        function initCoinFlipDemo(container) {
+            container.innerHTML = `
+                <div style="text-align: center; padding: 20px;">
+                    <div style="margin: 20px 0;">
+                        <button class="btn btn-primary" onclick="flipCoin('${container.id}')">
+                            <i class="fas fa-coins me-2"></i>Flip Coin
+                        </button>
+                        <button class="btn btn-secondary ms-2" onclick="flip100Coins('${container.id}')">
+                            Flip 100 Times
+                        </button>
+                    </div>
+                    <div id="${container.id}_result" style="font-size: 2rem; margin: 20px 0;">
+                        🪙 Click to flip!
+                    </div>
+                    <div id="${container.id}_stats" style="margin-top: 20px;">
+                        <p>Heads: <span id="${container.id}_heads">0</span> | Tails: <span id="${container.id}_tails">0</span></p>
+                        <p>Total Flips: <span id="${container.id}_total">0</span></p>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function initTrafficDemo(container) {
+            container.innerHTML = `
+                <div style="text-align: center; padding: 20px;">
+                    <div style="display: flex; justify-content: center; align-items: center; margin: 20px 0;">
+                        <div style="margin: 0 20px;">
+                            <div id="${container.id}_light" style="width: 50px; height: 50px; border-radius: 50%; background: red; margin: 0 auto;"></div>
+                            <p>Traffic Light</p>
+                        </div>
+                        <div style="margin: 0 20px;">
+                            <div id="${container.id}_cars" style="font-size: 2rem;">🚗🚗🚗</div>
+                            <p>Waiting Cars: <span id="${container.id}_count">3</span></p>
+                        </div>
+                    </div>
+                    <div style="margin: 20px 0;">
+                        <label>Light Duration (seconds): </label>
+                        <input type="range" id="${container.id}_timer" min="1" max="10" value="3" onchange="updateTrafficTiming('${container.id}')">
+                        <span id="${container.id}_timerValue">3</span>s
+                    </div>
+                    <button class="btn btn-success" onclick="startTrafficSim('${container.id}')">
+                        <i class="fas fa-play me-2"></i>Start Simulation
+                    </button>
+                </div>
+            `;
+        }
+        
+        function initPopulationDemo(container) {
+            container.innerHTML = `
+                <div style="text-align: center; padding: 20px;">
+                    <div style="margin: 20px 0;">
+                        <canvas id="${container.id}_canvas" width="400" height="200" style="border: 1px solid #ccc; background: white;"></canvas>
+                    </div>
+                    <div style="margin: 20px 0;">
+                        <label>Growth Rate: </label>
+                        <input type="range" id="${container.id}_growth" min="0.01" max="0.20" step="0.01" value="0.05" onchange="updatePopulation('${container.id}')">
+                        <span id="${container.id}_growthValue">5%</span>
+                    </div>
+                    <div>
+                        <p>Current Population: <span id="${container.id}_pop">100</span></p>
+                        <p>Years Elapsed: <span id="${container.id}_years">0</span></p>
+                    </div>
+                    <button class="btn btn-primary" onclick="startPopulationSim('${container.id}')">
+                        <i class="fas fa-play me-2"></i>Start Growth Simulation
+                    </button>
+                </div>
+            `;
+        }
+        
+        function initMonteCarloDemo(container) {
+            container.innerHTML = `
+                <div style="text-align: center; padding: 20px;">
+                    <div style="margin: 20px 0;">
+                        <canvas id="${container.id}_canvas" width="300" height="300" style="border: 1px solid #ccc; background: white;"></canvas>
+                    </div>
+                    <div style="margin: 20px 0;">
+                        <button class="btn btn-primary" onclick="throwDart('${container.id}')">
+                            🎯 Throw Dart
+                        </button>
+                        <button class="btn btn-secondary ms-2" onclick="throw1000Darts('${container.id}')">
+                            Throw 1000 Darts
+                        </button>
+                    </div>
+                    <div>
+                        <p>π Estimate: <span id="${container.id}_pi">-</span></p>
+                        <p>Inside Circle: <span id="${container.id}_inside">0</span> | Total Darts: <span id="${container.id}_total">0</span></p>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function initQueueDemo(container) {
+            container.innerHTML = `
+                <div style="text-align: center; padding: 20px;">
+                    <div style="margin: 20px 0; font-size: 2rem;">
+                        <div>Waiting: <span id="${container.id}_queue">👤👤👤</span></div>
+                        <div style="margin: 20px 0;">Serving: <span id="${container.id}_serving">💼</span></div>
+                    </div>
+                    <div style="margin: 20px 0;">
+                        <label>Arrival Rate: </label>
+                        <input type="range" id="${container.id}_arrival" min="1" max="10" value="3" onchange="updateQueueRate('${container.id}')">
+                        <span id="${container.id}_arrivalValue">3</span>/min
+                    </div>
+                    <div>
+                        <p>Average Wait Time: <span id="${container.id}_wait">0</span> minutes</p>
+                        <p>Customers Served: <span id="${container.id}_served">0</span></p>
+                    </div>
+                    <button class="btn btn-success" onclick="startQueueSim('${container.id}')">
+                        <i class="fas fa-play me-2"></i>Start Queue Simulation
+                    </button>
+                </div>
+            `;
+        }
+
+        function exitPresentation() {
+            document.getElementById('presentationMode').style.display = 'none';
+            document.body.style.overflow = 'auto';
+            
+            // Clean up slides
+            const slidesToRemove = document.querySelectorAll('.slide');
+            slidesToRemove.forEach(slide => slide.remove());
+            slides = [];
+            currentSlide = 0;
+        }
+
+        // Demo Support Functions
+        let coinStats = {};
+        let demoIntervals = {};
+        
+        function flipCoin(containerId) {
+            const result = Math.random() < 0.5 ? 'heads' : 'tails';
+            const emoji = result === 'heads' ? '👑' : '🪙';
+            document.getElementById(containerId + '_result').textContent = emoji + ' ' + result.toUpperCase();
+            
+            if (!coinStats[containerId]) coinStats[containerId] = {heads: 0, tails: 0};
+            coinStats[containerId][result]++;
+            
+            updateCoinStats(containerId);
+        }
+        
+        function flip100Coins(containerId) {
+            if (!coinStats[containerId]) coinStats[containerId] = {heads: 0, tails: 0};
+            
+            for (let i = 0; i < 100; i++) {
+                const result = Math.random() < 0.5 ? 'heads' : 'tails';
+                coinStats[containerId][result]++;
+            }
+            
+            document.getElementById(containerId + '_result').textContent = '🎲 Flipped 100 coins!';
+            updateCoinStats(containerId);
+        }
+        
+        function updateCoinStats(containerId) {
+            const stats = coinStats[containerId];
+            document.getElementById(containerId + '_heads').textContent = stats.heads;
+            document.getElementById(containerId + '_tails').textContent = stats.tails;
+            document.getElementById(containerId + '_total').textContent = stats.heads + stats.tails;
+        }
+        
+        function startTrafficSim(containerId) {
+            const duration = parseInt(document.getElementById(containerId + '_timer').value) * 1000;
+            let isGreen = false;
+            let carCount = 3;
+            
+            const interval = setInterval(() => {
+                isGreen = !isGreen;
+                const light = document.getElementById(containerId + '_light');
+                const carsEl = document.getElementById(containerId + '_cars');
+                const countEl = document.getElementById(containerId + '_count');
+                
+                if (isGreen) {
+                    light.style.background = 'green';
+                    carCount = Math.max(0, carCount - 1);
+                } else {
+                    light.style.background = 'red';
+                    carCount += Math.floor(Math.random() * 3) + 1;
+                }
+                
+                carsEl.textContent = '🚗'.repeat(Math.min(carCount, 10));
+                countEl.textContent = carCount;
+            }, duration);
+            
+            demoIntervals[containerId] = interval;
+            setTimeout(() => clearInterval(interval), 30000); // Stop after 30 seconds
+        }
+        
+        function updateTrafficTiming(containerId) {
+            const value = document.getElementById(containerId + '_timer').value;
+            document.getElementById(containerId + '_timerValue').textContent = value;
+        }
+        
+        function startPopulationSim(containerId) {
+            const canvas = document.getElementById(containerId + '_canvas');
+            const ctx = canvas.getContext('2d');
+            let population = 100;
+            let years = 0;
+            const growthRate = parseFloat(document.getElementById(containerId + '_growth').value);
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = '#007bff';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(0, canvas.height - 50);
+            
+            const interval = setInterval(() => {
+                population = Math.floor(population * (1 + growthRate));
+                years++;
+                
+                const x = (years / 50) * canvas.width;
+                const y = canvas.height - (population / 10) - 20;
+                
+                ctx.lineTo(x, y);
+                ctx.stroke();
+                
+                document.getElementById(containerId + '_pop').textContent = population.toLocaleString();
+                document.getElementById(containerId + '_years').textContent = years;
+                
+                if (years >= 50 || population > 10000) clearInterval(interval);
+            }, 200);
+            
+            demoIntervals[containerId] = interval;
+        }
+        
+        function updatePopulation(containerId) {
+            const value = parseFloat(document.getElementById(containerId + '_growth').value);
+            document.getElementById(containerId + '_growthValue').textContent = (value * 100).toFixed(0) + '%';
+        }
+        
+        function throwDart(containerId) {
+            const canvas = document.getElementById(containerId + '_canvas');
+            const ctx = canvas.getContext('2d');
+            
+            if (!canvas.dataset.initialized) {
+                // Initialize canvas
+                ctx.fillStyle = '#f0f0f0';
+                ctx.fillRect(0, 0, 300, 300);
+                ctx.strokeStyle = '#000';
+                ctx.strokeRect(0, 0, 300, 300);
+                ctx.beginPath();
+                ctx.arc(150, 150, 150, 0, 2 * Math.PI);
+                ctx.stroke();
+                canvas.dataset.initialized = 'true';
+                canvas.dataset.inside = '0';
+                canvas.dataset.total = '0';
+            }
+            
+            const x = Math.random() * 300;
+            const y = Math.random() * 300;
+            const distance = Math.sqrt((x - 150) ** 2 + (y - 150) ** 2);
+            const inside = distance <= 150;
+            
+            ctx.fillStyle = inside ? '#28a745' : '#dc3545';
+            ctx.beginPath();
+            ctx.arc(x, y, 2, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            const insideCount = parseInt(canvas.dataset.inside) + (inside ? 1 : 0);
+            const totalCount = parseInt(canvas.dataset.total) + 1;
+            
+            canvas.dataset.inside = insideCount;
+            canvas.dataset.total = totalCount;
+            
+            const piEstimate = (4 * insideCount / totalCount);
+            document.getElementById(containerId + '_pi').textContent = piEstimate.toFixed(4);
+            document.getElementById(containerId + '_inside').textContent = insideCount;
+            document.getElementById(containerId + '_total').textContent = totalCount;
+        }
+        
+        function throw1000Darts(containerId) {
+            for (let i = 0; i < 1000; i++) {
+                throwDart(containerId);
+            }
+        }
+        
+        function startQueueSim(containerId) {
+            let queueLength = 3;
+            let served = 0;
+            let totalWaitTime = 0;
+            const arrivalRate = parseInt(document.getElementById(containerId + '_arrival').value);
+            
+            const interval = setInterval(() => {
+                // Process queue
+                if (queueLength > 0) {
+                    queueLength--;
+                    served++;
+                    totalWaitTime += queueLength * 0.5; // Simplified wait time calculation
+                }
+                
+                // Add new customers
+                if (Math.random() < arrivalRate / 10) {
+                    queueLength += Math.floor(Math.random() * 3) + 1;
+                }
+                
+                const queueEl = document.getElementById(containerId + '_queue');
+                const servingEl = document.getElementById(containerId + '_serving');
+                const waitEl = document.getElementById(containerId + '_wait');
+                const servedEl = document.getElementById(containerId + '_served');
+                
+                queueEl.textContent = '👤'.repeat(Math.min(queueLength, 10));
+                servingEl.textContent = queueLength > 0 ? '🛎️' : '💼';
+                waitEl.textContent = served > 0 ? (totalWaitTime / served).toFixed(1) : '0';
+                servedEl.textContent = served;
+            }, 1000);
+            
+            demoIntervals[containerId] = interval;
+            setTimeout(() => clearInterval(interval), 30000);
+        }
+        
+        function updateQueueRate(containerId) {
+            const value = document.getElementById(containerId + '_arrival').value;
+            document.getElementById(containerId + '_arrivalValue').textContent = value;
+        }
+        
+        // Additional Demo Implementations
+        function initModelTypesDemo(container) {
+            container.innerHTML = `
+                <div style="text-align: center; padding: 20px;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 600px; margin: 0 auto;">
+                        <button class="btn btn-primary" onclick="showModelExample('physical', '${container.id}')">🏗️ Physical Model</button>
+                        <button class="btn btn-secondary" onclick="showModelExample('mathematical', '${container.id}')">📐 Mathematical Model</button>
+                        <button class="btn btn-success" onclick="showModelExample('conceptual', '${container.id}')">📊 Conceptual Model</button>
+                        <button class="btn btn-info" onclick="showModelExample('computer', '${container.id}')">💻 Computer Model</button>
+                    </div>
+                    <div id="${container.id}_example" style="margin-top: 20px; padding: 15px; background: rgba(255,255,255,0.1); border-radius: 8px;">
+                        Click a button to see model examples!
+                    </div>
+                </div>
+            `;
+        }
+        
+        function showModelExample(type, containerId) {
+            const examples = {
+                physical: '🏗️ <strong>Physical Models:</strong><br>• Scale model of a building<br>• Wind tunnel airplane model<br>• Architectural mockups<br>• Medical training mannequins',
+                mathematical: '📐 <strong>Mathematical Models:</strong><br>• Population growth: P(t) = P₀ × eʳᵗ<br>• Newton\'s laws: F = ma<br>• Economic supply/demand curves<br>• Weather prediction equations',
+                conceptual: '📊 <strong>Conceptual Models:</strong><br>• Flowcharts showing processes<br>• Organization charts<br>• System diagrams<br>• Mind maps and concept maps',
+                computer: '💻 <strong>Computer Models:</strong><br>• Flight simulators<br>• Climate models<br>• Financial modeling software<br>• Video game physics engines'
+            };
+            document.getElementById(containerId + '_example').innerHTML = examples[type];
+        }
+        
+        function initDESDemo(container) {
+            container.innerHTML = `
+                <div style="text-align: center; padding: 20px;">
+                    <div style="margin: 20px 0; font-size: 1.5rem;">
+                        Bank Simulation: <span id="${container.id}_customers">👤→🏦</span>
+                    </div>
+                    <div style="margin: 20px 0;">
+                        <p>Time: <span id="${container.id}_time">0</span> minutes</p>
+                        <p>Customers Served: <span id="${container.id}_served">0</span></p>
+                    </div>
+                    <button class="btn btn-primary" onclick="runDESDemo('${container.id}')">
+                        🎬 Run DES Simulation
+                    </button>
+                </div>
+            `;
+        }
+        
+        function runDESDemo(containerId) {
+            let time = 0;
+            let served = 0;
+            
+            const interval = setInterval(() => {
+                time++;
+                const customerEl = document.getElementById(containerId + '_customers');
+                
+                if (time % 3 === 0) { // Customer arrives every 3 minutes
+                    customerEl.textContent = '👤→🏦→💼';
+                    served++;
+                    document.getElementById(containerId + '_served').textContent = served;
+                } else {
+                    customerEl.textContent = '👤→🏦';
+                }
+                
+                document.getElementById(containerId + '_time').textContent = time;
+                
+                if (time >= 20) clearInterval(interval);
+            }, 500);
+        }
+        
+        function initSystemDynamicsDemo(container) {
+            container.innerHTML = `
+                <div style="text-align: center; padding: 20px;">
+                    <div style="margin: 20px 0;">
+                        <div style="display: inline-block; margin: 0 20px;">
+                            🐺 Wolves: <span id="${container.id}_wolves">5</span>
+                        </div>
+                        <div style="display: inline-block; margin: 0 20px;">
+                            🐰 Rabbits: <span id="${container.id}_rabbits">20</span>
+                        </div>
+                    </div>
+                    <div style="margin: 20px 0;">
+                        <canvas id="${container.id}_canvas" width="400" height="200" style="border: 1px solid #ccc; background: white;"></canvas>
+                    </div>
+                    <button class="btn btn-success" onclick="runEcosystemSim('${container.id}')">
+                        🌿 Start Ecosystem Simulation
+                    </button>
+                </div>
+            `;
+        }
+        
+        function runEcosystemSim(containerId) {
+            const canvas = document.getElementById(containerId + '_canvas');
+            const ctx = canvas.getContext('2d');
+            let wolves = 5, rabbits = 20, time = 0;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = '#dc3545'; // Red for wolves
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(0, canvas.height - wolves * 5);
+            
+            const interval = setInterval(() => {
+                // Simple predator-prey dynamics
+                const newRabbits = Math.max(1, rabbits + rabbits * 0.1 - wolves * 0.5);
+                const newWolves = Math.max(1, wolves + wolves * 0.05 - 0.2);
+                
+                rabbits = Math.floor(newRabbits);
+                wolves = Math.floor(newWolves);
+                time++;
+                
+                // Draw wolves line (red)
+                ctx.strokeStyle = '#dc3545';
+                ctx.lineTo(time * 8, canvas.height - wolves * 3);
+                ctx.stroke();
+                
+                // Draw rabbits line (green)
+                ctx.strokeStyle = '#28a745';
+                ctx.lineTo(time * 8, canvas.height - rabbits * 2);
+                ctx.stroke();
+                
+                document.getElementById(containerId + '_wolves').textContent = wolves;
+                document.getElementById(containerId + '_rabbits').textContent = rabbits;
+                
+                if (time >= 50) clearInterval(interval);
+            }, 300);
+        }
+        
+        function initAgentBasedDemo(container) {
+            container.innerHTML = `
+                <div style="text-align: center; padding: 20px;">
+                    <div id="${container.id}_agents" style="font-size: 2rem; margin: 20px 0; height: 100px; display: flex; justify-content: center; align-items: center; flex-wrap: wrap;">
+                        😊😊😊 😐😐😐 😔😔😔
+                    </div>
+                    <div style="margin: 20px 0;">
+                        <p>Happy: <span id="${container.id}_happy">3</span> | Neutral: <span id="${container.id}_neutral">3</span> | Sad: <span id="${container.id}_sad">3</span></p>
+                    </div>
+                    <button class="btn btn-warning" onclick="runSocialSim('${container.id}')">
+                        😊 Start Social Influence Simulation
+                    </button>
+                </div>
+            `;
+        }
+        
+        function runSocialSim(containerId) {
+            let happy = 3, neutral = 3, sad = 3;
+            
+            const interval = setInterval(() => {
+                // Simple social influence: happiness spreads
+                if (happy > sad) {
+                    if (neutral > 0) { neutral--; happy++; }
+                    else if (sad > 0) { sad--; neutral++; }
+                } else if (sad > happy) {
+                    if (neutral > 0) { neutral--; sad++; }
+                    else if (happy > 0) { happy--; neutral++; }
+                }
+                
+                const agentDisplay = '😊'.repeat(happy) + '😐'.repeat(neutral) + '😔'.repeat(sad);
+                document.getElementById(containerId + '_agents').textContent = agentDisplay;
+                document.getElementById(containerId + '_happy').textContent = happy;
+                document.getElementById(containerId + '_neutral').textContent = neutral;
+                document.getElementById(containerId + '_sad').textContent = sad;
+                
+                if (neutral === 0 && (happy === 0 || sad === 0)) clearInterval(interval);
+            }, 1000);
+        }
+
+        // Enhanced Quiz Functions
+        function startEnhancedQuiz() {
+            // Hide regular content, show quiz container
+            document.querySelector('.container').style.display = 'none';
+            document.getElementById('enhancedQuizContainer').style.display = 'block';
+            
+            // Select 5 random questions
+            currentQuestions = selectRandomQuestions(5);
+            currentQuestionIndex = 0;
+            userAnswers = [];
+            quizStarted = true;
+            
+            showQuestion();
+        }
+
+        function startPresentationQuiz() {
+            exitPresentation();
+            setTimeout(() => {
+                startEnhancedQuiz();
+            }, 500);
+        }
+
+        function selectRandomQuestions(count) {
+            const shuffled = [...questionPool].sort(() => 0.5 - Math.random());
+            return shuffled.slice(0, count);
+        }
+
+        function showQuestion() {
+            const question = currentQuestions[currentQuestionIndex];
+            const progressPercent = ((currentQuestionIndex + 1) / currentQuestions.length) * 100;
+            
+            document.getElementById('enhancedProgressBar').style.width = progressPercent + '%';
+            
+            const questionHtml = `
+                <div class="question-header">
+                    <div class="question-number">Question ${currentQuestionIndex + 1}</div>
+                    <div>${currentQuestions.length} Questions Total</div>
+                </div>
+                <h4 class="mb-4">${question.question}</h4>
+                <div class="options-container">
+                    ${question.options.map((option, index) => `
+                        <div class="quiz-option" data-option="${index}" onclick="selectOption(${index})">
+                            ${String.fromCharCode(65 + index)}. ${option}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            
+            document.getElementById('enhancedQuizQuestion').innerHTML = questionHtml;
+            document.getElementById('enhancedCheckBtn').style.display = 'none';
+            document.getElementById('enhancedNextBtn').style.display = 'none';
+        }
+
+        function selectOption(optionIndex) {
+            // Remove previous selections
+            document.querySelectorAll('.quiz-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            
+            // Select current option
+            document.querySelector(`[data-option="${optionIndex}"]`).classList.add('selected');
+            
+            // Show check button
+            document.getElementById('enhancedCheckBtn').style.display = 'inline-block';
+        }
+
+        function checkEnhancedAnswer() {
+            const selectedOption = document.querySelector('.quiz-option.selected');
+            if (!selectedOption) return;
+            
+            const userAnswer = parseInt(selectedOption.dataset.option);
+            const correctAnswer = currentQuestions[currentQuestionIndex].correct;
+            const isCorrect = userAnswer === correctAnswer;
+            
+            // Store answer
+            userAnswers.push({
+                questionIndex: currentQuestionIndex,
+                userAnswer: userAnswer,
+                correct: isCorrect,
+                question: currentQuestions[currentQuestionIndex]
+            });
+            
+            // Show correct/incorrect styling
+            document.querySelectorAll('.quiz-option').forEach((opt, index) => {
+                if (index === correctAnswer) {
+                    opt.classList.add('correct');
+                } else if (index === userAnswer && !isCorrect) {
+                    opt.classList.add('incorrect');
+                }
+            });
+            
+            // Animate question container
+            const questionContainer = document.getElementById('enhancedQuizQuestion');
+            if (isCorrect) {
+                questionContainer.classList.add('correct');
+                createConfetti();
+            } else {
+                questionContainer.classList.add('incorrect');
+                createRainEffect();
+            }
+            
+            // Show explanation
+            const explanationHtml = `
+                <div class="mt-3 p-3 ${isCorrect ? 'bg-success' : 'bg-danger'} text-white rounded">
+                    <i class="fas ${isCorrect ? 'fa-check-circle' : 'fa-times-circle'} me-2"></i>
+                    ${isCorrect ? 'Correct!' : 'Incorrect'} ${currentQuestions[currentQuestionIndex].explanation}
+                </div>
+            `;
+            
+            questionContainer.insertAdjacentHTML('beforeend', explanationHtml);
+            
+            // Hide check button, show next button
+            document.getElementById('enhancedCheckBtn').style.display = 'none';
+            
+            if (currentQuestionIndex < currentQuestions.length - 1) {
+                document.getElementById('enhancedNextBtn').style.display = 'inline-block';
+            } else {
+                document.getElementById('enhancedNextBtn').innerHTML = '<i class="fas fa-flag-checkered me-2"></i>See Results';
+                document.getElementById('enhancedNextBtn').style.display = 'inline-block';
+            }
+        }
+
+        function nextEnhancedQuestion() {
+            // Clean up animations
+            document.getElementById('enhancedQuizQuestion').classList.remove('correct', 'incorrect');
+            
+            if (currentQuestionIndex < currentQuestions.length - 1) {
+                currentQuestionIndex++;
+                showQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('enhancedQuizContainer').style.display = 'none';
+            
+            const score = userAnswers.filter(answer => answer.correct).length;
+            const total = userAnswers.length;
+            const percentage = Math.round((score / total) * 100);
+            
+            let scoreClass = 'score-needs-improvement';
+            let message = 'Keep studying! 📚';
+            let icon = 'fa-sad-tear';
+            
+            if (percentage >= 80) {
+                scoreClass = 'score-excellent';
+                message = 'Excellent work! 🎉';
+                icon = 'fa-star';
+            } else if (percentage >= 60) {
+                scoreClass = 'score-good';
+                message = 'Good job! 👍';
+                icon = 'fa-thumbs-up';
+            }
+            
+            const detailedResults = userAnswers.map((answer, index) => `
+                <div class="d-flex justify-content-between align-items-center p-2 ${answer.correct ? 'bg-success' : 'bg-danger'} bg-opacity-10 rounded mb-2">
+                    <span>Question ${index + 1}</span>
+                    <span class="${answer.correct ? 'text-success' : 'text-danger'}">
+                        <i class="fas ${answer.correct ? 'fa-check' : 'fa-times'}"></i>
+                        ${answer.correct ? 'Correct' : 'Incorrect'}
+                    </span>
+                </div>
+            `).join('');
+            
+            const resultsHtml = `
+                <div class="text-center">
+                    <div class="score-circle ${scoreClass}">
+                        <span>${score}/${total}</span>
+                    </div>
+                    <h3><i class="fas ${icon} me-2"></i>${message}</h3>
+                    <h4>${percentage}% Score</h4>
+                    <div class="mt-4 mb-4">
+                        ${detailedResults}
+                    </div>
+                    <div class="d-flex gap-3 justify-content-center">
+                        <button class="btn btn-primary" onclick="restartQuiz()">
+                            <i class="fas fa-redo me-2"></i>Try Again
+                        </button>
+                        <button class="btn btn-secondary" onclick="backToContent()">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Content
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('enhancedQuizResults').innerHTML = resultsHtml;
+            document.getElementById('enhancedQuizResults').style.display = 'block';
+            
+            // Create celebration effect for good scores
+            if (percentage >= 80) {
+                setTimeout(createConfetti, 500);
+            }
+        }
+
+        function restartQuiz() {
+            document.getElementById('enhancedQuizResults').style.display = 'none';
+            startEnhancedQuiz();
+        }
+
+        function backToContent() {
+            document.getElementById('enhancedQuizResults').style.display = 'none';
+            document.querySelector('.container').style.display = 'block';
+        }
+
+        // Animation Functions
+        function createConfetti() {
+            const colors = ['#f39c12', '#e74c3c', '#9b59b6', '#3498db', '#2ecc71'];
+            
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.animationDelay = Math.random() * 3 + 's';
+                    confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                    document.body.appendChild(confetti);
+                    
+                    setTimeout(() => {
+                        confetti.remove();
+                    }, 5000);
+                }, i * 50);
+            }
+        }
+
+        function createRainEffect() {
+            const sadEmojis = ['😢', '😞', '😔', '😭', '😿'];
+            
+            for (let i = 0; i < 20; i++) {
+                setTimeout(() => {
+                    const drop = document.createElement('div');
+                    drop.className = 'rain-drop';
+                    drop.textContent = sadEmojis[Math.floor(Math.random() * sadEmojis.length)];
+                    drop.style.left = Math.random() * 100 + 'vw';
+                    drop.style.animationDelay = Math.random() * 2 + 's';
+                    drop.style.animationDuration = (Math.random() * 1 + 1.5) + 's';
+                    document.body.appendChild(drop);
+                    
+                    setTimeout(() => {
+                        drop.remove();
+                    }, 3000);
+                }, i * 100);
+            }
+        }
+
+        // Legacy quiz function (keep for existing quiz)
+        function checkQuizAnswers() {
+            const answers = {
+                q1: 'b', q2: 'c', q3: 'b', q4: 'b', q5: 'b'
+            };
+
+            let score = 0;
+            let total = Object.keys(answers).length;
+            let results = [];
+
+            for (let question in answers) {
+                const userAnswer = document.querySelector(`input[name="${question}"]:checked`);
+                const correctAnswer = answers[question];
+                
+                if (userAnswer && userAnswer.value === correctAnswer) {
+                    score++;
+                    results.push(`<li class="text-success">Question ${question.slice(1)}: Correct! ✓</li>`);
+                } else {
+                    const questionNum = question.slice(1);
+                    const correctText = document.querySelector(`input[name="${question}"][value="${correctAnswer}"]`).parentElement.textContent.trim();
+                    results.push(`<li class="text-danger">Question ${questionNum}: Incorrect. Correct answer: ${correctText}</li>`);
+                }
+            }
+
+            const percentage = Math.round((score / total) * 100);
+            let alertClass = percentage >= 80 ? 'alert-success' : percentage >= 60 ? 'alert-warning' : 'alert-danger';
+            let message = percentage >= 80 ? 'Excellent work!' : percentage >= 60 ? 'Good job!' : 'Keep studying!';
+
+            const resultsHTML = `
+                <div class="alert ${alertClass}">
+                    <h6><i class="fas fa-chart-bar me-2"></i>Quiz Results: ${score}/${total} (${percentage}%)</h6>
+                    <p>${message}</p>
+                </div>
+                <ul class="list-unstyled">${results.join('')}</ul>
+            `;
+
+            const quizResults = document.getElementById('quizResults');
+            if (quizResults) {
+                quizResults.innerHTML = resultsHTML;
+                quizResults.style.display = 'block';
+                quizResults.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // Auto-save quiz answers
+        document.addEventListener('change', function(e) {
+            if (e.target.type === 'radio') {
+                localStorage.setItem('intro_quiz_' + e.target.name, e.target.value);
+            }
+        });
+
+        // Load saved answers
+        document.addEventListener('DOMContentLoaded', function() {
+            const questions = ['q1', 'q2', 'q3', 'q4', 'q5'];
+            questions.forEach(question => {
+                const saved = localStorage.getItem('intro_quiz_' + question);
+                if (saved) {
+                    const radio = document.querySelector(`input[name="${question}"][value="${saved}"]`);
+                    if (radio) radio.checked = true;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

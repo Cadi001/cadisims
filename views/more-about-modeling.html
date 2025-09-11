@@ -1,0 +1,1430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>More About Modeling</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../css/main.css" rel="stylesheet">
+    <link href="../css/topics.css" rel="stylesheet">
+    <style>
+        /* Presentation Mode Styles */
+        .presentation-mode {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            z-index: 9999;
+            display: none;
+            color: white;
+            overflow: hidden;
+        }
+        
+        .slide {
+            display: none;
+            height: 100vh;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .slide.active {
+            display: flex;
+        }
+        
+        .slide h1, .slide h2 {
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .slide p, .slide li {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            max-width: 80%;
+        }
+        
+        .slide ul {
+            text-align: left;
+            max-width: 60%;
+        }
+
+        /* Enhanced Quiz Styles */
+        #enhancedQuizContainer {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            z-index: 9999;
+            color: white;
+            overflow-y: auto;
+        }
+
+        .quiz-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .quiz-progress {
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            height: 8px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .quiz-progress-bar {
+            background: #28a745;
+            height: 100%;
+            transition: width 0.3s ease;
+            border-radius: 10px;
+        }
+
+        .quiz-question {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            color: #333;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .quiz-question.correct {
+            border-color: #28a745;
+            animation: correctPulse 0.6s ease-in-out;
+        }
+
+        .quiz-question.incorrect {
+            border-color: #dc3545;
+            animation: incorrectShake 0.6s ease-in-out;
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-weight: bold;
+            color: #6c757d;
+        }
+
+        .quiz-option {
+            padding: 15px 20px;
+            margin: 10px 0;
+            background: #f8f9fa;
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .quiz-option:hover {
+            background: #e9ecef;
+            border-color: #007bff;
+        }
+
+        .quiz-option.selected {
+            background: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
+        .quiz-option.correct {
+            background: #28a745;
+            color: white;
+            border-color: #28a745;
+        }
+
+        .quiz-option.incorrect {
+            background: #dc3545;
+            color: white;
+            border-color: #dc3545;
+        }
+
+        .quiz-button {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0 10px;
+        }
+
+        .quiz-button:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+
+        .quiz-button:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Animation styles */
+        @keyframes confetti {
+            0% { transform: translateY(0) rotateZ(0deg); opacity: 1; }
+            100% { transform: translateY(-1000px) rotateZ(720deg); opacity: 0; }
+        }
+
+        @keyframes rainDrop {
+            0% { transform: translateY(-100px); opacity: 1; }
+            100% { transform: translateY(100vh); opacity: 0; }
+        }
+
+        @keyframes correctPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes incorrectShake {
+            0%, 20%, 40%, 60%, 80% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+        }
+
+        .confetti-piece, .rain-drop {
+            position: fixed;
+            pointer-events: none;
+            z-index: 10000;
+        }
+
+        .confetti-piece {
+            width: 10px;
+            height: 10px;
+            animation: confetti 3s linear forwards;
+        }
+
+        .rain-drop {
+            font-size: 30px;
+            animation: rainDrop 2s linear forwards;
+        }
+
+        .results-container {
+            background: white;
+            color: #333;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .score-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: #28a745;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .score-circle.poor {
+            background: #dc3545;
+        }
+
+        .score-circle.fair {
+            background: #ffc107;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-arrow-left me-2"></i>
+                More About Modeling
+            </a>
+            <button class="btn btn-warning me-2" onclick="startPresentation()">
+                <i class="fas fa-presentation me-2"></i>
+                Present
+            </button>
+            <a href="topics.html" class="btn btn-outline-light">
+                <i class="fas fa-book me-2"></i>
+                All Topics
+            </a>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- Introduction Section -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <h2><i class="fas fa-palette me-3"></i>The Art of Modeling</h2>
+            </div>
+            <div class="topic-content">
+                <div class="simple-explanation">
+                    <h4>🎨 Modeling is an Art, Not Just Science</h4>
+                    <p><strong>Think of modeling like being an artist who creates a painting of a landscape.</strong></p>
+                    <p>The artist doesn't paint every single leaf on every tree - they capture the essence and feeling of the scene. Similarly, good modelers capture the essence of real systems without getting lost in every tiny detail.</p>
+                </div>
+
+                <div class="real-world-box">
+                    <h5>🌍 Universal Principles</h5>
+                    <p>Whether you're modeling a checkout line, a weather system, or a business process, the same artistic principles apply. Every field needs to turn complex raw data into useful information through <strong>abstraction</strong> and <strong>structure</strong>.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Four Key Skills Section -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <h2><i class="fas fa-brain me-3"></i>The Four Essential Modeling Skills</h2>
+            </div>
+            <div class="topic-content">
+                <div class="simple-explanation">
+                    <h4>🛠️ Master These Four Steps</h4>
+                    <p>Good modeling requires developing these four core abilities. Think of them as tools in your modeling toolkit:</p>
+                </div>
+
+                <div class="steps-container">
+                    <div class="step-item">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h5>🔍 Analyze a Problem</h5>
+                            <p><strong>Break it down:</strong> Look at the big messy problem and understand what's really going on</p>
+                            <div class="example-box">
+                                <strong>Example:</strong> A crowded restaurant isn't just "busy" - analyze: Are tables turning over slowly? Is the kitchen backed up? Are servers overwhelmed?
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-item">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h5>✨ Abstract the Essential Features</h5>
+                            <p><strong>Find the core:</strong> Identify what matters most and what you can safely ignore</p>
+                            <div class="example-box">
+                                <strong>Example:</strong> For restaurant modeling, customer arrival rate and service time matter most. The color of the walls probably doesn't.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-item">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h5>⚙️ Select and Test Assumptions</h5>
+                            <p><strong>Make smart assumptions:</strong> Choose reasonable simplifications, then test if they work</p>
+                            <div class="example-box">
+                                <strong>Example:</strong> Assume "customers arrive randomly" - then check real data to see if this assumption holds true.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-item">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <h5>🎯 Enrich and Elaborate</h5>
+                            <p><strong>Refine iteratively:</strong> Start simple, then gradually add complexity until you have a useful tool</p>
+                            <div class="example-box">
+                                <strong>Example:</strong> Start with "one server" model, then add multiple servers, then add different meal types, etc.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modeling Guidelines Section -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <h2><i class="fas fa-compass me-3"></i>Practical Modeling Guidelines</h2>
+            </div>
+            <div class="topic-content">
+                <div class="simple-explanation">
+                    <h4>🗺️ Your Modeling GPS</h4>
+                    <p>These practical guidelines will help you navigate the modeling process without getting lost in complexity:</p>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="model-type-card">
+                            <h4>🧩 Factor Into Simpler Problems</h4>
+                            <p>Break one big scary problem into several smaller, manageable pieces</p>
+                            <div class="example-box">
+                                <strong>Instead of:</strong> "Model the entire hospital"<br>
+                                <strong>Try:</strong> "Model the emergency room first"
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="model-type-card">
+                            <h4>🎯 Establish Clear Objectives</h4>
+                            <p>Know exactly what question you're trying to answer</p>
+                            <div class="example-box">
+                                <strong>Vague:</strong> "Make the restaurant better"<br>
+                                <strong>Clear:</strong> "Reduce customer wait time by 20%"
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="model-type-card">
+                            <h4>🔍 Seek Analogies</h4>
+                            <p>Look for similar problems that have already been solved</p>
+                            <div class="example-box">
+                                <strong>Example:</strong> Airport security lines work like restaurant queues - both involve arrivals, waiting, and service
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="model-type-card">
+                            <h4>🔢 Use Specific Numbers</h4>
+                            <p>Work with concrete examples before generalizing</p>
+                            <div class="example-box">
+                                <strong>Example:</strong> Start with "What if 50 customers arrive in one hour?" before tackling "variable arrival rates"
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="model-type-card">
+                            <h4>📝 Establish Symbols</h4>
+                            <p>Create clear notation to represent your system components</p>
+                            <div class="example-box">
+                                <strong>Example:</strong> Let A = arrival rate, S = service time, N = number of servers
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="model-type-card">
+                            <h4>💡 Write Down the Obvious</h4>
+                            <p>Don't skip the "obvious" stuff - write it down anyway</p>
+                            <div class="example-box">
+                                <strong>Example:</strong> "Customers must arrive before they can be served" (seems obvious, but important!)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Simplify vs Enrich Section -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <h2><i class="fas fa-balance-scale-left me-3"></i>The Simplify-Enrich Balance</h2>
+            </div>
+            <div class="topic-content">
+                <div class="simple-explanation">
+                    <h4>⚖️ Finding the Sweet Spot</h4>
+                    <p>Modeling is like cooking - too simple and it's not useful, too complex and it's impossible to work with. You need to find the right balance!</p>
+                </div>
+
+                <div class="vs-comparison">
+                    <div class="vs-left">
+                        <h5>📉 When to SIMPLIFY</h5>
+                        <p><strong>Your model is too complex to work with</strong></p>
+                        <div class="sim-detailed">
+                            <strong>How to simplify:</strong>
+                            <ul>
+                                <li>Turn variables into constants</li>
+                                <li>Eliminate or combine variables</li>
+                                <li>Assume linearity (straight lines)</li>
+                                <li>Add stronger assumptions</li>
+                                <li>Restrict system boundaries</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="vs-vs">⚖️</div>
+                    <div class="vs-right">
+                        <h5>📈 When to ENRICH</h5>
+                        <p><strong>Your model works but is too simple to be useful</strong></p>
+                        <div class="sim-detailed">
+                            <strong>How to enrich:</strong>
+                            <ul>
+                                <li>Turn constants into variables</li>
+                                <li>Add more variables</li>
+                                <li>Allow non-linear relationships</li>
+                                <li>Relax assumptions</li>
+                                <li>Expand system boundaries</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="real-world-box">
+                    <h5>🎯 The Golden Rule</h5>
+                    <p><strong>If you can work with your model</strong> → try enriching it to make it more realistic</p>
+                    <p><strong>If your model is too complex to work with</strong> → simplify it until you can use it</p>
+                    <p><strong>Keep iterating</strong> until you have a model that's both usable and useful!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Iterative Process Section -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <h2><i class="fas fa-sync-alt me-3"></i>The Iterative Modeling Process</h2>
+            </div>
+            <div class="topic-content">
+                <div class="simple-explanation">
+                    <h4>🔄 Round and Round We Go</h4>
+                    <p>Good modeling isn't a straight line from problem to solution. It's a spiral where you keep improving your model through repeated cycles of building, testing, and refining.</p>
+                </div>
+
+                <div class="classification-grid">
+                    <div class="classification-item">
+                        <h4>🔄 The Modeling Cycle</h4>
+                        <div class="step-item">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h5>Build → Test → Learn</h5>
+                                <p>Create your model, test how well it represents reality, learn what's missing or wrong</p>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h5>Simplify or Enrich</h5>
+                                <p>Based on your testing, either make it simpler (if too complex) or richer (if too simple)</p>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <h5>Repeat Until "Just Right"</h5>
+                                <p>Keep cycling until you have a model that's tractable (you can work with it) but also valid (represents reality well)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="benefits-grid">
+                    <div class="benefit-card">
+                        <i class="fas fa-tools"></i>
+                        <h4>Tractable</h4>
+                        <p>Simple enough that you can actually use it to solve problems and get answers</p>
+                    </div>
+                    <div class="benefit-card">
+                        <i class="fas fa-check-circle"></i>
+                        <h4>Valid</h4>
+                        <p>Complex enough that it accurately represents the important aspects of the real system</p>
+                    </div>
+                    <div class="benefit-card">
+                        <i class="fas fa-bullseye"></i>
+                        <h4>Useful</h4>
+                        <p>The sweet spot where it's both tractable AND valid - this is your goal!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Key Takeaways Section -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <h2><i class="fas fa-lightbulb me-3"></i>Key Takeaways</h2>
+            </div>
+            <div class="topic-content">
+                <div class="benefits-grid">
+                    <div class="benefit-card">
+                        <i class="fas fa-palette"></i>
+                        <h4>Modeling is an Art</h4>
+                        <p>It requires creativity, judgment, and skill - not just following mechanical rules</p>
+                    </div>
+                    <div class="benefit-card">
+                        <i class="fas fa-layer-group"></i>
+                        <h4>Abstraction and Structure Matter</h4>
+                        <p>The key is knowing what to include, what to leave out, and how to organize it</p>
+                    </div>
+                    <div class="benefit-card">
+                        <i class="fas fa-sync"></i>
+                        <h4>Iterate to Improve</h4>
+                        <p>Start simple, test, refine, repeat until you find the right balance of simplicity and realism</p>
+                    </div>
+                </div>
+
+                <div class="try-it-box">
+                    <p><strong>🎯 Remember:</strong> The goal isn't to create a perfect replica of reality - it's to create a useful tool that helps you understand and solve problems!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quiz Section -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <h2><i class="fas fa-question-circle me-3"></i>Test Your Understanding</h2>
+            </div>
+            <div class="topic-content">
+                <div class="interactive-question">
+                    <h5>📝 Multiple Choice Quiz</h5>
+                    <div class="question-content">
+                        <p><strong>Question 1:</strong> According to the material, modeling is best described as:</p>
+                        <div class="quiz-options">
+                            <label class="option-label">
+                                <input type="radio" name="q1" value="a"> 
+                                A) A mechanical process following strict rules
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q1" value="b"> 
+                                B) An art requiring creativity and judgment
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q1" value="c"> 
+                                C) A simple mathematical exercise
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q1" value="d"> 
+                                D) A computer programming task
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question-content mt-4">
+                        <p><strong>Question 2:</strong> What are the four essential abilities required for good modeling?</p>
+                        <div class="quiz-options">
+                            <label class="option-label">
+                                <input type="radio" name="q2" value="a"> 
+                                A) Program, test, debug, deploy
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q2" value="b"> 
+                                B) Analyze, abstract, select assumptions, enrich
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q2" value="c"> 
+                                C) Read, write, calculate, draw
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q2" value="d"> 
+                                D) Observe, measure, record, report
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question-content mt-4">
+                        <p><strong>Question 3:</strong> When should you SIMPLIFY your model?</p>
+                        <div class="quiz-options">
+                            <label class="option-label">
+                                <input type="radio" name="q3" value="a"> 
+                                A) When it's too simple to be useful
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q3" value="b"> 
+                                B) When it's too complex to work with
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q3" value="c"> 
+                                C) When it gives the wrong answers
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q3" value="d"> 
+                                D) Never - always make models more complex
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question-content mt-4">
+                        <p><strong>Question 4:</strong> The two key universal features in any modeling effort are:</p>
+                        <div class="quiz-options">
+                            <label class="option-label">
+                                <input type="radio" name="q4" value="a"> 
+                                A) Speed and accuracy
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q4" value="b"> 
+                                B) Abstraction and structure
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q4" value="c"> 
+                                C) Cost and efficiency
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q4" value="d"> 
+                                D) Time and resources
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question-content mt-4">
+                        <p><strong>Question 5:</strong> The ideal model should be:</p>
+                        <div class="quiz-options">
+                            <label class="option-label">
+                                <input type="radio" name="q5" value="a"> 
+                                A) As complex as possible
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q5" value="b"> 
+                                B) As simple as possible
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q5" value="c"> 
+                                B) Both tractable (workable) and valid (realistic)
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q5" value="d"> 
+                                D) An exact replica of reality
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <button class="btn btn-primary" onclick="checkQuizAnswers()">
+                            <i class="fas fa-check me-2"></i>Check My Answers
+                        </button>
+                    </div>
+
+                    <div id="quizResults" class="quiz-results mt-3" style="display: none;">
+                        <!-- Results will be inserted here -->
+                    </div>
+                    
+                    <!-- Enhanced Quiz Button -->
+                    <div class="text-center mt-4">
+                        <div class="alert alert-info">
+                            <h5><i class="fas fa-star me-2"></i>Want a More Interactive Experience?</h5>
+                            <p class="mb-3">Try our enhanced quiz with animations, random questions, and immediate feedback!</p>
+                            <button class="btn btn-warning btn-lg" onclick="startEnhancedQuiz()">
+                                <i class="fas fa-rocket me-2"></i>Take Enhanced Quiz
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Presentation Mode -->
+    <div id="presentationMode" class="presentation-mode">
+        <!-- Slides will be dynamically generated here -->
+    </div>
+
+    <!-- Enhanced Quiz Container -->
+    <div id="enhancedQuizContainer">
+        <div class="quiz-container">
+            <div class="quiz-progress">
+                <div class="quiz-progress-bar" id="enhancedProgressBar"></div>
+            </div>
+            <div class="quiz-question" id="enhancedQuizQuestion">
+                <!-- Questions will be loaded here -->
+            </div>
+            <div class="text-center mt-4">
+                <button class="quiz-button" id="enhancedCheckBtn" onclick="checkEnhancedAnswer()">
+                    <i class="fas fa-check me-2"></i>Check Answer
+                </button>
+                <button class="quiz-button" id="enhancedNextBtn" onclick="nextEnhancedQuestion()" style="display: none;">
+                    <i class="fas fa-arrow-right me-2"></i>Next Question
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Container -->
+    <div id="resultsContainer" style="display: none;">
+        <div class="quiz-container">
+            <div class="results-container">
+                <div class="score-circle" id="scoreCircle">
+                    <span id="scorePercentage">0%</span>
+                </div>
+                <h2 id="resultTitle">Quiz Complete!</h2>
+                <p id="resultMessage"></p>
+                <div id="resultsSummary"></div>
+                <div class="text-center mt-4">
+                    <button class="quiz-button" onclick="restartQuiz()">
+                        <i class="fas fa-redo me-2"></i>Try Again
+                    </button>
+                    <button class="quiz-button" onclick="exitQuiz()">
+                        <i class="fas fa-home me-2"></i>Back to Content
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Copyright Footer -->
+    <footer class="text-center py-4 mt-5">
+        <div class="container">
+            <p class="mb-2">
+                <i class="fas fa-copyright me-2"></i>
+                © 2025 <strong>Aldwin Nunag</strong>. All rights reserved.
+            </p>
+            <div class="mb-2">
+                <i class="fab fa-creative-commons me-1"></i>
+                <i class="fab fa-creative-commons-by me-1"></i>
+                <i class="fab fa-creative-commons-nc me-1"></i>
+                <i class="fab fa-creative-commons-sa me-2"></i>
+                <strong>Open Source Project</strong> - Licensed under 
+                <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" class="text-decoration-none">
+                    CC BY-NC-SA 4.0
+                </a>
+            </div>
+            <small class="text-muted">
+                Free to use, modify, and share for educational purposes only. Commercial use prohibited. 
+                Modified works must retain this license and be shared under the same terms.
+            </small>
+            <br>
+            <small class="text-muted">
+                More About Modeling - Educational Content
+            </small>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        function checkQuizAnswers() {
+            const answers = {
+                q1: 'b', // An art requiring creativity and judgment
+                q2: 'b', // Analyze, abstract, select assumptions, enrich
+                q3: 'b', // When it's too complex to work with
+                q4: 'b', // Abstraction and structure
+                q5: 'c'  // Both tractable (workable) and valid (realistic)
+            };
+
+            let score = 0;
+            let total = Object.keys(answers).length;
+            let results = [];
+
+            for (let question in answers) {
+                const userAnswer = document.querySelector(`input[name="${question}"]:checked`);
+                const correctAnswer = answers[question];
+                
+                if (userAnswer && userAnswer.value === correctAnswer) {
+                    score++;
+                    results.push(`<li class="text-success">Question ${question.slice(1)}: Correct! ✓</li>`);
+                } else {
+                    const questionNum = question.slice(1);
+                    const correctText = document.querySelector(`input[name="${question}"][value="${correctAnswer}"]`).parentElement.textContent.trim();
+                    results.push(`<li class="text-danger">Question ${questionNum}: Incorrect. Correct answer: ${correctText}</li>`);
+                }
+            }
+
+            const percentage = Math.round((score / total) * 100);
+            let alertClass = percentage >= 80 ? 'alert-success' : percentage >= 60 ? 'alert-warning' : 'alert-danger';
+            let message = percentage >= 80 ? 'Excellent work!' : percentage >= 60 ? 'Good job!' : 'Keep studying!';
+
+            const resultsHTML = `
+                <div class="alert ${alertClass}">
+                    <h6><i class="fas fa-chart-bar me-2"></i>Quiz Results: ${score}/${total} (${percentage}%)</h6>
+                    <p>${message}</p>
+                </div>
+                <ul class="list-unstyled">${results.join('')}</ul>
+            `;
+
+            document.getElementById('quizResults').innerHTML = resultsHTML;
+            document.getElementById('quizResults').style.display = 'block';
+            
+            // Scroll to results
+            document.getElementById('quizResults').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Auto-save quiz answers
+        document.addEventListener('change', function(e) {
+            if (e.target.type === 'radio') {
+                localStorage.setItem('modeling_quiz_' + e.target.name, e.target.value);
+            }
+        });
+
+        // Load saved answers
+        document.addEventListener('DOMContentLoaded', function() {
+            const questions = ['q1', 'q2', 'q3', 'q4', 'q5'];
+            questions.forEach(question => {
+                const saved = localStorage.getItem('modeling_quiz_' + question);
+                if (saved) {
+                    const radio = document.querySelector(`input[name="${question}"][value="${saved}"]`);
+                    if (radio) radio.checked = true;
+                }
+            });
+        });
+
+        // Presentation Mode Data for Modeling
+        const presentationData = [
+            {
+                type: 'title',
+                content: {
+                    title: 'More About Modeling',
+                    subtitle: 'Master the Art and Science of Model Building'
+                }
+            },
+            {
+                type: 'content',
+                content: {
+                    title: 'Modeling is an Art',
+                    text: 'Like an artist painting a landscape, good modelers capture the essence of systems without getting lost in every detail. The art lies in knowing what to include and what to leave out.'
+                }
+            },
+            {
+                type: 'list',
+                content: {
+                    title: 'Four Essential Modeling Skills',
+                    items: [
+                        'Simplify - Remove unnecessary complexity',
+                        'Chunk - Break systems into manageable pieces',
+                        'Build Analogies - Connect new concepts to familiar ones',
+                        'Tell Stories - Communicate insights effectively'
+                    ]
+                }
+            },
+            {
+                type: 'content',
+                content: {
+                    title: 'Universal Modeling Features',
+                    text: 'All successful models share two key features: Abstraction (focusing on essential elements) and Structure (organizing information logically).'
+                }
+            },
+            {
+                type: 'list',
+                content: {
+                    title: 'When to Simplify Your Model',
+                    items: [
+                        'When complexity obscures insights',
+                        'When stakeholders cannot understand it',
+                        'When it becomes unwieldy to manage',
+                        'When key patterns are hidden by detail'
+                    ]
+                }
+            },
+            {
+                type: 'content',
+                content: {
+                    title: 'The Power of Chunking',
+                    text: 'Breaking complex systems into smaller, manageable pieces allows us to understand each component deeply before seeing how they work together.'
+                }
+            },
+            {
+                type: 'list',
+                content: {
+                    title: 'Building Effective Analogies',
+                    items: [
+                        'Connect to familiar experiences',
+                        'Highlight key similarities',
+                        'Acknowledge important differences',
+                        'Use multiple analogies for complex concepts'
+                    ]
+                }
+            },
+            {
+                type: 'content',
+                content: {
+                    title: 'The Art of Model Storytelling',
+                    text: 'Great modelers are storytellers who weave data and analysis into compelling narratives that drive decision-making and understanding.'
+                }
+            },
+            {
+                type: 'list',
+                content: {
+                    title: 'Model Quality Indicators',
+                    items: [
+                        'Simple enough to understand',
+                        'Complex enough to be useful',
+                        'Accurate enough for decisions',
+                        'Flexible enough to adapt',
+                        'Transparent enough to trust'
+                    ]
+                }
+            },
+            {
+                type: 'content',
+                content: {
+                    title: 'From Art to Impact',
+                    text: 'The ultimate goal of modeling is not perfect accuracy, but actionable insight. Models succeed when they improve decisions and understanding.'
+                }
+            },
+            {
+                type: 'quiz_start',
+                content: {
+                    title: 'Test Your Modeling Knowledge!',
+                    text: 'Ready to test your understanding of modeling concepts? Take our interactive quiz!'
+                }
+            }
+        ];
+
+        // Enhanced Quiz Question Pool (30 questions)
+        const questionPool = [
+            {
+                question: "According to the material, modeling is best described as:",
+                options: ["A mechanical process following strict rules", "An art form that captures essential system features", "A complex mathematical procedure", "A data collection activity"],
+                correct: 1,
+                explanation: "Modeling is described as an art form, like painting a landscape, focusing on capturing essence rather than every detail."
+            },
+            {
+                question: "What are the four essential abilities required for good modeling?",
+                options: ["Program, test, debug, deploy", "Simplify, chunk, build analogies, tell stories", "Calculate, measure, predict, validate", "Observe, analyze, compute, report"],
+                correct: 1,
+                explanation: "The four essential modeling abilities are: simplify, chunk, build analogies, and tell stories."
+            },
+            {
+                question: "When should you SIMPLIFY your model?",
+                options: ["When it's too simple to be useful", "When complexity obscures key insights", "When you have more time", "Never - models should be complex"],
+                correct: 1,
+                explanation: "You should simplify when complexity prevents you from seeing key insights and patterns."
+            },
+            {
+                question: "The two key universal features in any modeling effort are:",
+                options: ["Speed and accuracy", "Abstraction and structure", "Cost and benefit", "Input and output"],
+                correct: 1,
+                explanation: "Abstraction (focusing on essentials) and structure (logical organization) are the two universal features of all models."
+            },
+            {
+                question: "The ideal model should be:",
+                options: ["As complex as possible", "Simple enough to understand, complex enough to be useful", "Completely accurate", "Based only on historical data"],
+                correct: 1,
+                explanation: "The ideal model balances simplicity for understanding with enough complexity to provide useful insights."
+            },
+            {
+                question: "What does 'chunking' mean in modeling?",
+                options: ["Adding random elements", "Breaking complex systems into manageable pieces", "Making models more complex", "Using only numerical data"],
+                correct: 1,
+                explanation: "Chunking involves breaking down complex systems into smaller, more manageable components for better understanding."
+            },
+            {
+                question: "Why are analogies important in modeling?",
+                options: ["They make models more complex", "They connect new concepts to familiar experiences", "They are required by law", "They slow down the modeling process"],
+                correct: 1,
+                explanation: "Analogies help connect unfamiliar concepts to familiar experiences, making models easier to understand and communicate."
+            },
+            {
+                question: "What makes a modeler a good storyteller?",
+                options: ["Using complex jargon", "Weaving data into compelling narratives", "Avoiding all details", "Speaking very quickly"],
+                correct: 1,
+                explanation: "Good modeling storytellers weave data and analysis into compelling narratives that drive understanding and decisions."
+            },
+            {
+                question: "The primary goal of modeling is:",
+                options: ["Perfect accuracy", "Actionable insight", "Maximum complexity", "Historical documentation"],
+                correct: 1,
+                explanation: "The ultimate goal is actionable insight that improves decisions, not perfect accuracy."
+            },
+            {
+                question: "What is abstraction in modeling?",
+                options: ["Making things more concrete", "Focusing on essential elements while ignoring irrelevant details", "Adding more variables", "Using only abstract mathematics"],
+                correct: 1,
+                explanation: "Abstraction means focusing on the essential elements of a system while filtering out irrelevant details."
+            },
+            {
+                question: "Models succeed when they:",
+                options: ["Include every possible detail", "Improve decisions and understanding", "Use the most advanced technology", "Take the longest time to build"],
+                correct: 1,
+                explanation: "Models succeed when they improve decisions and understanding, regardless of their complexity or technology used."
+            },
+            {
+                question: "What should you do when your model becomes unwieldy?",
+                options: ["Add more detail", "Simplify and refocus on key elements", "Start over completely", "Ignore the problem"],
+                correct: 1,
+                explanation: "When models become unwieldy, you should simplify and refocus on the key elements that drive insights."
+            },
+            {
+                question: "Structure in modeling refers to:",
+                options: ["Physical building design", "Logical organization of information", "Mathematical complexity", "Computer hardware"],
+                correct: 1,
+                explanation: "Structure refers to how information and components are logically organized within the model."
+            },
+            {
+                question: "A good analogy in modeling should:",
+                options: ["Be completely identical to the original", "Highlight key similarities while acknowledging differences", "Confuse the audience", "Be as complex as possible"],
+                correct: 1,
+                explanation: "Good analogies highlight key similarities while being honest about important differences."
+            },
+            {
+                question: "What indicates that a model might be too complex?",
+                options: ["It provides useful insights", "Stakeholders cannot understand it", "It runs quickly", "It's easy to maintain"],
+                correct: 1,
+                explanation: "If stakeholders cannot understand the model, it may be too complex and need simplification."
+            },
+            {
+                question: "The 'essence' of a system in modeling refers to:",
+                options: ["Every single detail", "The core features that drive behavior", "Only the mathematical parts", "The most expensive components"],
+                correct: 1,
+                explanation: "The essence refers to the core features and relationships that drive the system's behavior and outcomes."
+            },
+            {
+                question: "Why might you use multiple analogies for one concept?",
+                options: ["To confuse people", "To highlight different aspects of complex concepts", "To waste time", "To make things more complicated"],
+                correct: 1,
+                explanation: "Multiple analogies can illuminate different aspects of complex concepts, providing richer understanding."
+            },
+            {
+                question: "What makes a model 'transparent'?",
+                options: ["Using invisible components", "Clear logic that others can follow and verify", "Having no documentation", "Being completely automated"],
+                correct: 1,
+                explanation: "Transparency means the model's logic is clear and can be followed, understood, and verified by others."
+            },
+            {
+                question: "When building analogies, you should:",
+                options: ["Ignore all differences", "Connect to unfamiliar experiences", "Connect to familiar experiences", "Avoid using any comparisons"],
+                correct: 2,
+                explanation: "Effective analogies connect new concepts to familiar experiences that the audience already understands."
+            },
+            {
+                question: "What is the relationship between model accuracy and usefulness?",
+                options: ["More accuracy always means more useful", "Perfect accuracy is required for usefulness", "Optimal accuracy depends on the decision context", "Accuracy and usefulness are unrelated"],
+                correct: 2,
+                explanation: "The optimal level of accuracy depends on the decision context - sometimes simpler, less accurate models are more useful."
+            },
+            {
+                question: "Flexibility in models means:",
+                options: ["They can bend physically", "They can adapt to new situations and requirements", "They are always changing", "They have no structure"],
+                correct: 1,
+                explanation: "Flexible models can adapt to new situations, data, and changing requirements without complete rebuilding."
+            },
+            {
+                question: "What should guide your decision about model complexity?",
+                options: ["Available computing power", "The insights needed for decisions", "The time available", "Personal preference"],
+                correct: 1,
+                explanation: "Model complexity should be guided by the insights needed to make good decisions, not by technical capabilities alone."
+            },
+            {
+                question: "In modeling, 'telling stories' means:",
+                options: ["Making up fictional data", "Communicating insights through compelling narratives", "Writing creative fiction", "Avoiding facts and data"],
+                correct: 1,
+                explanation: "Telling stories in modeling means communicating insights and findings through compelling, data-driven narratives."
+            },
+            {
+                question: "What is a key benefit of chunking complex systems?",
+                options: ["It makes everything more complicated", "It allows detailed understanding of individual components", "It eliminates all relationships", "It requires more resources"],
+                correct: 1,
+                explanation: "Chunking allows you to understand individual components deeply before seeing how they interact in the whole system."
+            },
+            {
+                question: "Models should be trusted when they:",
+                options: ["Are the most expensive", "Have transparent logic and validated assumptions", "Use the most data", "Are built by experts only"],
+                correct: 1,
+                explanation: "Trust comes from transparent logic, clear assumptions, and validation, not from cost or authority alone."
+            },
+            {
+                question: "What happens when key patterns are hidden by detail?",
+                options: ["The model becomes more accurate", "Important insights are obscured", "The model runs faster", "Nothing changes"],
+                correct: 1,
+                explanation: "When details hide key patterns, the model fails to provide the insights needed for understanding and decision-making."
+            },
+            {
+                question: "The art of modeling involves:",
+                options: ["Following rigid procedures exactly", "Knowing what to include and what to leave out", "Using every available data point", "Avoiding all simplification"],
+                correct: 1,
+                explanation: "The artistic aspect of modeling is the skill of knowing what elements are essential and what can be simplified or omitted."
+            },
+            {
+                question: "A model that is 'accurate enough for decisions' means:",
+                options: ["It's 100% perfect", "It provides sufficient precision for the choices at hand", "It has no errors", "It predicts everything"],
+                correct: 1,
+                explanation: "Sufficient accuracy means the model provides enough precision to make good decisions, not perfect precision."
+            },
+            {
+                question: "What should you do if stakeholders find your model confusing?",
+                options: ["Explain it using more technical terms", "Simplify and improve communication", "Make it more detailed", "Give up on the model"],
+                correct: 1,
+                explanation: "If stakeholders are confused, you should simplify the presentation and improve how you communicate the model's insights."
+            },
+            {
+                question: "The ultimate measure of a model's success is:",
+                options: ["How much it cost to build", "How complex its mathematics are", "How well it improves decisions and understanding", "How long it took to create"],
+                correct: 2,
+                explanation: "A model's success is measured by how well it improves decisions and understanding, not by its cost, complexity, or development time."
+            }
+        ];
+
+        // Enhanced Quiz Variables
+        let currentSlide = 0;
+        let slides = [];
+        let currentQuestions = [];
+        let currentQuestionIndex = 0;
+        let userAnswers = [];
+
+        // Presentation Functions
+        function startPresentation() {
+            createSlides();
+            document.getElementById('presentationMode').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            showSlide(0);
+            
+            // Remove any existing event listeners first
+            document.getElementById('presentationMode').removeEventListener('click', nextSlide);
+            
+            // Click to advance slides - use event delegation
+            document.getElementById('presentationMode').addEventListener('click', function(e) {
+                console.log('Presentation clicked, target:', e.target);
+                
+                // Don't advance slide if clicking on interactive elements
+                if (e.target.closest('.exit-btn') || 
+                    e.target.closest('button') || 
+                    e.target.closest('input') || 
+                    e.target.closest('canvas') ||
+                    e.target.closest('.interactive-demo')) {
+                    console.log('Interactive element clicked, not advancing slide');
+                    return;
+                }
+                
+                // Only advance slide if clicking on empty space or text
+                console.log('Empty space clicked, advancing slide');
+                nextSlide();
+            });
+        }
+
+        function createSlides() {
+            const presentationMode = document.getElementById('presentationMode');
+            presentationMode.innerHTML = '';
+            
+            presentationData.forEach((slideData, index) => {
+                const slide = document.createElement('div');
+                slide.className = 'slide';
+                
+                let content = '';
+                switch(slideData.type) {
+                    case 'title':
+                        content = `<h1>${slideData.content.title}</h1><p style="font-size: 1.5rem; opacity: 0.8;">${slideData.content.subtitle}</p>`;
+                        break;
+                    case 'content':
+                        content = `<h2>${slideData.content.title}</h2><p>${slideData.content.text}</p>`;
+                        break;
+                    case 'list':
+                        content = `<h2>${slideData.content.title}</h2><ul style="text-align: left; max-width: 80%;">${slideData.content.items.map(item => `<li>${item}</li>`).join('')}</ul>`;
+                        break;
+                    case 'quiz_start':
+                        content = `<h2>${slideData.content.title}</h2><p>${slideData.content.text}</p><button class="btn btn-warning btn-lg" onclick="startPresentationQuiz()"><i class="fas fa-play me-2"></i>Start Quiz</button>`;
+                        break;
+                }
+                
+                slide.innerHTML = content;
+                presentationMode.appendChild(slide);
+            });
+            slides = document.querySelectorAll('.slide');
+        }
+
+        function showSlide(index) {
+            slides.forEach(slide => slide.classList.remove('active'));
+            if (slides[index]) {
+                slides[index].classList.add('active');
+                currentSlide = index;
+            }
+        }
+
+        function nextSlide() {
+            console.log('nextSlide called, current:', currentSlide, 'total:', slides.length);
+            if (currentSlide < slides.length - 1) {
+                showSlide(currentSlide + 1);
+            } else {
+                console.log('Reached end of slides, exiting presentation');
+                exitPresentation();
+            }
+        }
+
+        function exitPresentation() {
+            document.getElementById('presentationMode').style.display = 'none';
+            document.body.style.overflow = 'auto';
+            document.getElementById('presentationMode').removeEventListener('click', nextSlide);
+        }
+
+        // Enhanced Quiz Functions
+        function startEnhancedQuiz() {
+            document.querySelector('.container').style.display = 'none';
+            document.getElementById('enhancedQuizContainer').style.display = 'block';
+            currentQuestions = selectRandomQuestions(5);
+            currentQuestionIndex = 0;
+            userAnswers = [];
+            showQuestion();
+        }
+
+        function startPresentationQuiz() {
+            exitPresentation();
+            setTimeout(() => startEnhancedQuiz(), 500);
+        }
+
+        function selectRandomQuestions(count) {
+            const shuffled = [...questionPool].sort(() => 0.5 - Math.random());
+            return shuffled.slice(0, count);
+        }
+
+        function showQuestion() {
+            const question = currentQuestions[currentQuestionIndex];
+            const progressPercent = ((currentQuestionIndex + 1) / currentQuestions.length) * 100;
+            
+            document.getElementById('enhancedProgressBar').style.width = progressPercent + '%';
+            
+            const questionHtml = `
+                <div class="question-header">
+                    <div class="question-number">Question ${currentQuestionIndex + 1}</div>
+                    <div>${currentQuestions.length} Questions Total</div>
+                </div>
+                <h4 class="mb-4">${question.question}</h4>
+                <div class="options-container">
+                    ${question.options.map((option, index) => `
+                        <div class="quiz-option" data-option="${index}" onclick="selectOption(${index})">
+                            ${String.fromCharCode(65 + index)}. ${option}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            
+            document.getElementById('enhancedQuizQuestion').innerHTML = questionHtml;
+            document.getElementById('enhancedCheckBtn').style.display = 'inline-block';
+            document.getElementById('enhancedNextBtn').style.display = 'none';
+        }
+
+        function selectOption(optionIndex) {
+            document.querySelectorAll('.quiz-option').forEach(opt => opt.classList.remove('selected'));
+            document.querySelector(`[data-option="${optionIndex}"]`).classList.add('selected');
+        }
+
+        function checkEnhancedAnswer() {
+            const selectedOption = document.querySelector('.quiz-option.selected');
+            if (!selectedOption) return;
+            
+            const userAnswer = parseInt(selectedOption.dataset.option);
+            const correctAnswer = currentQuestions[currentQuestionIndex].correct;
+            const isCorrect = userAnswer === correctAnswer;
+            
+            userAnswers.push({
+                questionIndex: currentQuestionIndex,
+                userAnswer: userAnswer,
+                correct: isCorrect,
+                question: currentQuestions[currentQuestionIndex]
+            });
+            
+            document.querySelectorAll('.quiz-option').forEach((opt, index) => {
+                if (index === correctAnswer) {
+                    opt.classList.add('correct');
+                } else if (index === userAnswer && !isCorrect) {
+                    opt.classList.add('incorrect');
+                }
+            });
+            
+            const questionContainer = document.getElementById('enhancedQuizQuestion');
+            questionContainer.classList.add(isCorrect ? 'correct' : 'incorrect');
+            
+            if (isCorrect) {
+                createConfetti();
+            } else {
+                createRain();
+            }
+            
+            const explanationHtml = `
+                <div class="mt-3 p-3 ${isCorrect ? 'bg-success' : 'bg-danger'} text-white rounded">
+                    <i class="fas ${isCorrect ? 'fa-check-circle' : 'fa-times-circle'} me-2"></i>
+                    ${isCorrect ? 'Correct!' : 'Incorrect'} ${currentQuestions[currentQuestionIndex].explanation}
+                </div>
+            `;
+            
+            questionContainer.insertAdjacentHTML('beforeend', explanationHtml);
+            document.getElementById('enhancedCheckBtn').style.display = 'none';
+            
+            if (currentQuestionIndex < currentQuestions.length - 1) {
+                document.getElementById('enhancedNextBtn').style.display = 'inline-block';
+            } else {
+                document.getElementById('enhancedNextBtn').innerHTML = '<i class="fas fa-flag-checkered me-2"></i>See Results';
+                document.getElementById('enhancedNextBtn').style.display = 'inline-block';
+            }
+        }
+
+        function nextEnhancedQuestion() {
+            document.getElementById('enhancedQuizQuestion').classList.remove('correct', 'incorrect');
+            
+            if (currentQuestionIndex < currentQuestions.length - 1) {
+                currentQuestionIndex++;
+                showQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('enhancedQuizContainer').style.display = 'none';
+            document.getElementById('resultsContainer').style.display = 'block';
+            
+            const correctCount = userAnswers.filter(answer => answer.correct).length;
+            const totalQuestions = userAnswers.length;
+            const percentage = Math.round((correctCount / totalQuestions) * 100);
+            
+            document.getElementById('scorePercentage').textContent = percentage + '%';
+            
+            const scoreCircle = document.getElementById('scoreCircle');
+            scoreCircle.className = 'score-circle';
+            if (percentage >= 80) {
+                scoreCircle.classList.add('excellent');
+                document.getElementById('resultTitle').textContent = 'Modeling Master!';
+                document.getElementById('resultMessage').textContent = 'You have a strong understanding of modeling concepts!';
+            } else if (percentage >= 60) {
+                scoreCircle.classList.add('good');
+                document.getElementById('resultTitle').textContent = 'Good Progress!';
+                document.getElementById('resultMessage').textContent = 'You\'re developing solid modeling skills. Review the missed topics and try again!';
+            } else if (percentage >= 40) {
+                scoreCircle.classList.add('fair');
+                document.getElementById('resultTitle').textContent = 'Keep Learning!';
+                document.getElementById('resultMessage').textContent = 'You\'re on the right track. Review the material and practice more.';
+            } else {
+                scoreCircle.classList.add('poor');
+                document.getElementById('resultTitle').textContent = 'More Practice Needed';
+                document.getElementById('resultMessage').textContent = 'Consider reviewing the modeling content and trying again.';
+            }
+            
+            const summaryHtml = `
+                <div class="mt-4">
+                    <h5>Question Summary:</h5>
+                    ${userAnswers.map((answer, index) => `
+                        <div class="text-left mb-2 p-2 rounded ${answer.correct ? 'bg-light border-success' : 'bg-light border-danger'}" style="border-left: 4px solid;">
+                            <strong>Q${index + 1}:</strong> ${answer.question.question}<br>
+                            <small>
+                                Your answer: ${answer.question.options[answer.userAnswer]} 
+                                ${answer.correct ? '✓' : '✗ Correct: ' + answer.question.options[answer.question.correct]}
+                            </small>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            
+            document.getElementById('resultsSummary').innerHTML = summaryHtml;
+        }
+
+        function createConfetti() {
+            const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#ffeaa7', '#dda0dd', '#98d8c8'];
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti-piece';
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.animationDelay = Math.random() * 3 + 's';
+                    document.body.appendChild(confetti);
+                    
+                    setTimeout(() => confetti.remove(), 3000);
+                }, i * 10);
+            }
+        }
+
+        function createRain() {
+            const sadEmojis = ['😢', '😞', '😔', '😟', '😿'];
+            for (let i = 0; i < 20; i++) {
+                setTimeout(() => {
+                    const rain = document.createElement('div');
+                    rain.className = 'rain-drop';
+                    rain.textContent = sadEmojis[Math.floor(Math.random() * sadEmojis.length)];
+                    rain.style.left = Math.random() * 100 + 'vw';
+                    rain.style.animationDelay = Math.random() * 2 + 's';
+                    document.body.appendChild(rain);
+                    
+                    setTimeout(() => rain.remove(), 2000);
+                }, i * 50);
+            }
+        }
+
+        function restartQuiz() {
+            document.getElementById('resultsContainer').style.display = 'none';
+            startEnhancedQuiz();
+        }
+
+        function exitQuiz() {
+            document.getElementById('resultsContainer').style.display = 'none';
+            document.getElementById('enhancedQuizContainer').style.display = 'none';
+            document.querySelector('.container').style.display = 'block';
+            document.body.style.overflow = 'auto';
+        }
+    </script>
+</body>
+</html>

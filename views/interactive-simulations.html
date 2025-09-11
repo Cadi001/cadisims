@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Simulations - Modeling & Simulation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .simulation-container {
+            background: linear-gradient(135deg, rgba(13, 202, 240, 0.1) 0%, rgba(25, 135, 84, 0.1) 100%);
+            border: 2px solid rgba(13, 202, 240, 0.3);
+            border-radius: 12px;
+            padding: 25px;
+            margin: 30px 0;
+        }
+        .scenario-card {
+            background: #ffffff;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .control-panel {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .results-panel {
+            background-color: #e3f2fd;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .run-button {
+            background: linear-gradient(45deg, #007bff, #0056b3);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .run-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,123,255,0.3);
+        }
+        .output-box {
+            background-color: #f1f3f4;
+            border: 1px solid #dadce0;
+            border-radius: 6px;
+            padding: 10px;
+            font-family: monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .parameter-input {
+            margin: 8px 0;
+        }
+        .parameter-input label {
+            display: inline-block;
+            width: 150px;
+            font-weight: 500;
+        }
+        .parameter-input input {
+            width: 100px;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .tab-content {
+            border: 1px solid #dee2e6;
+            border-top: none;
+            padding: 20px;
+            border-radius: 0 0 8px 8px;
+        }
+        .nav-tabs .nav-link {
+            color: #495057;
+            font-weight: 500;
+        }
+        .nav-tabs .nav-link.active {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">📊 Modeling & Simulation</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="topics.html">Topics</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="interactive-simulations.html">Interactive Simulations</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container my-5">
+        <div class="text-center mb-5">
+            <h1 class="display-4 fw-bold text-primary">🎯 Interactive Simulations</h1>
+            <p class="lead">Experience hands-on simulation modeling with real scenarios</p>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <ul class="nav nav-tabs" id="simulationTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="monte-carlo-tab" data-bs-toggle="tab" data-bs-target="#monte-carlo" type="button" role="tab">Monte Carlo</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="discrete-event-tab" data-bs-toggle="tab" data-bs-target="#discrete-event" type="button" role="tab">Discrete-Event</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="hand-simulation-tab" data-bs-toggle="tab" data-bs-target="#hand-simulation" type="button" role="tab">Hand Simulation</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="excel-simulation-tab" data-bs-toggle="tab" data-bs-target="#excel-simulation" type="button" role="tab">Excel Simulation</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="real-world-tab" data-bs-toggle="tab" data-bs-target="#real-world" type="button" role="tab">Real-World Systems</button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="simulationTabContent">
+            <!-- Monte Carlo Simulations -->
+            <div class="tab-pane fade show active" id="monte-carlo" role="tabpanel">
+                <h2 class="text-center mb-4">🎲 Monte Carlo Simulations</h2>
+                
+                <!-- Scenario 1: Pi Estimation -->
+                <div class="scenario-card">
+                    <h4>📐 Scenario 1: Estimating π (Pi)</h4>
+                    <p><strong>Setup:</strong> Imagine you have a dartboard with a perfect circle inscribed inside a square. You're blindfolded and throwing darts randomly at the board. The ratio of darts landing inside the circle versus the total darts thrown can help estimate π.</p>
+                    <p><strong>Key Components:</strong> Square area = 4, Circle area = π, Random (x,y) coordinates between -1 and 1, Distance formula to check if point is inside circle (x² + y² ≤ 1). The mathematical relationship: π ≈ 4 × (points inside circle / total points).</p>
+                    <p><strong>Real-world Application:</strong> This Monte Carlo technique is used in physics simulations, financial modeling risk assessment, computer graphics rendering, and any situation where complex mathematical integration is needed.</p>
+                    
+                    <div class="control-panel">
+                        <div class="parameter-input">
+                            <label>Number of darts:</label>
+                            <input type="number" id="pi-darts" value="10000" min="100" max="1000000">
+                        </div>
+                        <button class="run-button" onclick="runPiEstimation()">🎯 Throw Darts!</button>
+                    </div>
+                    
+                    <div class="results-panel">
+                        <div id="pi-output" class="output-box">Click "Throw Darts!" to start the simulation...</div>
+                        <canvas id="pi-canvas" width="300" height="300" style="border: 1px solid #ccc; margin-top: 10px;"></canvas>
+                    </div>
+                </div>
+
+                <!-- Scenario 2: Stock Price Simulation -->
+                <div class="scenario-card">
+                    <h4>📈 Scenario 2: Stock Price Simulation</h4>
+                    <p><strong>Setup:</strong> You're a financial analyst trying to understand potential future stock prices. Stock prices don't move predictably - they fluctuate randomly each day based on news, market sentiment, and countless factors. This simulation models these random daily changes.</p>
+                    <p><strong>Key Components:</strong> Starting stock price, daily volatility percentage (how much the stock typically moves up or down each day), time period for simulation, and random daily multipliers. Each day: New Price = Previous Price × (1 + random change within volatility range).</p>
+                    <p><strong>Real-world Application:</strong> Investment banks use this for option pricing (Black-Scholes model), portfolio risk management, regulatory stress testing, and helping clients understand investment risks and potential returns over time.</p>
+                    
+                    <div class="control-panel">
+                        <div class="parameter-input">
+                            <label>Initial Price ($):</label>
+                            <input type="number" id="stock-initial" value="100" min="1" step="0.01">
+                        </div>
+                        <div class="parameter-input">
+                            <label>Days to simulate:</label>
+                            <input type="number" id="stock-days" value="252" min="10" max="1000">
+                        </div>
+                        <div class="parameter-input">
+                            <label>Daily volatility (%):</label>
+                            <input type="number" id="stock-volatility" value="2" min="0.1" max="10" step="0.1">
+                        </div>
+                        <button class="run-button" onclick="runStockSimulation()">📊 Simulate Stock!</button>
+                    </div>
+                    
+                    <div class="results-panel">
+                        <div id="stock-output" class="output-box">Click "Simulate Stock!" to start...</div>
+                        <canvas id="stock-canvas" width="600" height="300" style="border: 1px solid #ccc; margin-top: 10px;"></canvas>
+                    </div>
+                </div>
+
+                <!-- Scenario 3: Dice Analysis -->
+                <div class="scenario-card">
+                    <h4>🎲 Scenario 3: Dice Roll Analysis</h4>
+                    <p><strong>Setup:</strong> You're designing a board game and need to understand the probability of different dice roll combinations. Rolling multiple dice creates different probability distributions - two dice won't give equal chances for all sums.</p>
+                    <p><strong>Key Components:</strong> Number of dice being rolled, number of trials to run, tracking frequency of each possible sum, comparing actual results to theoretical probabilities. For 2 dice: sum of 7 is most likely (6 ways to make it), while 2 and 12 are rarest (1 way each).</p>
+                    <p><strong>Real-world Application:</strong> Game design, casino odds calculation, quality control in manufacturing (testing if dice are fair), statistics education, and any scenario involving combining multiple random events.</p>
+                    
+                    <div class="control-panel">
+                        <div class="parameter-input">
+                            <label>Number of dice:</label>
+                            <input type="number" id="dice-count" value="2" min="1" max="6">
+                        </div>
+                        <div class="parameter-input">
+                            <label>Number of rolls:</label>
+                            <input type="number" id="dice-rolls" value="10000" min="100" max="1000000">
+                        </div>
+                        <button class="run-button" onclick="runDiceAnalysis()">🎲 Roll Dice!</button>
+                    </div>
+                    
+                    <div class="results-panel">
+                        <div id="dice-output" class="output-box">Click "Roll Dice!" to start...</div>
+                        <canvas id="dice-canvas" width="600" height="300" style="border: 1px solid #ccc; margin-top: 10px;"></canvas>
+                    </div>
+                </div>
+
+                <!-- Scenario 4: Coin Streak Analysis -->
+                <div class="scenario-card">
+                    <h4>🪙 Scenario 4: Coin Flip Streak Analysis</h4>
+                    <p><strong>Setup:</strong> You're analyzing whether a coin is fair by looking at streaks. Even with a fair coin, you'll occasionally get surprising long runs of heads or tails. This simulation helps understand what's 'normal' versus suspicious.</p>
+                    <p><strong>Key Components:</strong> Number of flips per trial, number of independent trials, tracking the longest streak of consecutive identical outcomes in each trial, statistical analysis of streak lengths. Even fair coins can produce streaks of 6-8 in a row fairly regularly.</p>
+                    <p><strong>Real-world Application:</strong> Fraud detection in gambling, quality control testing, sports analytics (hot streaks), market analysis (consecutive up/down days), and understanding randomness vs patterns in data.</p>
+                    
+                    <div class="control-panel">
+                        <div class="parameter-input">
+                            <label>Flips per trial:</label>
+                            <input type="number" id="coin-flips" value="1000" min="10" max="10000">
+                        </div>
+                        <div class="parameter-input">
+                            <label>Number of trials:</label>
+                            <input type="number" id="coin-trials" value="1000" min="10" max="10000">
+                        </div>
+                        <button class="run-button" onclick="runCoinStreaks()">🪙 Flip Coins!</button>
+                    </div>
+                    
+                    <div class="results-panel">
+                        <div id="coin-output" class="output-box">Click "Flip Coins!" to start...</div>
+                    </div>
+                </div>
+
+                <!-- Scenario 5: Portfolio Risk Assessment -->
+                <div class="scenario-card">
+                    <h4>💼 Scenario 5: Portfolio Risk Assessment</h4>
+                    <p><strong>Setup:</strong> You're a financial advisor managing client portfolios. Each portfolio contains multiple assets (stocks, bonds, commodities) with different risk profiles and correlations. Your goal is to understand potential future values under various market conditions.</p>
+                    <p><strong>Key Components:</strong> Initial investment amount, time horizon for investment, annual expected returns, volatility (risk), and correlation between assets. The simulation uses Monte Carlo methods to generate thousands of possible future scenarios.</p>
+                    <p><strong>Real-world Application:</strong> Investment firms use this to show clients potential outcomes, regulatory stress testing, retirement planning, and risk management decisions.</p>
+                    
+                    <div class="control-panel">
+                        <div class="parameter-input">
+                            <label>Initial Portfolio ($):</label>
+                            <input type="number" id="portfolio-initial" value="100000" min="1000" step="1000">
+                        </div>
+                        <div class="parameter-input">
+                            <label>Time horizon (years):</label>
+                            <input type="number" id="portfolio-years" value="10" min="1" max="30">
+                        </div>
+                        <div class="parameter-input">
+                            <label>Simulations:</label>
+                            <input type="number" id="portfolio-sims" value="1000" min="100" max="10000">
+                        </div>
+                        <button class="run-button" onclick="runPortfolioRisk()">💼 Assess Risk!</button>
+                    </div>
+                    
+                    <div class="results-panel">
+                        <div id="portfolio-output" class="output-box">Click "Assess Risk!" to start...</div>
+                        <canvas id="portfolio-canvas" width="600" height="300" style="border: 1px solid #ccc; margin-top: 10px;"></canvas>
+                    </div>
+                </div>
+
+                <!-- Scenario 6: Insurance Claims Modeling -->
+                <div class="scenario-card">
+                    <h4>🛡️ Scenario 6: Insurance Claims Modeling</h4>
+                    <p><strong>Setup:</strong> You work for an insurance company that needs to estimate future claim payouts to set premiums and maintain adequate reserves. Claims arrive randomly throughout the year with varying severity levels.</p>
+                    <p><strong>Key Components:</strong> Claim frequency (how often claims occur), claim severity distribution (small fender-benders vs major accidents), seasonal variations, and total exposure (number of policies). Uses Poisson process for arrivals and log-normal distribution for claim amounts.</p>
+                    <p><strong>Real-world Application:</strong> Auto insurance, health insurance, property insurance companies use this for pricing policies, setting reserves, and regulatory capital requirements.</p>
+                    
+                    <div class="control-panel">
+                        <div class="parameter-input">
+                            <label>Policies in force:</label>
+                            <input type="number" id="insurance-policies" value="10000" min="1000" max="100000" step="1000">
+                        </div>
+                        <div class="parameter-input">
+                            <label>Annual claim rate (%):</label>
+                            <input type="number" id="insurance-claim-rate" value="8" min="1" max="30" step="0.5">
+                        </div>
+                        <div class="parameter-input">
+                            <label>Average claim size ($):</label>
+                            <input type="number" id="insurance-avg-claim" value="3500" min="500" max="50000" step="500">
+                        </div>
+                        <button class="run-button" onclick="runInsuranceClaims()">🛡️ Model Claims!</button>
+                    </div>
+                    
+                    <div class="results-panel">
+                        <div id="insurance-output" class="output-box">Click "Model Claims!" to start...</div>
+                        <canvas id="insurance-canvas" width="600" height="300" style="border: 1px solid #ccc; margin-top: 10px;"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Discrete-Event Simulations -->
+            <div class="tab-pane fade" id="discrete-event" role="tabpanel">
+                <h2 class="text-center mb-4">⏰ Discrete-Event Simulations</h2>
+                
+                <!-- Scenario 1: Single Server Queue -->
+                <div class="scenario-card">
+                    <h4>🏪 Scenario 1: Single Server Checkout</h4>
+                    <p><strong>Setup:</strong> You're managing a small store with one checkout counter. Customers arrive randomly throughout the day, and each customer takes a different amount of time to check out. You need to understand wait times and service efficiency.</p>
+                    <p><strong>Key Components:</strong> Customer arrival process (Poisson distribution), service time distribution (exponential), queue discipline (first-come-first-served), server utilization, and performance metrics like average wait time and queue length.</p>
+                    <p><strong>Real-world Application:</strong> Retail checkout optimization, call center staffing, hospital emergency rooms, bank teller operations, and any single-server service system.</p>
+                    
+                    <div class="control-panel">
+                        <div class="parameter-input">
+                            <label>Avg arrival time (min):</label>
+                            <input type="number" id="checkout-arrival" value="5" min="1" max="20" step="0.5">
+                        </div>
+                        <div class="parameter-input">
+                            <label>Avg service time (min):</label>
+                            <input type="number" id="checkout-service" value="4" min="1" max="15" step="0.5">
+                        </div>
+                        <div class="parameter-input">
+                            <label>Simulation time (hours):</label>
+                            <input type="number" id="checkout-time" value="8" min="1" max="24">
+                        </div>
+                        <button class="run-button" onclick="runCheckoutSimulation()">🏪 Run Checkout!</button>
+                    </div>
+                    
+                    <div class="results-panel">
+                        <div id="checkout-output" class="output-box">Click "Run Checkout!" to start...</div>
+                    </div>
+                </div>
+
+                <!-- Scenario 2: Multi-Server System -->
+                <div class="scenario-card">
+                    <h4>🏢 Scenario 2: Multi-Server Bank</h4>
+                    <p><strong>Setup:</strong> You're a bank operations manager with multiple teller windows. Customers form a single queue and go to the next available teller. You need to determine optimal staffing levels to balance customer satisfaction with operational costs.</p>
+                    <p><strong>Key Components:</strong> Multiple parallel servers, shared queue system, customer arrival rate, variable service times per teller, server utilization rates, and cost-benefit analysis of adding more tellers.</p>
+                    <p><strong>Real-world Application:</strong> Bank operations, airport security checkpoints, fast-food restaurants, technical support centers, and any multi-server service facility.</p>
+                    
+                    <div class="control-panel">
+                        <div class="parameter-input">
+                            <label>Number of tellers:</label>
+                            <input type="number" id="bank-servers" value="3" min="1" max="10">
+                        </div>
+                        <div class="parameter-input">
+                            <label>Customer arrival rate (/hour):</label>
+                            <input type="number" id="bank-arrival-rate" value="20" min="5" max="100">
+                        </div>
+                        <div class="parameter-input">
+                            <label>Avg service time (min):</label>
+                            <input type="number" id="bank-service" value="8" min="2" max="30">
+                        </div>
+                        <button class="run-button" onclick="runBankSimulation()">🏢 Run Bank!</button>
+                    </div>
+                    
+                    <div class="results-panel">
+                        <div id="bank-output" class="output-box">Click "Run Bank!" to start...</div>
+                    </div>
+                </div>
+
+                <!-- Scenario 3: Manufacturing Line -->
+                <div class="scenario-card">
+                    <h4>🏭 Scenario 3: Manufacturing Assembly Line</h4>
+                    <p><strong>Setup:</strong> You're overseeing a factory assembly line where products move through sequential workstations. Each station has processing time variations and limited buffer space. Bottlenecks can cause entire line shutdowns.</p>
+                    <p><strong>Key Components:</strong> Sequential processing stations, buffer capacities between stations, processing time variations, throughput analysis, bottleneck identification, and line balancing optimization.</p>
+                    <p><strong>Real-world Application:</strong> Automotive assembly, electronics manufacturing, food processing, pharmaceutical production, and any sequential production system.</p>
+                    
+                    <div class="control-panel">
+                        <div class="parameter-input">
+                            <label>Workstations:</label>
+                            <input type="number" id="mfg-stations" value="4" min="2" max="8">
+                        </div>
+                        <div class="parameter-input">
+                            <label>Processing time (min):</label>
+                            <input type="number" id="mfg-process" value="10" min="5" max="30">
+                        </div>
+                        <div class="parameter-input">
+                            <label>Buffer size:</label>
+                            <input type="number" id="mfg-buffer" value="5" min="1" max="20">
+                        </div>
+                        <button class="run-button" onclick="runManufacturingSimulation()">🏭 Run Production!</button>
+                    </div>
+                    
+                    <div class="results-panel">
+                        <div id="mfg-output" class="output-box">Click "Run Production!" to start...</div>
+                    </div>
+                </div>
+
+                <!-- Scenario 4: Hospital Emergency Room -->
+                <div class="scenario-card">
+                    <h4>🏥 Scenario 4: Hospital Emergency Room</h4>
+                    <p><strong>Setup:</strong> You're managing a hospital emergency department where patients arrive with varying urgency levels. Critical patients must be seen immediately, while others wait based on triage priority. Doctor availability fluctuates throughout shifts.</p>
+                    <p><strong>Key Components:</strong> Priority queuing system, patient triage categories (critical, urgent, standard), multiple doctors with varying specialties, treatment time variations by patient type, and performance metrics focused on patient outcomes.</p>
+                    <p><strong>Real-world Application:</strong> Hospital emergency departments, urgent care clinics, disaster response planning, ambulance dispatch systems, and any priority-based healthcare service.</p>
+                    
+                    <div class="control-panel">
+                        <div class="parameter-input">
+                            <label>Doctors available:</label>
+                            <input type="number" id="er-doctors" value="2" min="1" max="6">
+                        </div>
+                        <div class="parameter-input">
+                            <label>Patient arrival rate (/hour):</label>
+                            <input type="number" id="er-arrival" value="8" min="2" max="30">
+                        </div>
+                        <div class="parameter-input">
+                            <label>Critical patient % (0-100):</label>
+                            <input type="number" id="er-critical" value="20" min="0" max="50">
+                        </div>
+                        <button class="run-button" onclick="runERSimulation()">🏥 Run ER!</button>
+                    </div>
+                    
+                    <div class="results-panel">
+                        <div id="er-output" class="output-box">Click "Run ER!" to start...</div>
+                    </div>
+                </div>
+
+                <!-- Scenario 5: Call Center Operations -->
+                <div class="scenario-card">
+                    <h4>📞 Scenario 5: Call Center Operations</h4>
+                    <p><strong>Setup:</strong> You're managing a customer service call center where customers call throughout the day with varying patience levels. Some hang up if wait times are too long, while others require callbacks. Agent availability varies with breaks and shifts.</p>
+                    <p><strong>Key Components:</strong> Call arrival patterns (often higher during business hours), agent availability schedules, customer patience thresholds, call abandonment rates, callback systems, and service level agreements (SLA) targets.</p>
+                    <p><strong>Real-world Application:</strong> Customer service centers, technical support hotlines, reservation systems, emergency dispatch centers, and any telephone-based service operation.</p>
+                    
+                    <div class="control-panel">
+                        <div class="parameter-input">
+                            <label>Agents:</label>
+                            <input type="number" id="call-agents" value="10" min="2" max="50">
+                        </div>
+                        <div class="parameter-input">
+                            <label>Calls per hour:</label>
+                            <input type="number" id="call-rate" value="100" min="10" max="500">
+                        </div>
+                        <div class="parameter-input">
+                            <label>Max wait time (min):</label>
+                            <input type="number" id="call-patience" value="5" min="1" max="15">
+                        </div>
+                        <button class="run-button" onclick="runCallCenterSimulation()">📞 Run Call Center!</button>
+                    </div>
+                    
+                    <div class="results-panel">
+                        <div id="call-output" class="output-box">Click "Run Call Center!" to start...</div>
+                    </div>
+                </div>
+
+                <!-- Scenario 6: Airport Security Checkpoint -->
+                <div class="scenario-card">
+                    <h4>✈️ Scenario 6: Airport Security Checkpoint</h4>
+                    <p><strong>Setup:</strong> You're optimizing airport security operations where passengers arrive in waves (flight schedules), go through multiple sequential checkpoints (ID check, X-ray, metal detector), with some requiring additional screening. Delays cascade through the entire system.</p>
+                    <p><strong>Key Components:</strong> Batch arrivals based on flight schedules, sequential processing stages, random additional screening events, baggage processing times, staffing variations, and passenger flow optimization through multiple checkpoints.</p>
+                    <p><strong>Real-world Application:</strong> Airport security design, customs processing, immigration checkpoints, event entry management, and any multi-stage sequential processing system with security protocols.</p>
+                    
+                    <div class="control-panel">
+                        <div class="parameter-input">
+                            <label>Security lanes:</label>
+                            <input type="number" id="airport-lanes" value="4" min="2" max="12">
+                        </div>
+                        <div class="parameter-input">
+                            <label>Passengers per hour:</label>
+                            <input type="number" id="airport-passengers" value="300" min="50" max="1000">
+                        </div>
+                        <div class="parameter-input">
+                            <label>Additional screening (%):</label>
+                            <input type="number" id="airport-additional" value="15" min="5" max="40">
+                        </div>
+                        <button class="run-button" onclick="runAirportSecurity()">✈️ Run Security!</button>
+                    </div>
+                    
+                    <div class="results-panel">
+                        <div id="airport-output" class="output-box">Click "Run Security!" to start...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hand Simulation -->
+            <div class="tab-pane fade" id="hand-simulation" role="tabpanel">
+                <h2 class="text-center mb-4">✋ Hand Simulation Examples</h2>
+                
+                <!-- Scenario 1: Demand Simulation -->
+                <div class="scenario-card">
+                    <h4>📦 Scenario 1: Product Demand Simulation</h4>
+                    <p><strong>Setup:</strong> You're an inventory manager for a retail store trying to understand daily demand patterns. Before computers, this was done by hand using random number tables and probability distributions. You track demand over time to make ordering decisions.</p>
+                    <p><strong>Key Components:</strong> Probability distribution table (e.g., 0-4 units demand), random number generation (0-99), cumulative probability mapping, daily tracking, and statistical analysis of results. Each random number maps to a demand level based on historical probabilities.</p>
+                    <p><strong>Real-world Application:</strong> Inventory management, demand forecasting, production planning, retail operations, and teaching simulation fundamentals without computer dependency.</p>
+                    
+                    <div class="control-panel">
+                        <div class="parameter-input">
+                            <label>Days to simulate:</label>
+                            <input type="number" id="demand-days" value="30" min="5" max="365">
+                        </div>
+                        <button class="run-button" onclick="runDemandSimulation()">📦 Simulate Demand!</button>
+                    </div>
+                    
+                    <div class="results-panel">
+                        <div id="demand-output" class="output-box">Click "Simulate Demand!" to start...</div>
+                        <div id="demand-table" style="margin-top: 15px;"></div>
+                    </div>
+                </div>
+
+                <!-- Scenario 2: Random Walk -->
+                <div class="scenario-card">
+                    <h4>🚶 Scenario 2: Random Walk Problem</h4>
+                    <p><strong>Setup:</strong> Imagine a drunk person leaving a bar, taking random steps either forward or backward along a straight line. This classic problem demonstrates how random processes behave over time and helps understand Brownian motion and market movements.</p>
+                    <p><strong>Key Components:</strong> Starting position (usually 0), step size (+1 or -1), number of steps to simulate, position tracking over time, and analysis of final displacement from starting point. Each coin flip or random number determines direction.</p>
+                    <p><strong>Real-world Application:</strong> Stock price modeling, particle physics, molecular movement, economic forecasting, and understanding how random events accumulate over time.</p>
+                    
+                    <div class="control-panel">
+                        <div class="parameter-input">
+                            <label>Number of steps:</label>
+                            <input type="number" id="walk-steps" value="100" min="10" max="1000">
+                        </div>
+                        <div class="parameter-input">
+                            <label>Number of walks:</label>
+                            <input type="number" id="walk-trials" value="10" min="1" max="50">
+                        </div>
+                        <button class="run-button" onclick="runRandomWalk()">🚶 Start Walking!</button>
+                    </div>
+                    
+                    <div class="results-panel">
+                        <div id="walk-output" class="output-box">Click "Start Walking!" to start...</div>
+                        <canvas id="walk-canvas" width="600" height="300" style="border: 1px solid #ccc; margin-top: 10px;"></canvas>
+                    </div>
+                </div>
+
+                <!-- Scenario 3: Inventory Management -->
+                <div class="scenario-card">
+                    <h4>📊 Scenario 3: Inventory Management</h4>
+                    <p><strong>Setup:</strong> You're manually tracking warehouse inventory over time. Each day has random demand, and you follow fixed rules: when inventory drops to a reorder point, order a fixed quantity. This helps understand inventory costs and stockout risks.</p>
+                    <p><strong>Key Components:</strong> Starting inventory level, daily demand generation, reorder point trigger, order quantity, lead times, carrying costs, stockout costs, and performance metrics like service level and total costs.</p>
+                    <p><strong>Real-world Application:</strong> Warehouse management, retail inventory control, supply chain optimization, understanding inventory policies, and cost trade-off analysis between holding inventory and stockouts.</p>
+                    
+                    <div class="control-panel">
+                        <div class="parameter-input">
+                            <label>Initial inventory:</label>
+                            <input type="number" id="inv-initial" value="50" min="10" max="200">
+                        </div>
+                        <div class="parameter-input">
+                            <label>Reorder point:</label>
+                            <input type="number" id="inv-reorder" value="20" min="5" max="100">
+                        </div>
+                        <div class="parameter-input">
+                            <label>Order quantity:</label>
+                            <input type="number" id="inv-order-qty" value="40" min="10" max="100">
+                        </div>
+                        <button class="run-button" onclick="runInventorySimulation()">📊 Manage Inventory!</button>
+                    </div>
+                    
+                    <div class="results-panel">
+                        <div id="inv-output" class="output-box">Click "Manage Inventory!" to start...</div>
+                    </div>
+                </div>
+
+                <!-- Scenario 4: Weather Simulation -->
+                <div class="scenario-card">
+                    <h4>🌤️ Scenario 4: Weather Pattern Simulation</h4>
+                    <p><strong>Setup:</strong> You're a meteorologist in the pre-computer era trying to forecast weather patterns. Today's weather influences tomorrow's weather, but not perfectly. This Markov chain approach shows how current states influence future states with known probabilities.</p>
+                    <p><strong>Key Components:</strong> Weather states (sunny, cloudy, rainy), transition probability matrix, current state tracking, random number generation for state changes, and long-term pattern analysis. Each day's weather depends only on the previous day.</p>
+                    <p><strong>Real-world Application:</strong> Weather forecasting, market trend analysis, customer behavior modeling, equipment reliability prediction, and any system where current state influences future state.</p>
+                    
+                    <div class="control-panel">
+                        <div class="parameter-input">
+                            <label>Days to forecast:</label>
+                            <input type="number" id="weather-days" value="30" min="7" max="365">
+                        </div>
+                        <div class="parameter-input">
+                            <label>Initial weather:</label>
+                            <select id="weather-initial">
+                                <option value="sunny">☀️ Sunny</option>
+                                <option value="cloudy">☁️ Cloudy</option>
+                                <option value="rainy">🌧️ Rainy</option>
+                            </select>
+                        </div>
+                        <button class="run-button" onclick="runWeatherSimulation()">🌤️ Forecast Weather!</button>
+                    </div>
+                    
+                    <div class="results-panel">
+                        <div id="weather-output" class="output-box">Click "Forecast Weather!" to start...</div>
+                    </div>
+                </div>
+
+                <!-- Scenario 5: Simple Queue by Hand -->
+                <div class="scenario-card">
+                    <h4>👥 Scenario 5: Simple Queue by Hand</h4>
+                    <p><strong>Setup:</strong> You're learning queuing theory fundamentals by manually tracking each customer through a service system. This step-by-step approach helps understand how wait times, service times, and queue lengths are calculated without computer assistance.</p>
+                    <p><strong>Key Components:</strong> Customer arrival times, service start times, service durations, wait times calculation, queue length tracking, and performance metrics computation. Each customer is tracked individually through the system.</p>
+                    <p><strong>Real-world Application:</strong> Teaching queuing theory, validating computer simulations, understanding service system fundamentals, small-scale system analysis, and building intuition for queue behavior.</p>
+                    
+                    <div class="control-panel">
+                        <div class="parameter-input">
+                            <label>Number of customers:</label>
+                            <input type="number" id="queue-customers" value="10" min="5" max="30">
+                        </div>
+                        <button class="run-button" onclick="runHandQueue()">👥 Calculate Queue!</button>
+                    </div>
+                    
+                    <div class="results-panel">
+                        <div id="queue-output" class="output-box">Click "Calculate Queue!" to start...</div>
+                        <div id="queue-table" style="margin-top: 15px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Excel Simulation -->
+            <div class="tab-pane fade" id="excel-simulation" role="tabpanel">
+                <h2 class="text-center mb-4">📊 Excel-Style Simulations</h2>
+                
+                <!-- Scenario 1: Excel Checkout Simulation -->
+                <div class="scenario-card">
+                    <h4>🛒 Scenario 1: Excel Checkout Simulation</h4>
+                    <p>Simulate checkout operations using Excel-like formulas and RAND() functions.</p>
+                    
+                    <div class="control-panel">
+                        <div class="parameter-input">
+                            <label>Number of customers:</label>
+                            <input type="number" id="excel-customers" value="20" min="5" max="100">
+                        </div>
+                        <button class="run-button" onclick="runExcelCheckout()">🛒 Excel Checkout!</button>
+                    </div>
+                    
+                    <div class="results-panel">
+                        <div id="excel-checkout-output" class="output-box">Click "Excel Checkout!" to start...</div>
+                        <div id="excel-checkout-table" style="margin-top: 15px;"></div>
+                    </div>
+                </div>
+
+                <!-- Scenario 2: Sales Forecast with Excel -->
+                <div class="scenario-card">
+                    <h4>📈 Scenario 2: Sales Forecasting</h4>
+                    <p>Use Excel-style functions to forecast sales with trend and seasonality.</p>
+                    
+                    <div class="control-panel">
+                        <div class="parameter-input">
+                            <label>Months to forecast:</label>
+                            <input type="number" id="sales-months" value="12" min="3" max="36">
+                        </div>
+                        <div class="parameter-input">
+                            <label>Base monthly sales:</label>
+                            <input type="number" id="sales-base" value="10000" min="1000" max="100000" step="1000">
+                        </div>
+                        <button class="run-button" onclick="runSalesForecast()">📈 Forecast Sales!</button>
+                    </div>
+                    
+                    <div class="results-panel">
+                        <div id="sales-output" class="output-box">Click "Forecast Sales!" to start...</div>
+                        <canvas id="sales-canvas" width="600" height="300" style="border: 1px solid #ccc; margin-top: 10px;"></canvas>
+                    </div>
+                </div>
+
+                <!-- Scenario 3: Project Risk Analysis -->
+                <div class="scenario-card">
+                    <h4>⚠️ Scenario 3: Project Risk Analysis</h4>
+                    <p>Analyze project completion times using triangular distribution in Excel-style.</p>
+                    
+                    <div class="control-panel">
+                        <div class="parameter-input">
+                            <label>Optimistic time (days):</label>
+                            <input type="number" id="project-optimistic" value="30" min="10" max="100">
+                        </div>
+                        <div class="parameter-input">
+                            <label>Most likely time (days):</label>
+                            <input type="number" id="project-likely" value="45" min="20" max="150">
+                        </div>
+                        <div class="parameter-input">
+                            <label>Pessimistic time (days):</label>
+                            <input type="number" id="project-pessimistic" value="75" min="30" max="200">
+                        </div>
+                        <button class="run-button" onclick="runProjectRisk()">⚠️ Analyze Risk!</button>
+                    </div>
+                    
+                    <div class="results-panel">
+                        <div id="project-output" class="output-box">Click "Analyze Risk!" to start...</div>
+                        <canvas id="project-canvas" width="600" height="300" style="border: 1px solid #ccc; margin-top: 10px;"></canvas>
+                    </div>
+                </div>
+
+                <!-- Scenario 4: Budget Variance Analysis -->
+                <div class="scenario-card">
+                    <h4>💰 Scenario 4: Budget Variance Analysis</h4>
+                    <p>Simulate budget variances using Excel statistical functions.</p>
+                    
+                    <div class="control-panel">
+                        <div class="parameter-input">
+                            <label>Budget amount ($):</label>
+                            <input type="number" id="budget-amount" value="50000" min="5000" max="500000" step="5000">
+                        </div>
+                        <div class="parameter-input">
+                            <label>Variance % (±):</label>
+                            <input type="number" id="budget-variance" value="15" min="5" max="50">
+                        </div>
+                        <div class="parameter-input">
+                            <label>Simulations:</label>
+                            <input type="number" id="budget-sims" value="1000" min="100" max="10000">
+                        </div>
+                        <button class="run-button" onclick="runBudgetAnalysis()">💰 Analyze Budget!</button>
+                    </div>
+                    
+                    <div class="results-panel">
+                        <div id="budget-output" class="output-box">Click "Analyze Budget!" to start...</div>
+                        <canvas id="budget-canvas" width="600" height="300" style="border: 1px solid #ccc; margin-top: 10px;"></canvas>
+                    </div>
+                </div>
+
+                <!-- Scenario 5: Quality Control Simulation -->
+                <div class="scenario-card">
+                    <h4>✅ Scenario 5: Quality Control Process</h4>
+                    <p>Simulate quality control using Excel binomial and normal distributions.</p>
+                    
+                    <div class="control-panel">
+                        <div class="parameter-input">
+                            <label>Batch size:</label>
+                            <input type="number" id="qc-batch-size" value="100" min="20" max="1000">
+                        </div>
+                        <div class="parameter-input">
+                            <label>Defect rate (%):</label>
+                            <input type="number" id="qc-defect-rate" value="5" min="0.1" max="20" step="0.1">
+                        </div>
+                        <div class="parameter-input">
+                            <label>Batches to test:</label>
+                            <input type="number" id="qc-batches" value="50" min="10" max="200">
+                        </div>
+                        <button class="run-button" onclick="runQualityControl()">✅ Test Quality!</button>
+                    </div>
+                    
+                    <div class="results-panel">
+                        <div id="qc-output" class="output-box">Click "Test Quality!" to start...</div>
+                        <canvas id="qc-canvas" width="600" height="300" style="border: 1px solid #ccc; margin-top: 10px;"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Real-World Systems -->
+            <div class="tab-pane fade" id="real-world" role="tabpanel">
+                <h2 class="text-center mb-4">🌍 Real-World System Simulations</h2>
+                
+                <!-- Scenario 1: Transportation System -->
+                <div class="scenario-card">
+                    <h4>🚌 Scenario 1: Public Transportation</h4>
+                    <p>Simulate bus route efficiency and passenger wait times.</p>
+                    
+                    <div class="control-panel">
+                        <div class="parameter-input">
+                            <label>Number of buses:</label>
+                            <input type="number" id="trans-buses" value="5" min="2" max="20">
+                        </div>
+                        <div class="parameter-input">
+                            <label>Route distance (km):</label>
+                            <input type="number" id="trans-distance" value="15" min="5" max="50">
+                        </div>
+                        <div class="parameter-input">
+                            <label>Number of stops:</label>
+                            <input type="number" id="trans-stops" value="12" min="5" max="30">
+                        </div>
+                        <button class="run-button" onclick="runTransportationSimulation()">🚌 Run Transit!</button>
+                    </div>
+                    
+                    <div class="results-panel">
+                        <div id="trans-output" class="output-box">Click "Run Transit!" to start...</div>
+                    </div>
+                </div>
+
+                <!-- Scenario 2: Supply Chain Network -->
+                <div class="scenario-card">
+                    <h4>📦 Scenario 2: Supply Chain Network</h4>
+                    <p>Simulate a multi-tier supply chain with suppliers, manufacturers, and retailers.</p>
+                    
+                    <div class="control-panel">
+                        <div class="parameter-input">
+                            <label>Suppliers:</label>
+                            <input type="number" id="supply-suppliers" value="3" min="1" max="10">
+                        </div>
+                        <div class="parameter-input">
+                            <label>Manufacturers:</label>
+                            <input type="number" id="supply-manufacturers" value="2" min="1" max="5">
+                        </div>
+                        <div class="parameter-input">
+                            <label>Retailers:</label>
+                            <input type="number" id="supply-retailers" value="10" min="2" max="20">
+                        </div>
+                        <button class="run-button" onclick="runSupplyChain()">📦 Run Supply Chain!</button>
+                    </div>
+                    
+                    <div class="results-panel">
+                        <div id="supply-output" class="output-box">Click "Run Supply Chain!" to start...</div>
+                    </div>
+                </div>
+
+                <!-- Scenario 3: Social Services System -->
+                <div class="scenario-card">
+                    <h4>🏛️ Scenario 3: Social Services Office</h4>
+                    <p>Simulate government office operations with multiple service types and queues.</p>
+                    
+                    <div class="control-panel">
+                        <div class="parameter-input">
+                            <label>Service windows:</label>
+                            <input type="number" id="social-windows" value="4" min="2" max="10">
+                        </div>
+                        <div class="parameter-input">
+                            <label>Clients per hour:</label>
+                            <input type="number" id="social-clients" value="25" min="5" max="100">
+                        </div>
+                        <div class="parameter-input">
+                            <label>Complex cases (%):</label>
+                            <input type="number" id="social-complex" value="30" min="10" max="70">
+                        </div>
+                        <button class="run-button" onclick="runSocialServices()">🏛️ Run Office!</button>
+                    </div>
+                    
+                    <div class="results-panel">
+                        <div id="social-output" class="output-box">Click "Run Office!" to start...</div>
+                    </div>
+                </div>
+
+                <!-- Scenario 4: E-commerce Platform -->
+                <div class="scenario-card">
+                    <h4>🛍️ Scenario 4: E-commerce Platform</h4>
+                    <p>Simulate online shopping behavior, cart abandonment, and server load.</p>
+                    
+                    <div class="control-panel">
+                        <div class="parameter-input">
+                            <label>Daily visitors:</label>
+                            <input type="number" id="ecom-visitors" value="10000" min="1000" max="100000" step="1000">
+                        </div>
+                        <div class="parameter-input">
+                            <label>Conversion rate (%):</label>
+                            <input type="number" id="ecom-conversion" value="3.5" min="1" max="15" step="0.1">
+                        </div>
+                        <div class="parameter-input">
+                            <label>Server capacity:</label>
+                            <input type="number" id="ecom-capacity" value="500" min="100" max="2000" step="50">
+                        </div>
+                        <button class="run-button" onclick="runEcommerceSimulation()">🛍️ Run E-commerce!</button>
+                    </div>
+                    
+                    <div class="results-panel">
+                        <div id="ecom-output" class="output-box">Click "Run E-commerce!" to start...</div>
+                    </div>
+                </div>
+
+                <!-- Scenario 5: Healthcare System -->
+                <div class="scenario-card">
+                    <h4>🏥 Scenario 5: Integrated Healthcare System</h4>
+                    <p>Simulate patient flow through an integrated healthcare system with appointments and emergencies.</p>
+                    
+                    <div class="control-panel">
+                        <div class="parameter-input">
+                            <label>Clinics:</label>
+                            <input type="number" id="health-clinics" value="3" min="1" max="8">
+                        </div>
+                        <div class="parameter-input">
+                            <label>Specialists:</label>
+                            <input type="number" id="health-specialists" value="5" min="2" max="15">
+                        </div>
+                        <div class="parameter-input">
+                            <label>Daily appointments:</label>
+                            <input type="number" id="health-appointments" value="200" min="50" max="500" step="10">
+                        </div>
+                        <button class="run-button" onclick="runHealthcareSystem()">🏥 Run Healthcare!</button>
+                    </div>
+                    
+                    <div class="results-panel">
+                        <div id="healthcare-output" class="output-box">Click "Run Healthcare!" to start...</div>
+                    </div>
+                </div>
+
+                <!-- Scenario 6: Wolf-Sheep Predation Ecosystem -->
+                <div class="scenario-card">
+                    <h4>🐺 Scenario 6: Wolf-Sheep Predation Ecosystem</h4>
+                    <p><strong>Setup:</strong> You're an ecological researcher studying predator-prey dynamics in a natural ecosystem. Wolves hunt sheep for survival, sheep graze on grass for energy, and grass regrows over time. This creates complex population dynamics that can lead to boom-bust cycles.</p>
+                    <p><strong>Key Components:</strong> Three interacting species (wolves, sheep, grass), energy-based survival system, reproduction rates affected by available energy, spatial movement patterns, and environmental carrying capacity. Based on the classic Lotka-Volterra predator-prey model.</p>
+                    <p><strong>Real-world Application:</strong> Wildlife conservation planning, ecosystem management, understanding population dynamics, fisheries management, pest control strategies, and biodiversity preservation efforts.</p>
+                    
+                    <div class="control-panel">
+                        <div class="parameter-input">
+                            <label>Launch Full Simulation:</label>
+                            <button class="run-button" onclick="window.open('wolf-sheep-predation.html', '_blank')" style="margin-left: 10px;">
+                                🐺 Open Wolf-Sheep Ecosystem!
+                            </button>
+                        </div>
+                        <p class="text-muted mt-2">
+                            <small><strong>Note:</strong> This opens a dedicated simulation environment with full ecosystem visualization, population charts, and detailed parameter controls including initial populations, energy gain rates, reproduction rates, and grass regrowth timing.</small>
+                        </p>
+                    </div>
+                    
+                    <div class="results-panel">
+                        <div class="alert alert-info">
+                            <strong>🎯 What you'll explore:</strong>
+                            <ul class="mb-0 mt-2">
+                                <li>Population dynamics and predator-prey cycles</li>
+                                <li>Effects of reproduction rates on ecosystem stability</li>
+                                <li>Resource availability impact on population growth</li>
+                                <li>Spatial distribution of species in the ecosystem</li>
+                                <li>Long-term sustainability and extinction risks</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Copyright Footer -->
+    <footer class="text-center py-4 mt-5">
+        <div class="container">
+            <p class="mb-2">
+                <i class="fas fa-copyright me-2"></i>
+                © 2025 <strong>Aldwin Nunag</strong>. All rights reserved.
+            </p>
+            <div class="mb-2">
+                <i class="fab fa-creative-commons me-1"></i>
+                <i class="fab fa-creative-commons-by me-1"></i>
+                <i class="fab fa-creative-commons-nc me-1"></i>
+                <i class="fab fa-creative-commons-sa me-2"></i>
+                <strong>Open Source Project</strong> - Licensed under 
+                <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" class="text-decoration-none">
+                    CC BY-NC-SA 4.0
+                </a>
+            </div>
+            <small class="text-muted">
+                Free to use, modify, and share for educational purposes only. Commercial use prohibited. 
+                Modified works must retain this license and be shared under the same terms.
+            </small>
+            <br>
+            <small class="text-muted">
+                Interactive Simulations - Part of Modeling & Simulation Hub
+            </small>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/simulations.js"></script>
+</body>
+</html>

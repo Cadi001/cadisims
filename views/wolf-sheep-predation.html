@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wolf-Sheep Predation Simulation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../css/main.css" rel="stylesheet">
+    <style>
+        .simulation-canvas {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            margin-bottom: 30px;
+        }
+        
+        .control-panel {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .ecosystem-grid {
+            width: 100%;
+            height: 400px;
+            background: #2d5016;
+            border: 3px solid #4a7c59;
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+            background-image: 
+                radial-gradient(circle at 20% 30%, #3d6b23 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, #5d8b3a 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, #4a7c2a 0%, transparent 50%);
+        }
+        
+        .agent {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8px;
+            font-weight: bold;
+        }
+        
+        .sheep {
+            background: radial-gradient(circle, #ffffff 0%, #f0f0f0 100%);
+            border: 2px solid #333;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .wolf {
+            background: radial-gradient(circle, #4a4a4a 0%, #2a2a2a 100%);
+            border: 2px solid #000;
+            color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        .grass-patch {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+        
+        .grass-full {
+            background: #4CAF50;
+        }
+        
+        .grass-empty {
+            background: #8D6E63;
+        }
+        
+        .population-chart {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            height: 250px;
+            margin-top: 15px;
+        }
+        
+        .stat-display {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2c3e50;
+            display: block;
+        }
+        
+        .stat-label {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .btn-simulation {
+            border-radius: 25px;
+            padding: 12px 25px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            border: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .btn-simulation:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        
+        .parameter-section {
+            background: rgba(108, 117, 125, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            border: 1px solid rgba(108, 117, 125, 0.2);
+        }
+        
+        .parameter-section h6 {
+            color: #495057;
+            border-bottom: 2px solid #dee2e6;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .form-range::-webkit-slider-thumb {
+            background: #667eea;
+        }
+        
+        .form-range::-moz-range-thumb {
+            background: #667eea;
+        }
+        
+        .navbar-custom {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .navbar-brand {
+            color: white !important;
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+        
+        .navbar-brand:hover {
+            color: rgba(255,255,255,0.8) !important;
+        }
+        
+        .simulation-info {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 15px 0;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        .legend-icon {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+        }
+        
+        .sheep-icon {
+            background: white;
+            border: 2px solid #333;
+        }
+        
+        .wolf-icon {
+            background: #4a4a4a;
+            border: 2px solid #000;
+        }
+        
+        .grass-icon {
+            background: #4CAF50;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container">
+            <a class="navbar-brand" href="../views/index.html">
+                <i class="fas fa-arrow-left me-2"></i>
+                Wolf-Sheep Predation Simulation
+            </a>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="simulation-info">
+            <h4 class="text-center mb-3"><i class="fas fa-leaf me-2"></i>Ecosystem Dynamics Simulation</h4>
+            <p class="text-center text-muted mb-3">
+                Explore the complex interactions between predators, prey, and resources in a dynamic ecosystem. 
+                Watch how populations fluctuate based on reproduction rates, energy consumption, and environmental factors.
+            </p>
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-icon sheep-icon"></div>
+                    <span>Sheep (Prey)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-icon wolf-icon"></div>
+                    <span>Wolves (Predators)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-icon grass-icon"></div>
+                    <span>Grass (Food)</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="control-panel">
+                    <h5 class="mb-4"><i class="fas fa-cogs me-2"></i>Simulation Controls</h5>
+                    
+                    <!-- Population Settings -->
+                    <div class="parameter-section">
+                        <h6><i class="fas fa-users me-2"></i>Initial Populations</h6>
+                        <div class="mb-3">
+                            <label for="initialSheep" class="form-label">Sheep: <span id="initialSheepValue">100</span></label>
+                            <input type="range" class="form-range" id="initialSheep" min="10" max="250" value="100" step="10">
+                        </div>
+                        <div class="mb-3">
+                            <label for="initialWolves" class="form-label">Wolves: <span id="initialWolvesValue">50</span></label>
+                            <input type="range" class="form-range" id="initialWolves" min="5" max="100" value="50" step="5">
+                        </div>
+                    </div>
+
+                    <!-- Sheep Settings -->
+                    <div class="parameter-section">
+                        <h6><i class="fas fa-sheep me-2"></i>Sheep Parameters</h6>
+                        <div class="mb-3">
+                            <label for="sheepGainFromFood" class="form-label">Energy Gain: <span id="sheepGainValue">4</span></label>
+                            <input type="range" class="form-range" id="sheepGainFromFood" min="1" max="10" value="4" step="1">
+                        </div>
+                        <div class="mb-3">
+                            <label for="sheepReproduce" class="form-label">Reproduction Rate: <span id="sheepReproduceValue">4</span>%</label>
+                            <input type="range" class="form-range" id="sheepReproduce" min="1" max="10" value="4" step="1">
+                        </div>
+                    </div>
+
+                    <!-- Wolf Settings -->
+                    <div class="parameter-section">
+                        <h6><i class="fas fa-wolf me-2"></i>Wolf Parameters</h6>
+                        <div class="mb-3">
+                            <label for="wolfGainFromFood" class="form-label">Energy Gain: <span id="wolfGainValue">20</span></label>
+                            <input type="range" class="form-range" id="wolfGainFromFood" min="10" max="50" value="20" step="5">
+                        </div>
+                        <div class="mb-3">
+                            <label for="wolfReproduce" class="form-label">Reproduction Rate: <span id="wolfReproduceValue">5</span>%</label>
+                            <input type="range" class="form-range" id="wolfReproduce" min="1" max="10" value="5" step="1">
+                        </div>
+                    </div>
+
+                    <!-- Grass Settings -->
+                    <div class="parameter-section">
+                        <h6><i class="fas fa-seedling me-2"></i>Grass Parameters</h6>
+                        <div class="mb-3">
+                            <label for="grassRegrowthTime" class="form-label">Regrowth Time: <span id="grassRegrowthValue">30</span> ticks</label>
+                            <input type="range" class="form-range" id="grassRegrowthTime" min="10" max="100" value="30" step="10">
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input class="form-check-input" type="checkbox" id="showEnergy" checked>
+                            <label class="form-check-label" for="showEnergy">
+                                Show Energy Levels
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Control Buttons -->
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-primary btn-simulation" id="setupBtn">
+                            <i class="fas fa-sync me-2"></i>Setup
+                        </button>
+                        <button class="btn btn-success btn-simulation" id="runBtn">
+                            <i class="fas fa-play me-2"></i>Run
+                        </button>
+                        <button class="btn btn-warning btn-simulation" id="pauseBtn" disabled>
+                            <i class="fas fa-pause me-2"></i>Pause
+                        </button>
+                        <button class="btn btn-danger btn-simulation" id="stopBtn">
+                            <i class="fas fa-stop me-2"></i>Stop
+                        </button>
+                    </div>
+
+                    <!-- Current Statistics -->
+                    <div class="mt-4">
+                        <div class="row">
+                            <div class="col-4">
+                                <div class="stat-display">
+                                    <span class="stat-value" id="currentSheep">0</span>
+                                    <span class="stat-label">Sheep</span>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="stat-display">
+                                    <span class="stat-value" id="currentWolves">0</span>
+                                    <span class="stat-label">Wolves</span>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="stat-display">
+                                    <span class="stat-value" id="currentTicks">0</span>
+                                    <span class="stat-label">Ticks</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-8">
+                <div class="simulation-canvas">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="text-white mb-0"><i class="fas fa-globe-americas me-2"></i>Ecosystem View</h5>
+                        <div class="text-white">
+                            <small>Simulation Speed: </small>
+                            <input type="range" class="form-range" id="speedSlider" min="1" max="10" value="5" style="width: 100px; display: inline-block;">
+                        </div>
+                    </div>
+                    
+                    <div class="ecosystem-grid" id="ecosystemGrid"></div>
+                    
+                    <div class="population-chart">
+                        <canvas id="populationChart" width="100%" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Copyright Footer -->
+    <footer class="text-center py-4 mt-5">
+        <div class="container">
+            <p class="mb-2">
+                <i class="fas fa-copyright me-2"></i>
+                © 2025 <strong>Aldwin Nunag</strong>. All rights reserved.
+            </p>
+            <div class="mb-2">
+                <i class="fab fa-creative-commons me-1"></i>
+                <i class="fab fa-creative-commons-by me-1"></i>
+                <i class="fab fa-creative-commons-nc me-1"></i>
+                <i class="fab fa-creative-commons-sa me-2"></i>
+                <strong>Open Source Project</strong> - Licensed under 
+                <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" class="text-decoration-none">
+                    CC BY-NC-SA 4.0
+                </a>
+            </div>
+            <small class="text-muted">
+                Free to use, modify, and share for educational purposes only. Commercial use prohibited.
+            </small>
+            <br>
+            <small class="text-muted">
+                Wolf-Sheep Predation Simulation - Part of Modeling & Simulation Hub
+            </small>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="../js/wolf-sheep-predation.js"></script>
+</body>
+</html>

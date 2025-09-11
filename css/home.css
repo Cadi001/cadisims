@@ -1,0 +1,84 @@
+/* Home Page Styles */
+.hero-section {
+    padding: 80px 0;
+    color: white;
+    text-align: center;
+}
+
+.simulation-card {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 15px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: none;
+    height: 250px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.simulation-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+}
+
+.simulation-card.active {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+}
+
+.simulation-card.inactive {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.simulation-icon {
+    font-size: 3rem;
+    margin-bottom: 20px;
+    color: #667eea;
+}
+
+.simulation-card.active .simulation-icon {
+    color: white;
+}
+
+.simulation-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.simulation-description {
+    color: #666;
+    line-height: 1.6;
+}
+
+.simulation-card.active .simulation-description {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.coming-soon {
+    background: linear-gradient(45deg, #ff6b6b, #ffa726);
+    color: white;
+    border-radius: 20px;
+    padding: 5px 15px;
+    font-size: 0.8rem;
+    margin-top: 10px;
+    display: inline-block;
+}
+
+/* Info card styles */
+.info-card {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.info-card-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 15px 15px 0 0;
+}

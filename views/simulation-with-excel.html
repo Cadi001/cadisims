@@ -1,0 +1,1525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulation with Excel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../css/main.css" rel="stylesheet">
+    <link href="../css/topics.css" rel="stylesheet">
+    <style>
+        /* Presentation Mode Styles */
+        .presentation-mode {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            z-index: 9999;
+            display: none;
+            color: white;
+            overflow: hidden;
+        }
+        
+        .slide {
+            display: none;
+            height: 100vh;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .slide.active {
+            display: flex;
+        }
+        
+        .slide h1, .slide h2 {
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .slide p, .slide li {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            max-width: 80%;
+        }
+        
+        .slide ul {
+            text-align: left;
+            max-width: 60%;
+        }
+
+        /* Enhanced Quiz Styles */
+        #enhancedQuizContainer {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            z-index: 9999;
+            color: white;
+            overflow-y: auto;
+        }
+
+        .quiz-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .quiz-progress {
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            height: 8px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .quiz-progress-bar {
+            background: #28a745;
+            height: 100%;
+            transition: width 0.3s ease;
+            border-radius: 10px;
+        }
+
+        .quiz-question {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            color: #333;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .quiz-question.correct {
+            border-color: #28a745;
+            animation: correctPulse 0.6s ease-in-out;
+        }
+
+        .quiz-question.incorrect {
+            border-color: #dc3545;
+            animation: incorrectShake 0.6s ease-in-out;
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-weight: bold;
+            color: #6c757d;
+        }
+
+        .quiz-option {
+            padding: 15px 20px;
+            margin: 10px 0;
+            background: #f8f9fa;
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .quiz-option:hover {
+            background: #e9ecef;
+            border-color: #007bff;
+        }
+
+        .quiz-option.selected {
+            background: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
+        .quiz-option.correct {
+            background: #28a745;
+            color: white;
+            border-color: #28a745;
+        }
+
+        .quiz-option.incorrect {
+            background: #dc3545;
+            color: white;
+            border-color: #dc3545;
+        }
+
+        .quiz-button {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0 10px;
+        }
+
+        .quiz-button:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+
+        .quiz-button:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Animation styles */
+        @keyframes confetti {
+            0% { transform: translateY(0) rotateZ(0deg); opacity: 1; }
+            100% { transform: translateY(-1000px) rotateZ(720deg); opacity: 0; }
+        }
+
+        @keyframes rainDrop {
+            0% { transform: translateY(-100px); opacity: 1; }
+            100% { transform: translateY(100vh); opacity: 0; }
+        }
+
+        @keyframes correctPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes incorrectShake {
+            0%, 20%, 40%, 60%, 80% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+        }
+
+        .confetti-piece, .rain-drop {
+            position: fixed;
+            pointer-events: none;
+            z-index: 10000;
+        }
+
+        .confetti-piece {
+            width: 10px;
+            height: 10px;
+            animation: confetti 3s linear forwards;
+        }
+
+        .rain-drop {
+            font-size: 30px;
+            animation: rainDrop 2s linear forwards;
+        }
+
+        .results-container {
+            background: white;
+            color: #333;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .score-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: #28a745;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .score-circle.poor {
+            background: #dc3545;
+        }
+
+        .score-circle.fair {
+            background: #ffc107;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-arrow-left me-2"></i>
+                Simulation with Excel
+            </a>
+            <button class="btn btn-warning me-2" onclick="startPresentation()">
+                <i class="fas fa-presentation me-2"></i>
+                Present
+            </button>
+            <a href="topics.html" class="btn btn-outline-light">
+                <i class="fas fa-book me-2"></i>
+                All Topics
+            </a>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- Introduction Section -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <h2><i class="fas fa-file-excel me-3"></i>Simulating with Spreadsheets</h2>
+            </div>
+            <div class="topic-content">
+                <div class="simple-explanation">
+                    <h4>📊 From Manual to Digital</h4>
+                    <p><strong>Now that we know how to simulate by hand, let's use Excel to do the heavy lifting!</strong></p>
+                    <p>Think of Excel as your super-smart assistant that can roll dice and do calculations thousands of times faster than you can.</p>
+                </div>
+
+                <div class="real-world-box">
+                    <h5>💡 Why Use Excel for Simulation?</h5>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <strong>✅ Easy to Learn</strong><br>
+                            <small>You probably already know Excel!</small>
+                        </div>
+                        <div class="col-md-4">
+                            <strong>✅ Available Everywhere</strong><br>
+                            <small>Almost every computer has Excel</small>
+                        </div>
+                        <div class="col-md-4">
+                            <strong>✅ Visual and Interactive</strong><br>
+                            <small>See your simulation results instantly</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Software Options Section -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <h2><i class="fas fa-tools me-3"></i>Software Options for Simulation</h2>
+            </div>
+            <div class="topic-content">
+                <div class="simple-explanation">
+                    <h4>🛠️ Different Tools for Different Jobs</h4>
+                    <p>Just like you can drive a nail with different tools, you can build simulations with different software - each has pros and cons!</p>
+                </div>
+
+                <div class="simulation-types">
+                    <div class="sim-type-card">
+                        <div class="sim-icon">🎯</div>
+                        <h4>Specialized Simulation Software</h4>
+                        <div class="sim-simple">Professional simulation tools</div>
+                        <div class="sim-detailed">Powerful software designed specifically for simulation (Arena, Simio, SIMSCRIPT)</div>
+                        <div class="sim-uses"><strong>Best for:</strong> Complex simulations, professional projects, advanced features</div>
+                    </div>
+
+                    <div class="sim-type-card">
+                        <div class="sim-icon">💻</div>
+                        <h4>Programming Languages</h4>
+                        <div class="sim-simple">Code from scratch</div>
+                        <div class="sim-detailed">Build simulations using programming languages (Python, Java, C++)</div>
+                        <div class="sim-uses"><strong>Best for:</strong> Custom solutions, research, when you need full control</div>
+                    </div>
+
+                    <div class="sim-type-card">
+                        <div class="sim-icon">📊</div>
+                        <h4>Spreadsheet Tools (Excel)</h4>
+                        <div class="sim-simple">Familiar and accessible</div>
+                        <div class="sim-detailed">Use familiar spreadsheet tools to build and run simulations</div>
+                        <div class="sim-uses"><strong>Best for:</strong> Learning, simple simulations, quick prototypes</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Checkout Stand in Excel Section -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <h2><i class="fas fa-cash-register me-3"></i>Building the Checkout Stand in Excel</h2>
+            </div>
+            <div class="topic-content">
+                <div class="simple-explanation">
+                    <h4>🏪 Remember Our Gift Shop?</h4>
+                    <p>Let's take the checkout stand simulation we did by hand and build it in Excel. Same problem, but now Excel does the math!</p>
+                </div>
+
+                <h4>🎯 What We Want to Find:</h4>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="reason-card">
+                            <i class="fas fa-clock"></i>
+                            <h6>Average Customer Wait Time</h6>
+                            <p>How long do customers spend in the system (waiting + being served)?</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="reason-card">
+                            <i class="fas fa-percentage"></i>
+                            <h6>Cashier Idle Percentage</h6>
+                            <p>What percentage of time is the cashier not busy with customers?</p>
+                        </div>
+                    </div>
+                </div>
+
+                <h4>📋 Our Assumptions (Same as Before):</h4>
+                <div class="vs-comparison">
+                    <div class="vs-left">
+                        <h5>⏰ Customer Arrival Times</h5>
+                        <p>Time between customers: 1 to 10 minutes (uniform random)</p>
+                        <div class="example-box">
+                            <strong>By Hand:</strong> Draw poker chips from hat<br>
+                            <strong>In Excel:</strong> Use RAND() function
+                        </div>
+                    </div>
+                    <div class="vs-vs">+</div>
+                    <div class="vs-right">
+                        <h5>🛒 Service Times</h5>
+                        <p>Time to serve each customer: 1 to 6 minutes (uniform random)</p>
+                        <div class="example-box">
+                            <strong>By Hand:</strong> Roll a die<br>
+                            <strong>In Excel:</strong> Use RAND() function
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Excel Implementation Section -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <h2><i class="fas fa-cogs me-3"></i>How to Build It in Excel</h2>
+            </div>
+            <div class="topic-content">
+                <div class="simple-explanation">
+                    <h4>🧮 Replacing Dice and Chips with Formulas</h4>
+                    <p>Instead of physical randomness, we'll use Excel's RAND() function to generate random numbers between 0 and 1, then transform them to our desired ranges.</p>
+                </div>
+
+                <div class="steps-container">
+                    <div class="step-group">
+                        <h4>Step 1: Set Up the Spreadsheet Structure</h4>
+                        <div class="step-item">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h5>Create Column Headers</h5>
+                                <p>Customer | Time Since Last | Service Time | Arrival | Service Begins | Service Ends | Time in System | Clerk Idle</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-group">
+                        <h4>Step 2: Random Number Generation</h4>
+                        <div class="step-item">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h5>Time Between Arrivals (1-10 minutes)</h5>
+                                <p><code>=RAND()*(10-1)+1</code> or <code>=RAND()*9+1</code></p>
+                                <p><small>This gives us random numbers between 1 and 10</small></p>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <h5>Service Time (1-6 minutes)</h5>
+                                <p><code>=RAND()*(6-1)+1</code> or <code>=RAND()*5+1</code></p>
+                                <p><small>This gives us random numbers between 1 and 6</small></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-group">
+                        <h4>Step 3: Calculate Times and Statistics</h4>
+                        <div class="step-item">
+                            <div class="step-number">4</div>
+                            <div class="step-content">
+                                <h5>Arrival Time</h5>
+                                <p><code>=Previous_Arrival_Time + Time_Since_Last_Arrival</code></p>
+                                <p><small>When does this customer actually arrive?</small></p>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">5</div>
+                            <div class="step-content">
+                                <h5>Service Begin/End Times</h5>
+                                <p><strong>Service Begins:</strong> <code>=MAX(Arrival_Time, Previous_Service_End)</code></p>
+                                <p><strong>Service Ends:</strong> <code>=Service_Begins + Service_Time</code></p>
+                                <p><small>Can't start service until both customer arrives AND cashier is free</small></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="real-world-box">
+                    <h5>💡 Pro Tip: The Magic F9 Key</h5>
+                    <p>Press F9 to recalculate all random numbers and run a new simulation instantly! It's like shaking the dice and poker chips again.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sample Excel Output Section -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <h2><i class="fas fa-table me-3"></i>Sample Excel Results</h2>
+            </div>
+            <div class="topic-content">
+                <div class="simple-explanation">
+                    <h4>📈 What Your Excel Simulation Might Look Like</h4>
+                    <p>Here's an example of the first 10 customers in our Excel simulation:</p>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-bordered table-sm">
+                        <thead class="table-success">
+                            <tr>
+                                <th>Customer</th>
+                                <th>Since Last</th>
+                                <th>Service</th>
+                                <th>Arrival</th>
+                                <th>Service Begins</th>
+                                <th>Service Ends</th>
+                                <th>Time in System</th>
+                                <th>Clerk Idle</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>1</td><td>-</td><td>4</td><td>0:00</td><td>0:00</td><td>0:04</td><td>4.0</td><td>0.0</td></tr>
+                            <tr><td>2</td><td>10</td><td>2</td><td>0:10</td><td>0:10</td><td>0:12</td><td>2.0</td><td>6.0</td></tr>
+                            <tr><td>3</td><td>10</td><td>6</td><td>0:20</td><td>0:20</td><td>0:26</td><td>6.0</td><td>8.0</td></tr>
+                            <tr><td>4</td><td>1</td><td>4</td><td>0:21</td><td>0:26</td><td>0:30</td><td>9.0</td><td>0.0</td></tr>
+                            <tr><td>5</td><td>7</td><td>6</td><td>0:28</td><td>0:30</td><td>0:36</td><td>8.0</td><td>0.0</td></tr>
+                            <tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="benefits-grid">
+                    <div class="benefit-card">
+                        <i class="fas fa-calculator"></i>
+                        <h4>Automatic Calculations</h4>
+                        <p>Excel calculates averages, sums, and percentages automatically as you add more customers</p>
+                    </div>
+                    <div class="benefit-card">
+                        <i class="fas fa-sync-alt"></i>
+                        <h4>Instant Updates</h4>
+                        <p>Press F9 to get completely new random results and see how different scenarios play out</p>
+                    </div>
+                    <div class="benefit-card">
+                        <i class="fas fa-chart-line"></i>
+                        <h4>Easy Analysis</h4>
+                        <p>Create charts and graphs directly from your simulation data</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Replications and Data Tables Section -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <h2><i class="fas fa-copy me-3"></i>Running Multiple Replications</h2>
+            </div>
+            <div class="topic-content">
+                <div class="simple-explanation">
+                    <h4>🔄 Why Run It Many Times?</h4>
+                    <p>Just like flipping a coin once doesn't tell you it's fair, running one simulation doesn't give you the full picture. We need many trials!</p>
+                </div>
+
+                <h4>Two Ways to Get More Data:</h4>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="model-type-card">
+                            <h4>📋 Method 1: Manual Replications</h4>
+                            <p>Press F9 many times and record the results manually</p>
+                            <div class="example-box">
+                                <strong>Good for:</strong> Understanding the process<br>
+                                <strong>Downside:</strong> Tedious for many replications
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="model-type-card">
+                            <h4>📊 Method 2: Excel Data Tables</h4>
+                            <p>Use Excel's Data Table feature to run hundreds of replications automatically</p>
+                            <div class="example-box">
+                                <strong>Good for:</strong> Large-scale analysis<br>
+                                <strong>Learn more:</strong> Search "Excel Data Table simulation"
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="real-world-box">
+                    <h5>🎯 Stopping Rules</h5>
+                    <p>When should you stop the simulation? You have two main options:</p>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <strong>📊 Fixed Number of Customers</strong><br>
+                            <small>Run until you've served 50, 100, or 200 customers</small>
+                        </div>
+                        <div class="col-md-6">
+                            <strong>⏰ Fixed Time Period</strong><br>
+                            <small>Run for 8 hours, 1 day, or 1 week of simulated time</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Advantages and Limitations Section -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <h2><i class="fas fa-balance-scale me-3"></i>Excel for Simulation: Pros and Cons</h2>
+            </div>
+            <div class="topic-content">
+                <div class="simple-explanation">
+                    <h4>⚖️ Is Excel Right for Your Simulation?</h4>
+                    <p>Excel is great for learning and simple problems, but every tool has its limits. Here's when to use it and when to look elsewhere.</p>
+                </div>
+
+                <div class="vs-comparison">
+                    <div class="vs-left">
+                        <h5>✅ Excel Advantages</h5>
+                        <ul>
+                            <li><strong>Familiar interface</strong> - Most people know Excel</li>
+                            <li><strong>Widely available</strong> - On almost every computer</li>
+                            <li><strong>Easy to learn</strong> - Start simulating immediately</li>
+                            <li><strong>Visual results</strong> - See data and create charts easily</li>
+                            <li><strong>Great for learning</strong> - Understand simulation concepts</li>
+                        </ul>
+                    </div>
+                    <div class="vs-vs">VS</div>
+                    <div class="vs-right">
+                        <h5>❌ Excel Limitations</h5>
+                        <ul>
+                            <li><strong>Limited complexity</strong> - Hard for very complex models</li>
+                            <li><strong>Manual setup</strong> - Lots of formula writing</li>
+                            <li><strong>Performance limits</strong> - Slow with huge simulations</li>
+                            <li><strong>Error-prone</strong> - Easy to make formula mistakes</li>
+                            <li><strong>No advanced features</strong> - Missing specialized simulation tools</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="try-it-box">
+                    <p><strong>🎯 Perfect for:</strong> Learning simulation concepts, prototyping models, simple business problems</p>
+                    <p><strong>🚫 Not ideal for:</strong> Complex manufacturing systems, large-scale models, real-time simulations</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Key Takeaways Section -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <h2><i class="fas fa-lightbulb me-3"></i>Key Takeaways</h2>
+            </div>
+            <div class="topic-content">
+                <div class="benefits-grid">
+                    <div class="benefit-card">
+                        <i class="fas fa-graduation-cap"></i>
+                        <h4>Excel is a Great Learning Tool</h4>
+                        <p>Perfect for understanding simulation concepts before moving to specialized software</p>
+                    </div>
+                    <div class="benefit-card">
+                        <i class="fas fa-random"></i>
+                        <h4>RAND() Replaces Physical Randomness</h4>
+                        <p>The RAND() function does what dice and coins did in hand simulation</p>
+                    </div>
+                    <div class="benefit-card">
+                        <i class="fas fa-sync"></i>
+                        <h4>Multiple Replications Are Essential</h4>
+                        <p>One run isn't enough - use F9 or Data Tables to get reliable results</p>
+                    </div>
+                </div>
+
+                <div class="try-it-box">
+                    <p><strong>💡 Remember:</strong> Excel simulation teaches you the fundamentals. Once you master these concepts, you'll be ready for any simulation software!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quiz Section -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <h2><i class="fas fa-question-circle me-3"></i>Test Your Understanding</h2>
+            </div>
+            <div class="topic-content">
+                <div class="interactive-question">
+                    <h5>📝 Multiple Choice Quiz</h5>
+                    <div class="question-content">
+                        <p><strong>Question 1:</strong> What Excel function is used to generate random numbers for simulation?</p>
+                        <div class="quiz-options">
+                            <label class="option-label">
+                                <input type="radio" name="q1" value="a"> 
+                                A) RANDOM()
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q1" value="b"> 
+                                B) RAND()
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q1" value="c"> 
+                                C) RND()
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q1" value="d"> 
+                                D) GENERATE()
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question-content mt-4">
+                        <p><strong>Question 2:</strong> To generate a random number between 1 and 10 in Excel, which formula would you use?</p>
+                        <div class="quiz-options">
+                            <label class="option-label">
+                                <input type="radio" name="q2" value="a"> 
+                                A) =RAND()*10
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q2" value="b"> 
+                                B) =RAND()*9+1
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q2" value="c"> 
+                                C) =RAND()+10
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q2" value="d"> 
+                                D) =RAND(1,10)
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question-content mt-4">
+                        <p><strong>Question 3:</strong> What key do you press to recalculate all random numbers in Excel and run a new simulation?</p>
+                        <div class="quiz-options">
+                            <label class="option-label">
+                                <input type="radio" name="q3" value="a"> 
+                                A) F5
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q3" value="b"> 
+                                B) F9
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q3" value="c"> 
+                                C) Ctrl+R
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q3" value="d"> 
+                                D) F12
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question-content mt-4">
+                        <p><strong>Question 4:</strong> What is the main advantage of using Excel for simulation over specialized simulation software?</p>
+                        <div class="quiz-options">
+                            <label class="option-label">
+                                <input type="radio" name="q4" value="a"> 
+                                A) It's more powerful
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q4" value="b"> 
+                                B) It's familiar and widely available
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q4" value="c"> 
+                                C) It runs faster
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q4" value="d"> 
+                                D) It has better graphics
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question-content mt-4">
+                        <p><strong>Question 5:</strong> In the checkout stand simulation, the "Service Begins" time should be calculated as:</p>
+                        <div class="quiz-options">
+                            <label class="option-label">
+                                <input type="radio" name="q5" value="a"> 
+                                A) Arrival Time + Service Time
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q5" value="b"> 
+                                B) MAX(Arrival Time, Previous Service End)
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q5" value="c"> 
+                                C) MIN(Arrival Time, Previous Service End)
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q5" value="d"> 
+                                D) Arrival Time only
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <button class="btn btn-primary" onclick="checkQuizAnswers()">
+                            <i class="fas fa-check me-2"></i>Check My Answers
+                        </button>
+                    </div>
+
+                    <div id="quizResults" class="quiz-results mt-3" style="display: none;">
+                        <!-- Results will be inserted here -->
+                    </div>
+                    
+                    <!-- Enhanced Quiz Button -->
+                    <div class="text-center mt-4">
+                        <div class="alert alert-info">
+                            <h5><i class="fas fa-star me-2"></i>Want a More Interactive Experience?</h5>
+                            <p class="mb-3">Try our enhanced quiz with animations, random questions, and immediate feedback!</p>
+                            <button class="btn btn-warning btn-lg" onclick="startEnhancedQuiz()">
+                                <i class="fas fa-rocket me-2"></i>Take Enhanced Quiz
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Presentation Mode -->
+    <div id="presentationMode" class="presentation-mode">
+        <!-- Slides will be dynamically generated here -->
+    </div>
+
+    <!-- Enhanced Quiz Container -->
+    <div id="enhancedQuizContainer">
+        <div class="quiz-container">
+            <div class="quiz-progress">
+                <div class="quiz-progress-bar" id="enhancedProgressBar"></div>
+            </div>
+            <div class="quiz-question" id="enhancedQuizQuestion">
+                <!-- Questions will be loaded here -->
+            </div>
+            <div class="text-center mt-4">
+                <button class="quiz-button" id="enhancedCheckBtn" onclick="checkEnhancedAnswer()">
+                    <i class="fas fa-check me-2"></i>Check Answer
+                </button>
+                <button class="quiz-button" id="enhancedNextBtn" onclick="nextEnhancedQuestion()" style="display: none;">
+                    <i class="fas fa-arrow-right me-2"></i>Next Question
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Container -->
+    <div id="resultsContainer" style="display: none;">
+        <div class="quiz-container">
+            <div class="results-container">
+                <div class="score-circle" id="scoreCircle">
+                    <span id="scorePercentage">0%</span>
+                </div>
+                <h2 id="resultTitle">Quiz Complete!</h2>
+                <p id="resultMessage"></p>
+                <div id="resultsSummary"></div>
+                <div class="text-center mt-4">
+                    <button class="quiz-button" onclick="restartQuiz()">
+                        <i class="fas fa-redo me-2"></i>Try Again
+                    </button>
+                    <button class="quiz-button" onclick="exitQuiz()">
+                        <i class="fas fa-home me-2"></i>Back to Content
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Copyright Footer -->
+    <footer class="text-center py-4 mt-5">
+        <div class="container">
+            <p class="mb-2">
+                <i class="fas fa-copyright me-2"></i>
+                © 2025 <strong>Aldwin Nunag</strong>. All rights reserved.
+            </p>
+            <div class="mb-2">
+                <i class="fab fa-creative-commons me-1"></i>
+                <i class="fab fa-creative-commons-by me-1"></i>
+                <i class="fab fa-creative-commons-nc me-1"></i>
+                <i class="fab fa-creative-commons-sa me-2"></i>
+                <strong>Open Source Project</strong> - Licensed under 
+                <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" class="text-decoration-none">
+                    CC BY-NC-SA 4.0
+                </a>
+            </div>
+            <small class="text-muted">
+                Free to use, modify, and share for educational purposes only. Commercial use prohibited. 
+                Modified works must retain this license and be shared under the same terms.
+            </small>
+            <br>
+            <small class="text-muted">
+                Simulation with Excel - Educational Content
+            </small>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        function checkQuizAnswers() {
+            const answers = {
+                q1: 'b', // RAND()
+                q2: 'b', // =RAND()*9+1
+                q3: 'b', // F9
+                q4: 'b', // It's familiar and widely available
+                q5: 'b'  // MAX(Arrival Time, Previous Service End)
+            };
+
+            let score = 0;
+            let total = Object.keys(answers).length;
+            let results = [];
+
+            for (let question in answers) {
+                const userAnswer = document.querySelector(`input[name="${question}"]:checked`);
+                const correctAnswer = answers[question];
+                
+                if (userAnswer && userAnswer.value === correctAnswer) {
+                    score++;
+                    results.push(`<li class="text-success">Question ${question.slice(1)}: Correct! ✓</li>`);
+                } else {
+                    const questionNum = question.slice(1);
+                    const correctText = document.querySelector(`input[name="${question}"][value="${correctAnswer}"]`).parentElement.textContent.trim();
+                    results.push(`<li class="text-danger">Question ${questionNum}: Incorrect. Correct answer: ${correctText}</li>`);
+                }
+            }
+
+            const percentage = Math.round((score / total) * 100);
+            let alertClass = percentage >= 80 ? 'alert-success' : percentage >= 60 ? 'alert-warning' : 'alert-danger';
+            let message = percentage >= 80 ? 'Excellent work!' : percentage >= 60 ? 'Good job!' : 'Keep studying!';
+
+            const resultsHTML = `
+                <div class="alert ${alertClass}">
+                    <h6><i class="fas fa-chart-bar me-2"></i>Quiz Results: ${score}/${total} (${percentage}%)</h6>
+                    <p>${message}</p>
+                </div>
+                <ul class="list-unstyled">${results.join('')}</ul>
+            `;
+
+            document.getElementById('quizResults').innerHTML = resultsHTML;
+            document.getElementById('quizResults').style.display = 'block';
+            
+            // Scroll to results
+            document.getElementById('quizResults').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Auto-save quiz answers
+        document.addEventListener('change', function(e) {
+            if (e.target.type === 'radio') {
+                localStorage.setItem('excel_quiz_' + e.target.name, e.target.value);
+            }
+        });
+
+        // Load saved answers
+        document.addEventListener('DOMContentLoaded', function() {
+            const questions = ['q1', 'q2', 'q3', 'q4', 'q5'];
+            questions.forEach(question => {
+                const saved = localStorage.getItem('excel_quiz_' + question);
+                if (saved) {
+                    const radio = document.querySelector(`input[name="${question}"][value="${saved}"]`);
+                    if (radio) radio.checked = true;
+                }
+            });
+        });
+
+        // Presentation Mode Data for Excel Simulation
+        const presentationData = [
+            {
+                type: 'title',
+                content: {
+                    title: 'Simulation with Excel',
+                    subtitle: 'Transform Spreadsheets into Powerful Simulation Tools'
+                }
+            },
+            {
+                type: 'content',
+                content: {
+                    title: 'Why Use Excel for Simulation?',
+                    text: 'Excel transforms from a simple calculator into a powerful simulation engine. Most people already know how to use it, making it the perfect stepping stone into simulation modeling.'
+                }
+            },
+            {
+                type: 'list',
+                content: {
+                    title: 'Benefits of Excel Simulation',
+                    items: [
+                        'Easy to learn - familiar interface',
+                        'Available everywhere - on most computers',
+                        'Visual and interactive - see results instantly',
+                        'Great for prototyping and teaching',
+                        'Stakeholder friendly - everyone understands spreadsheets'
+                    ]
+                }
+            },
+            {
+                type: 'content',
+                content: {
+                    title: 'Software Options Comparison',
+                    text: 'Different tools serve different purposes: Specialized software for complex models, programming languages for custom solutions, and Excel for accessible, quick prototypes.'
+                }
+            },
+            {
+                type: 'list',
+                content: {
+                    title: 'Key Excel Functions for Simulation',
+                    items: [
+                        'RAND() - Generate random numbers',
+                        'IF() - Create decision logic',
+                        'VLOOKUP() - Map values to outcomes',
+                        'Data Tables - Run multiple scenarios',
+                        'Goal Seek - Find optimal values'
+                    ]
+                }
+            },
+            {
+                type: 'content',
+                content: {
+                    title: 'Random Number Generation',
+                    text: 'RAND() is your simulation workhorse. It generates numbers between 0 and 1, which you can transform into any probability distribution you need.'
+                }
+            },
+            {
+                type: 'content',
+                content: {
+                    title: 'Building Your First Excel Simulation',
+                    text: 'Start simple: model a coin flip, then a dice roll, then gradually add complexity. Each step builds your confidence and understanding.'
+                }
+            },
+            {
+                type: 'list',
+                content: {
+                    title: 'Excel Simulation Best Practices',
+                    items: [
+                        'Separate inputs, calculations, and outputs',
+                        'Use clear, descriptive names for cells',
+                        'Document your assumptions',
+                        'Test with known scenarios first',
+                        'Use data validation for inputs'
+                    ]
+                }
+            },
+            {
+                type: 'content',
+                content: {
+                    title: 'Advanced Excel Techniques',
+                    text: 'Data Tables let you run hundreds of scenarios automatically. Goal Seek finds optimal solutions. Solver handles complex optimization problems.'
+                }
+            },
+            {
+                type: 'list',
+                content: {
+                    title: 'Common Excel Simulation Applications',
+                    items: [
+                        'Sales forecasting with uncertainty',
+                        'Project risk analysis',
+                        'Budget variance modeling',
+                        'Quality control sampling',
+                        'Inventory optimization'
+                    ]
+                }
+            },
+            {
+                type: 'content',
+                content: {
+                    title: 'From Excel to Advanced Tools',
+                    text: 'Excel teaches simulation fundamentals. Once comfortable, you can graduate to specialized simulation software or programming languages for more complex models.'
+                }
+            },
+            {
+                type: 'quiz_start',
+                content: {
+                    title: 'Test Your Excel Simulation Knowledge!',
+                    text: 'Ready to test your understanding of Excel simulation? Take our interactive quiz!'
+                }
+            }
+        ];
+
+        // Enhanced Quiz Question Pool (30 questions)
+        const questionPool = [
+            {
+                question: "What is the primary Excel function used to generate random numbers for simulation?",
+                options: ["RANDOM()", "RAND()", "RND()", "GENERATE()"],
+                correct: 1,
+                explanation: "RAND() generates random numbers between 0 and 1, which can be transformed for any simulation need."
+            },
+            {
+                question: "Why is Excel considered good for simulation prototyping?",
+                options: ["It's the most powerful tool", "It's familiar and accessible to most users", "It has the best graphics", "It's the fastest"],
+                correct: 1,
+                explanation: "Excel's familiarity and accessibility make it ideal for quick prototypes and stakeholder communication."
+            },
+            {
+                question: "Which Excel feature allows you to run multiple simulation scenarios automatically?",
+                options: ["Goal Seek", "Data Tables", "Pivot Tables", "Filters"],
+                correct: 1,
+                explanation: "Data Tables can automatically run hundreds of scenarios by varying input values."
+            },
+            {
+                question: "What does RAND() return?",
+                options: ["A random integer", "A number between 0 and 1", "A number between 1 and 100", "A boolean value"],
+                correct: 1,
+                explanation: "RAND() returns a decimal number between 0 and 1, which forms the basis for all random distributions."
+            },
+            {
+                question: "Which Excel function is best for creating decision logic in simulations?",
+                options: ["VLOOKUP", "IF", "SUM", "AVERAGE"],
+                correct: 1,
+                explanation: "IF functions create conditional logic that drives decision-making in simulation models."
+            },
+            {
+                question: "What should you separate in a well-designed Excel simulation?",
+                options: ["Only inputs and outputs", "Inputs, calculations, and outputs", "Only calculations", "Everything on one sheet"],
+                correct: 1,
+                explanation: "Separating inputs, calculations, and outputs makes models easier to understand, modify, and debug."
+            },
+            {
+                question: "How can you map random numbers to specific outcomes in Excel?",
+                options: ["Using VLOOKUP with ranges", "Only with IF statements", "Using AVERAGE", "Using SUM"],
+                correct: 0,
+                explanation: "VLOOKUP with range lookups can efficiently map random numbers to probability-based outcomes."
+            },
+            {
+                question: "What is a key advantage of Excel simulation for business stakeholders?",
+                options: ["It's the most complex", "Everyone understands spreadsheets", "It's the cheapest", "It has the best algorithms"],
+                correct: 1,
+                explanation: "Spreadsheet familiarity makes Excel simulations more accessible and trustworthy to business stakeholders."
+            },
+            {
+                question: "Which Excel tool can help find optimal values in a simulation?",
+                options: ["Data Tables", "Goal Seek", "Filters", "Conditional Formatting"],
+                correct: 1,
+                explanation: "Goal Seek can automatically find input values that achieve desired simulation outcomes."
+            },
+            {
+                question: "What's the first step when building an Excel simulation?",
+                options: ["Create complex formulas", "Start with simple scenarios", "Add all variables", "Build charts"],
+                correct: 1,
+                explanation: "Starting simple (like a coin flip) builds confidence and understanding before adding complexity."
+            },
+            {
+                question: "How should you test an Excel simulation model?",
+                options: ["Only with real data", "With known scenarios first", "Never test it", "Only with random data"],
+                correct: 1,
+                explanation: "Testing with known scenarios helps validate that your model logic is working correctly."
+            },
+            {
+                question: "What Excel feature helps ensure valid inputs in simulation models?",
+                options: ["Data Validation", "Conditional Formatting", "Filters", "Pivot Tables"],
+                correct: 0,
+                explanation: "Data Validation restricts input values to valid ranges, preventing model errors."
+            },
+            {
+                question: "Which is NOT a typical Excel simulation application?",
+                options: ["Sales forecasting", "Project risk analysis", "Real-time process control", "Budget variance modeling"],
+                correct: 2,
+                explanation: "Real-time process control requires specialized software; Excel is better for analysis and planning."
+            },
+            {
+                question: "What makes Excel different from specialized simulation software?",
+                options: ["Excel is more powerful", "Excel is more accessible but less specialized", "Excel is faster", "Excel has better graphics"],
+                correct: 1,
+                explanation: "Excel trades some specialized features for accessibility and ease of use."
+            },
+            {
+                question: "How can you handle uncertainty in Excel simulations?",
+                options: ["Ignore it", "Use only averages", "Use probability distributions with RAND()", "Guess values"],
+                correct: 2,
+                explanation: "RAND() combined with distribution formulas allows modeling of uncertainty and variability."
+            },
+            {
+                question: "What's a best practice for documenting Excel simulations?",
+                options: ["Don't document anything", "Only document outputs", "Document assumptions and logic", "Only document inputs"],
+                correct: 2,
+                explanation: "Clear documentation of assumptions and logic helps others understand and validate your model."
+            },
+            {
+                question: "Which Excel feature is most useful for sensitivity analysis?",
+                options: ["Charts", "Data Tables", "Filters", "Conditional Formatting"],
+                correct: 1,
+                explanation: "Data Tables can systematically vary inputs to show how sensitive outputs are to changes."
+            },
+            {
+                question: "What should you do before moving from Excel to specialized simulation software?",
+                options: ["Nothing", "Master Excel simulation fundamentals", "Learn programming", "Buy expensive software"],
+                correct: 1,
+                explanation: "Understanding simulation fundamentals in Excel provides a solid foundation for advanced tools."
+            },
+            {
+                question: "How can you make random events more realistic in Excel?",
+                options: ["Use only RAND()", "Transform RAND() to match real distributions", "Use fixed values", "Guess probabilities"],
+                correct: 1,
+                explanation: "Transforming RAND() output to match real-world distributions makes simulations more realistic."
+            },
+            {
+                question: "What's the main limitation of Excel for simulation?",
+                options: ["It can't handle randomness", "It's too simple for complex models", "It's too expensive", "It doesn't have formulas"],
+                correct: 1,
+                explanation: "Excel becomes unwieldy for very complex models with many variables and interactions."
+            },
+            {
+                question: "Which Excel function helps create lookup tables for simulations?",
+                options: ["VLOOKUP", "SUM", "AVERAGE", "COUNT"],
+                correct: 0,
+                explanation: "VLOOKUP efficiently maps input values to corresponding outputs in lookup tables."
+            },
+            {
+                question: "What's important when naming cells in Excel simulations?",
+                options: ["Use single letters", "Use descriptive, meaningful names", "Use only numbers", "Names don't matter"],
+                correct: 1,
+                explanation: "Descriptive cell names make formulas easier to understand and maintain."
+            },
+            {
+                question: "How should you handle multiple scenarios in Excel simulation?",
+                options: ["Create separate files", "Use Data Tables or scenario manager", "Don't run multiple scenarios", "Use only one scenario"],
+                correct: 1,
+                explanation: "Data Tables and Scenario Manager efficiently organize and compare multiple scenarios."
+            },
+            {
+                question: "What makes Excel simulation results trustworthy to management?",
+                options: ["Complex formulas", "Familiar spreadsheet format", "Colorful charts", "Hidden calculations"],
+                correct: 1,
+                explanation: "The familiar spreadsheet format allows stakeholders to examine and understand the logic."
+            },
+            {
+                question: "Which is most important when building Excel simulations?",
+                options: ["Using all Excel features", "Starting simple and building complexity gradually", "Making it look pretty", "Using the most advanced formulas"],
+                correct: 1,
+                explanation: "Gradual complexity building ensures solid foundations and easier debugging."
+            },
+            {
+                question: "How can you verify your Excel simulation is working correctly?",
+                options: ["Never verify", "Test with extreme values", "Only test once", "Use random tests only"],
+                correct: 1,
+                explanation: "Testing with extreme values and edge cases helps identify model limitations and errors."
+            },
+            {
+                question: "What Excel feature can solve optimization problems in simulations?",
+                options: ["Goal Seek", "Solver", "Data Tables", "Both Goal Seek and Solver"],
+                correct: 3,
+                explanation: "Both Goal Seek (simple optimization) and Solver (complex optimization) can solve different types of optimization problems."
+            },
+            {
+                question: "Why is Excel good for teaching simulation concepts?",
+                options: ["It's the most advanced", "It visualizes logic transparently", "It's the fastest", "It's the most complex"],
+                correct: 1,
+                explanation: "Excel's transparent logic allows students to see every step of the simulation process."
+            },
+            {
+                question: "What should you do after building an Excel simulation?",
+                options: ["Delete it", "Never change it", "Validate with real data", "Make it more complex"],
+                correct: 2,
+                explanation: "Validation with real data ensures the simulation accurately represents the real system."
+            },
+            {
+                question: "How can Excel simulations support decision making?",
+                options: ["By making decisions automatically", "By showing outcomes of different choices", "By eliminating uncertainty", "By providing one answer"],
+                correct: 1,
+                explanation: "Excel simulations help by showing the range of possible outcomes for different decision alternatives."
+            }
+        ];
+
+        // Enhanced Quiz Variables
+        let currentSlide = 0;
+        let slides = [];
+        let currentQuestions = [];
+        let currentQuestionIndex = 0;
+        let userAnswers = [];
+
+        // Presentation Functions
+        function startPresentation() {
+            createSlides();
+            document.getElementById('presentationMode').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            showSlide(0);
+            
+            // Remove any existing event listeners first
+            document.getElementById('presentationMode').removeEventListener('click', nextSlide);
+            
+            // Click to advance slides - use event delegation
+            document.getElementById('presentationMode').addEventListener('click', function(e) {
+                console.log('Presentation clicked, target:', e.target);
+                
+                // Don't advance slide if clicking on interactive elements
+                if (e.target.closest('.exit-btn') || 
+                    e.target.closest('button') || 
+                    e.target.closest('input') || 
+                    e.target.closest('canvas') ||
+                    e.target.closest('.interactive-demo')) {
+                    console.log('Interactive element clicked, not advancing slide');
+                    return;
+                }
+                
+                // Only advance slide if clicking on empty space or text
+                console.log('Empty space clicked, advancing slide');
+                nextSlide();
+            });
+        }
+
+        function createSlides() {
+            const presentationMode = document.getElementById('presentationMode');
+            presentationMode.innerHTML = '';
+            
+            presentationData.forEach((slideData, index) => {
+                const slide = document.createElement('div');
+                slide.className = 'slide';
+                
+                let content = '';
+                switch(slideData.type) {
+                    case 'title':
+                        content = `<h1>${slideData.content.title}</h1><p style="font-size: 1.5rem; opacity: 0.8;">${slideData.content.subtitle}</p>`;
+                        break;
+                    case 'content':
+                        content = `<h2>${slideData.content.title}</h2><p>${slideData.content.text}</p>`;
+                        break;
+                    case 'list':
+                        content = `<h2>${slideData.content.title}</h2><ul style="text-align: left; max-width: 80%;">${slideData.content.items.map(item => `<li>${item}</li>`).join('')}</ul>`;
+                        break;
+                    case 'quiz_start':
+                        content = `<h2>${slideData.content.title}</h2><p>${slideData.content.text}</p><button class="btn btn-warning btn-lg" onclick="startPresentationQuiz()"><i class="fas fa-play me-2"></i>Start Quiz</button>`;
+                        break;
+                }
+                
+                slide.innerHTML = content;
+                presentationMode.appendChild(slide);
+            });
+            slides = document.querySelectorAll('.slide');
+        }
+
+        function showSlide(index) {
+            slides.forEach(slide => slide.classList.remove('active'));
+            if (slides[index]) {
+                slides[index].classList.add('active');
+                currentSlide = index;
+            }
+        }
+
+        function nextSlide() {
+            console.log('nextSlide called, current:', currentSlide, 'total:', slides.length);
+            if (currentSlide < slides.length - 1) {
+                showSlide(currentSlide + 1);
+            } else {
+                console.log('Reached end of slides, exiting presentation');
+                exitPresentation();
+            }
+        }
+
+        function exitPresentation() {
+            document.getElementById('presentationMode').style.display = 'none';
+            document.body.style.overflow = 'auto';
+            document.getElementById('presentationMode').removeEventListener('click', nextSlide);
+        }
+
+        // Enhanced Quiz Functions
+        function startEnhancedQuiz() {
+            document.querySelector('.container').style.display = 'none';
+            document.getElementById('enhancedQuizContainer').style.display = 'block';
+            currentQuestions = selectRandomQuestions(5);
+            currentQuestionIndex = 0;
+            userAnswers = [];
+            showQuestion();
+        }
+
+        function startPresentationQuiz() {
+            exitPresentation();
+            setTimeout(() => startEnhancedQuiz(), 500);
+        }
+
+        function selectRandomQuestions(count) {
+            const shuffled = [...questionPool].sort(() => 0.5 - Math.random());
+            return shuffled.slice(0, count);
+        }
+
+        function showQuestion() {
+            const question = currentQuestions[currentQuestionIndex];
+            const progressPercent = ((currentQuestionIndex + 1) / currentQuestions.length) * 100;
+            
+            document.getElementById('enhancedProgressBar').style.width = progressPercent + '%';
+            
+            const questionHtml = `
+                <div class="question-header">
+                    <div class="question-number">Question ${currentQuestionIndex + 1}</div>
+                    <div>${currentQuestions.length} Questions Total</div>
+                </div>
+                <h4 class="mb-4">${question.question}</h4>
+                <div class="options-container">
+                    ${question.options.map((option, index) => `
+                        <div class="quiz-option" data-option="${index}" onclick="selectOption(${index})">
+                            ${String.fromCharCode(65 + index)}. ${option}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            
+            document.getElementById('enhancedQuizQuestion').innerHTML = questionHtml;
+            document.getElementById('enhancedCheckBtn').style.display = 'inline-block';
+            document.getElementById('enhancedNextBtn').style.display = 'none';
+        }
+
+        function selectOption(optionIndex) {
+            document.querySelectorAll('.quiz-option').forEach(opt => opt.classList.remove('selected'));
+            document.querySelector(`[data-option="${optionIndex}"]`).classList.add('selected');
+        }
+
+        function checkEnhancedAnswer() {
+            const selectedOption = document.querySelector('.quiz-option.selected');
+            if (!selectedOption) return;
+            
+            const userAnswer = parseInt(selectedOption.dataset.option);
+            const correctAnswer = currentQuestions[currentQuestionIndex].correct;
+            const isCorrect = userAnswer === correctAnswer;
+            
+            userAnswers.push({
+                questionIndex: currentQuestionIndex,
+                userAnswer: userAnswer,
+                correct: isCorrect,
+                question: currentQuestions[currentQuestionIndex]
+            });
+            
+            document.querySelectorAll('.quiz-option').forEach((opt, index) => {
+                if (index === correctAnswer) {
+                    opt.classList.add('correct');
+                } else if (index === userAnswer && !isCorrect) {
+                    opt.classList.add('incorrect');
+                }
+            });
+            
+            const questionContainer = document.getElementById('enhancedQuizQuestion');
+            questionContainer.classList.add(isCorrect ? 'correct' : 'incorrect');
+            
+            if (isCorrect) {
+                createConfetti();
+            } else {
+                createRain();
+            }
+            
+            const explanationHtml = `
+                <div class="mt-3 p-3 ${isCorrect ? 'bg-success' : 'bg-danger'} text-white rounded">
+                    <i class="fas ${isCorrect ? 'fa-check-circle' : 'fa-times-circle'} me-2"></i>
+                    ${isCorrect ? 'Correct!' : 'Incorrect'} ${currentQuestions[currentQuestionIndex].explanation}
+                </div>
+            `;
+            
+            questionContainer.insertAdjacentHTML('beforeend', explanationHtml);
+            document.getElementById('enhancedCheckBtn').style.display = 'none';
+            
+            if (currentQuestionIndex < currentQuestions.length - 1) {
+                document.getElementById('enhancedNextBtn').style.display = 'inline-block';
+            } else {
+                document.getElementById('enhancedNextBtn').innerHTML = '<i class="fas fa-flag-checkered me-2"></i>See Results';
+                document.getElementById('enhancedNextBtn').style.display = 'inline-block';
+            }
+        }
+
+        function nextEnhancedQuestion() {
+            document.getElementById('enhancedQuizQuestion').classList.remove('correct', 'incorrect');
+            
+            if (currentQuestionIndex < currentQuestions.length - 1) {
+                currentQuestionIndex++;
+                showQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('enhancedQuizContainer').style.display = 'none';
+            document.getElementById('resultsContainer').style.display = 'block';
+            
+            const correctCount = userAnswers.filter(answer => answer.correct).length;
+            const totalQuestions = userAnswers.length;
+            const percentage = Math.round((correctCount / totalQuestions) * 100);
+            
+            document.getElementById('scorePercentage').textContent = percentage + '%';
+            
+            const scoreCircle = document.getElementById('scoreCircle');
+            scoreCircle.className = 'score-circle';
+            if (percentage >= 80) {
+                scoreCircle.classList.add('excellent');
+                document.getElementById('resultTitle').textContent = 'Excellent Work!';
+                document.getElementById('resultMessage').textContent = 'You have a strong understanding of Excel simulation concepts!';
+            } else if (percentage >= 60) {
+                scoreCircle.classList.add('good');
+                document.getElementById('resultTitle').textContent = 'Good Job!';
+                document.getElementById('resultMessage').textContent = 'You\'re getting the hang of Excel simulation. Review the missed topics and try again!';
+            } else if (percentage >= 40) {
+                scoreCircle.classList.add('fair');
+                document.getElementById('resultTitle').textContent = 'Keep Learning!';
+                document.getElementById('resultMessage').textContent = 'You\'re on the right track. Review the material and practice more.';
+            } else {
+                scoreCircle.classList.add('poor');
+                document.getElementById('resultTitle').textContent = 'More Practice Needed';
+                document.getElementById('resultMessage').textContent = 'Consider reviewing the Excel simulation content and trying again.';
+            }
+            
+            const summaryHtml = `
+                <div class="mt-4">
+                    <h5>Question Summary:</h5>
+                    ${userAnswers.map((answer, index) => `
+                        <div class="text-left mb-2 p-2 rounded ${answer.correct ? 'bg-light border-success' : 'bg-light border-danger'}" style="border-left: 4px solid;">
+                            <strong>Q${index + 1}:</strong> ${answer.question.question}<br>
+                            <small>
+                                Your answer: ${answer.question.options[answer.userAnswer]} 
+                                ${answer.correct ? '✓' : '✗ Correct: ' + answer.question.options[answer.question.correct]}
+                            </small>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            
+            document.getElementById('resultsSummary').innerHTML = summaryHtml;
+        }
+
+        function createConfetti() {
+            const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#ffeaa7', '#dda0dd', '#98d8c8'];
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti-piece';
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.animationDelay = Math.random() * 3 + 's';
+                    document.body.appendChild(confetti);
+                    
+                    setTimeout(() => confetti.remove(), 3000);
+                }, i * 10);
+            }
+        }
+
+        function createRain() {
+            const sadEmojis = ['😢', '😞', '😔', '😟', '😿'];
+            for (let i = 0; i < 20; i++) {
+                setTimeout(() => {
+                    const rain = document.createElement('div');
+                    rain.className = 'rain-drop';
+                    rain.textContent = sadEmojis[Math.floor(Math.random() * sadEmojis.length)];
+                    rain.style.left = Math.random() * 100 + 'vw';
+                    rain.style.animationDelay = Math.random() * 2 + 's';
+                    document.body.appendChild(rain);
+                    
+                    setTimeout(() => rain.remove(), 2000);
+                }, i * 50);
+            }
+        }
+
+        function restartQuiz() {
+            document.getElementById('resultsContainer').style.display = 'none';
+            startEnhancedQuiz();
+        }
+
+        function exitQuiz() {
+            document.getElementById('resultsContainer').style.display = 'none';
+            document.getElementById('enhancedQuizContainer').style.display = 'none';
+            document.querySelector('.container').style.display = 'block';
+            document.body.style.overflow = 'auto';
+        }
+    </script>
+</body>
+</html>
