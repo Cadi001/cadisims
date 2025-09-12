@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Population Dynamics Simulation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../css/main.css" rel="stylesheet">
+    <style>
+        .population-canvas {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .age-pyramid {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            height: 300px;
+            margin-bottom: 15px;
+        }
+        
+        .population-chart {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            height: 250px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container">
+            <a class="navbar-brand" href="../views/index.html">
+                <i class="fas fa-arrow-left me-2"></i>
+                Population Dynamics Simulation
+            </a>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="alert alert-info">
+                    <h5><i class="fas fa-users me-2"></i>Demographic Transition Model</h5>
+                    <p class="mb-0">Simulate population growth with birth rates, death rates, and age structure. Study demographic transition and population pyramids.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="control-panel">
+                    <h5 class="mb-4"><i class="fas fa-baby me-2"></i>Demographics</h5>
+                    
+                    <div class="mb-3">
+                        <label for="birthRate" class="form-label">Birth Rate: <span id="birthRateValue">20</span>‰</label>
+                        <input type="range" class="form-range" id="birthRate" min="5" max="50" value="20" step="1">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="deathRate" class="form-label">Death Rate: <span id="deathRateValue">8</span>‰</label>
+                        <input type="range" class="form-range" id="deathRate" min="3" max="30" value="8" step="1">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="migrationRate" class="form-label">Migration Rate: <span id="migrationRateValue">2</span>‰</label>
+                        <input type="range" class="form-range" id="migrationRate" min="-10" max="20" value="2" step="1">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="infantMortality" class="form-label">Infant Mortality: <span id="infantMortalityValue">25</span>‰</label>
+                        <input type="range" class="form-range" id="infantMortality" min="5" max="100" value="25" step="5">
+                    </div>
+
+                    <div class="d-grid gap-2 mb-4">
+                        <button class="btn btn-primary btn-simulation" id="setupBtn">
+                            <i class="fas fa-sync me-2"></i>Setup
+                        </button>
+                        <button class="btn btn-success btn-simulation" id="runBtn">
+                            <i class="fas fa-play me-2"></i>Run
+                        </button>
+                        <button class="btn btn-warning btn-simulation" id="pauseBtn" disabled>
+                            <i class="fas fa-pause me-2"></i>Pause
+                        </button>
+                        <button class="btn btn-danger btn-simulation" id="stopBtn">
+                            <i class="fas fa-stop me-2"></i>Stop
+                        </button>
+                    </div>
+
+                    <div class="row text-center">
+                        <div class="col-12 mb-2">
+                            <div class="stat-display bg-primary text-white">
+                                <span class="stat-value" id="totalPop">100000</span>
+                                <span class="stat-label">Total Population</span>
+                            </div>
+                        </div>
+                        <div class="col-6 mb-2">
+                            <div class="stat-display bg-success text-white">
+                                <span class="stat-value" id="growthRate">1.2</span>%
+                                <span class="stat-label small">Growth Rate</span>
+                            </div>
+                        </div>
+                        <div class="col-6 mb-2">
+                            <div class="stat-display bg-info text-white">
+                                <span class="stat-value" id="medianAge">28</span>
+                                <span class="stat-label small">Median Age</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-8">
+                <div class="population-canvas">
+                    <h5 class="text-white mb-3"><i class="fas fa-chart-area me-2"></i>Population Structure</h5>
+                    <div class="age-pyramid">
+                        <canvas id="agePyramid" width="100%" height="250"></canvas>
+                    </div>
+                    <div class="population-chart">
+                        <canvas id="populationChart" width="100%" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="text-center py-4 mt-5">
+        <div class="container">
+            <p class="mb-2">
+                <i class="fas fa-copyright me-2"></i>
+                © 2025 <strong>Aldwin Nunag</strong>. All rights reserved.
+            </p>
+            <small class="text-muted">
+                Population Dynamics Simulation - Part of Modeling & Simulation Hub
+            </small>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="../js/population-dynamics-simulation.js"></script>
+</body>
+</html>

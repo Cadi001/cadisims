@@ -25,7 +25,7 @@
         }
         
         .heartbeat-monitor {
-            background: #1a1a1a;
+            background: #000;
             border-radius: 15px;
             padding: 20px;
             margin: 20px 0;
@@ -34,6 +34,7 @@
             min-height: 200px;
             position: relative;
             overflow: hidden;
+            border: 2px solid #333;
         }
         
         .heartbeat-line {
@@ -107,9 +108,10 @@
         
         .heartbeat-canvas {
             width: 100%;
-            height: 120px;
-            background: rgba(0, 50, 0, 0.3);
+            height: 150px;
+            background: #000;
             border-radius: 10px;
+            border: 1px solid #333;
         }
         
         .diagnosis-panel {
@@ -374,11 +376,19 @@
             
             initializeCanvas() {
                 this.canvas.width = this.canvas.offsetWidth;
-                this.canvas.height = 120;
+                this.canvas.height = 150;
                 this.ctx.strokeStyle = '#00ff00';
                 this.ctx.lineWidth = 2;
-                this.ctx.fillStyle = '#1a1a1a';
+                this.ctx.fillStyle = '#000';
                 this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                // Initialize ECG data array
+                this.ecgData = new Array(this.canvas.width).fill(this.canvas.height / 2);
+                this.currentX = 0;
+                this.beatPhase = 0;
+                this.nextBeatTime = 0;
+                
+                this.drawGrid();
             }
             
             generateCatProfile() {
@@ -459,7 +469,7 @@
                     this.updateHeartRate();
                     this.updateDisplay();
                     this.drawHeartbeatWave();
-                }, 100);
+                }, 50); // Faster refresh for smoother ECG
                 
                 // Auto-stop after duration
                 setTimeout(() => {
@@ -564,40 +574,139 @@
                 }
             }
             
-            drawHeartbeatWave() {
-                // Clear canvas
-                this.ctx.fillStyle = 'rgba(26, 26, 26, 0.1)';
-                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+            drawGrid() {
+                // Draw ECG grid background
+                this.ctx.strokeStyle = '#003300';
+                this.ctx.lineWidth = 0.5;
                 
-                // Draw heartbeat waveform
-                this.ctx.strokeStyle = '#00ff00';
-                this.ctx.lineWidth = 2;
-                this.ctx.beginPath();
+                // Vertical grid lines
+                for (let x = 0; x < this.canvas.width; x += 20) {
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(x, 0);
+                    this.ctx.lineTo(x, this.canvas.height);
+                    this.ctx.stroke();
+                }
                 
+                // Horizontal grid lines
+                for (let y = 0; y < this.canvas.height; y += 20) {
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(0, y);
+                    this.ctx.lineTo(this.canvas.width, y);
+                    this.ctx.stroke();
+                }
+                
+                // Major grid lines (every 5th line)
+                this.ctx.strokeStyle = '#006600';
+                this.ctx.lineWidth = 1;
+                
+                for (let x = 0; x < this.canvas.width; x += 100) {
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(x, 0);
+                    this.ctx.lineTo(x, this.canvas.height);
+                    this.ctx.stroke();
+                }
+                
+                for (let y = 0; y < this.canvas.height; y += 100) {
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(0, y);
+                    this.ctx.lineTo(this.canvas.width, y);
+                    this.ctx.stroke();
+                }
+            }
+            
+            generateECGWaveform() {
                 const centerY = this.canvas.height / 2;
-                const amplitude = 40;
-                const frequency = this.heartRate / 180; // Normalize frequency
+                const currentTime = Date.now();
+                const bpm = this.heartRate;
+                const beatInterval = 60000 / bpm; // ms between beats
                 
-                for (let x = 0; x < this.canvas.width; x++) {
-                    const time = (x + this.waveOffset) * 0.02;
-                    let y = centerY;
+                // Check if it's time for next heartbeat
+                if (currentTime >= this.nextBeatTime) {
+                    this.beatPhase = 0;
+                    this.nextBeatTime = currentTime + beatInterval;
                     
-                    // Generate heartbeat-like waveform
-                    if (this.rhythmPattern === 'irregular' && Math.sin(time * frequency * 8) > 0.7) {
-                        y += Math.sin(time * frequency * 12) * amplitude * 1.5; // Irregular spike
-                    } else {
-                        y += Math.sin(time * frequency * 6) * amplitude;
-                    }
-                    
-                    if (x === 0) {
-                        this.ctx.moveTo(x, y);
-                    } else {
-                        this.ctx.lineTo(x, y);
+                    // Add some irregularity for certain conditions
+                    if (this.rhythmPattern === 'irregular' && Math.random() < 0.15) {
+                        this.nextBeatTime += (Math.random() - 0.5) * beatInterval * 0.3;
                     }
                 }
                 
+                let y = centerY;
+                
+                // Generate ECG-like waveform pattern
+                if (this.beatPhase < 50) {
+                    // QRS complex (main spike)
+                    if (this.beatPhase < 10) {
+                        // P wave (small bump)
+                        y = centerY - 8 * Math.sin((this.beatPhase / 10) * Math.PI);
+                    } else if (this.beatPhase < 20) {
+                        // Flat segment
+                        y = centerY;
+                    } else if (this.beatPhase < 30) {
+                        // Q dip
+                        y = centerY + 15 * Math.sin(((this.beatPhase - 20) / 10) * Math.PI);
+                    } else if (this.beatPhase < 35) {
+                        // R spike (main peak)
+                        const progress = (this.beatPhase - 30) / 5;
+                        y = centerY - 60 * Math.sin(progress * Math.PI);
+                    } else if (this.beatPhase < 40) {
+                        // S dip
+                        const progress = (this.beatPhase - 35) / 5;
+                        y = centerY + 25 * Math.sin(progress * Math.PI);
+                    } else {
+                        // T wave
+                        const progress = (this.beatPhase - 40) / 10;
+                        y = centerY - 15 * Math.sin(progress * Math.PI);
+                    }
+                    
+                    this.beatPhase++;
+                } else {
+                    // Baseline between beats
+                    y = centerY + (Math.random() - 0.5) * 2; // Small noise
+                }
+                
+                return y;
+            }
+            
+            drawHeartbeatWave() {
+                // Clear canvas and redraw grid
+                this.ctx.fillStyle = '#000';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                this.drawGrid();
+                
+                // Generate new ECG point
+                const newY = this.generateECGWaveform();
+                
+                // Shift array left and add new point
+                for (let i = 0; i < this.ecgData.length - 1; i++) {
+                    this.ecgData[i] = this.ecgData[i + 1];
+                }
+                this.ecgData[this.ecgData.length - 1] = newY;
+                
+                // Draw the ECG waveform
+                this.ctx.strokeStyle = '#00ff00';
+                this.ctx.lineWidth = 2;
+                this.ctx.shadowColor = '#00ff00';
+                this.ctx.shadowBlur = 5;
+                
+                this.ctx.beginPath();
+                for (let x = 0; x < this.ecgData.length; x++) {
+                    if (x === 0) {
+                        this.ctx.moveTo(x, this.ecgData[x]);
+                    } else {
+                        this.ctx.lineTo(x, this.ecgData[x]);
+                    }
+                }
                 this.ctx.stroke();
-                this.waveOffset += 2;
+                
+                // Reset shadow
+                this.ctx.shadowBlur = 0;
+                
+                // Draw current reading indicator
+                this.ctx.fillStyle = '#00ff00';
+                this.ctx.beginPath();
+                this.ctx.arc(this.canvas.width - 1, this.ecgData[this.ecgData.length - 1], 3, 0, 2 * Math.PI);
+                this.ctx.fill();
             }
             
             generateDiagnosis() {

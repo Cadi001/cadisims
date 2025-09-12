@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forest Fire Simulation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../css/main.css" rel="stylesheet">
+    <style>
+        .fire-canvas {
+            background: linear-gradient(135deg, #2d5016 0%, #4a7c59 100%);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .forest-grid {
+            background: #2d4a22;
+            border-radius: 10px;
+            height: 500px;
+            position: relative;
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: repeat(50, 1fr);
+            grid-template-rows: repeat(40, 1fr);
+        }
+        
+        .cell {
+            border: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8px;
+            transition: all 0.5s ease;
+        }
+        
+        .empty { background: #8b4513; }
+        .tree { background: #228b22; color: white; }
+        .burning { background: #ff4500; color: yellow; animation: flicker 0.5s infinite alternate; }
+        .burnt { background: #2f2f2f; }
+        
+        @keyframes flicker {
+            0% { background: #ff4500; }
+            100% { background: #ff6600; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container">
+            <a class="navbar-brand" href="../views/index.html">
+                <i class="fas fa-arrow-left me-2"></i>
+                Forest Fire Simulation
+            </a>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="alert alert-info">
+                    <h5><i class="fas fa-fire me-2"></i>Cellular Automata Forest Fire</h5>
+                    <p class="mb-0">Simulate wildfire spread through forests using cellular automata. Study fire prevention strategies and containment effectiveness.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="control-panel">
+                    <h5 class="mb-4"><i class="fas fa-tree me-2"></i>Fire Parameters</h5>
+                    
+                    <div class="mb-3">
+                        <label for="forestDensity" class="form-label">Forest Density: <span id="densityValue">60</span>%</label>
+                        <input type="range" class="form-range" id="forestDensity" min="20" max="95" value="60" step="5">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="fireSpread" class="form-label">Fire Spread Rate: <span id="spreadValue">0.4</span></label>
+                        <input type="range" class="form-range" id="fireSpread" min="0.1" max="1.0" value="0.4" step="0.1">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="windStrength" class="form-label">Wind Strength: <span id="windValue">0.2</span></label>
+                        <input type="range" class="form-range" id="windStrength" min="0" max="0.8" value="0.2" step="0.1">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="humidity" class="form-label">Humidity: <span id="humidityValue">40</span>%</label>
+                        <input type="range" class="form-range" id="humidity" min="10" max="90" value="40" step="5">
+                    </div>
+
+                    <div class="mb-4">
+                        <button class="btn btn-warning btn-sm" id="igniteBtn">
+                            <i class="fas fa-fire me-1"></i>Ignite Random Fire
+                        </button>
+                    </div>
+
+                    <div class="d-grid gap-2 mb-4">
+                        <button class="btn btn-primary btn-simulation" id="setupBtn">
+                            <i class="fas fa-sync me-2"></i>Setup
+                        </button>
+                        <button class="btn btn-success btn-simulation" id="runBtn">
+                            <i class="fas fa-play me-2"></i>Run
+                        </button>
+                        <button class="btn btn-warning btn-simulation" id="pauseBtn" disabled>
+                            <i class="fas fa-pause me-2"></i>Pause
+                        </button>
+                        <button class="btn btn-danger btn-simulation" id="stopBtn">
+                            <i class="fas fa-stop me-2"></i>Stop
+                        </button>
+                    </div>
+
+                    <div class="row text-center">
+                        <div class="col-6 mb-2">
+                            <div class="stat-display bg-success text-white">
+                                <span class="stat-value" id="treesAlive">0</span>
+                                <span class="stat-label small">Trees</span>
+                            </div>
+                        </div>
+                        <div class="col-6 mb-2">
+                            <div class="stat-display bg-warning text-dark">
+                                <span class="stat-value" id="firesCurrent">0</span>
+                                <span class="stat-label small">Burning</span>
+                            </div>
+                        </div>
+                        <div class="col-6 mb-2">
+                            <div class="stat-display bg-secondary text-white">
+                                <span class="stat-value" id="treesBurnt">0</span>
+                                <span class="stat-label small">Burnt</span>
+                            </div>
+                        </div>
+                        <div class="col-6 mb-2">
+                            <div class="stat-display bg-primary text-white">
+                                <span class="stat-value" id="burnPercentage">0</span>%
+                                <span class="stat-label small">Destroyed</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-8">
+                <div class="fire-canvas">
+                    <h5 class="text-white mb-3"><i class="fas fa-mountain me-2"></i>Forest Landscape</h5>
+                    <div class="forest-grid" id="forestGrid">
+                        <!-- Forest cells will be generated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="text-center py-4 mt-5">
+        <div class="container">
+            <p class="mb-2">
+                <i class="fas fa-copyright me-2"></i>
+                © 2025 <strong>Aldwin Nunag</strong>. All rights reserved.
+            </p>
+            <small class="text-muted">
+                Forest Fire Simulation - Part of Modeling & Simulation Hub
+            </small>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="../js/forest-fire-simulation.js"></script>
+</body>
+</html>

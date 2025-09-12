@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gas Leak Detection Simulation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../css/main.css" rel="stylesheet">
+    <style>
+        .gas-canvas {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .facility-layout {
+            background: #ecf0f1;
+            border-radius: 10px;
+            height: 500px;
+            position: relative;
+            overflow: hidden;
+            border: 3px solid #bdc3c7;
+        }
+        
+        .room {
+            position: absolute;
+            border: 2px solid #7f8c8d;
+            background: rgba(255, 255, 255, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 12px;
+            color: #2c3e50;
+        }
+        
+        .gas-source {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #e74c3c;
+            border-radius: 50%;
+            border: 3px solid #c0392b;
+            cursor: pointer;
+            z-index: 15;
+            animation: pulse 2s infinite;
+        }
+        
+        .gas-source.active {
+            animation: leak 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(231, 76, 60, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0); }
+        }
+        
+        @keyframes leak {
+            0% { background: #e74c3c; }
+            50% { background: #ff6b6b; }
+            100% { background: #e74c3c; }
+        }
+        
+        .gas-detector {
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            background: #27ae60;
+            border-radius: 4px;
+            border: 2px solid #229954;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 10;
+        }
+        
+        .detector-alarm {
+            background: #e74c3c !important;
+            animation: blink 0.5s infinite;
+        }
+        
+        .detector-warning {
+            background: #f39c12 !important;
+        }
+        
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+        
+        .gas-cloud {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(231, 76, 60, 0.3) 0%, rgba(231, 76, 60, 0.1) 50%, transparent 100%);
+            pointer-events: none;
+            z-index: 5;
+            animation: expand 3s ease-out forwards;
+        }
+        
+        @keyframes expand {
+            from {
+                width: 0;
+                height: 0;
+                opacity: 0.8;
+            }
+            to {
+                width: 100px;
+                height: 100px;
+                opacity: 0.3;
+            }
+        }
+        
+        .ventilation-system {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background: #3498db;
+            border-radius: 50%;
+            border: 2px solid #2980b9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            z-index: 12;
+        }
+        
+        .ventilation-active {
+            animation: spin 2s linear infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .alarm-panel {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+            border: 2px solid #e74c3c;
+        }
+        
+        .alarm-light {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 10px;
+        }
+        
+        .alarm-green { background: #27ae60; }
+        .alarm-yellow { background: #f39c12; animation: blink 1s infinite; }
+        .alarm-red { background: #e74c3c; animation: blink 0.3s infinite; }
+        
+        .gas-concentration {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            height: 200px;
+            margin-top: 15px;
+        }
+        
+        .ppm-display {
+            font-size: 2rem;
+            font-weight: bold;
+            text-align: center;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 10px 0;
+        }
+        
+        .ppm-safe { background: #d5f4e6; color: #27ae60; }
+        .ppm-warning { background: #fef9e7; color: #f39c12; }
+        .ppm-danger { background: #fadbd8; color: #e74c3c; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container">
+            <a class="navbar-brand" href="../views/index.html">
+                <i class="fas fa-arrow-left me-2"></i>
+                Gas Leak Detection Simulation
+            </a>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="alert alert-warning">
+                    <h5><i class="fas fa-exclamation-triangle me-2"></i>Industrial Safety Simulation</h5>
+                    <p class="mb-0">Simulate gas leak detection systems in industrial facilities. Study sensor placement, response times, and safety protocols for hazardous gas monitoring.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="control-panel">
+                    <h5 class="mb-4"><i class="fas fa-shield-alt me-2"></i>Safety Controls</h5>
+                    
+                    <div class="mb-3">
+                        <label for="gasType" class="form-label">Gas Type</label>
+                        <select class="form-select" id="gasType">
+                            <option value="methane">Methane (CH₄)</option>
+                            <option value="propane">Propane (C₃H₈)</option>
+                            <option value="hydrogen">Hydrogen (H₂)</option>
+                            <option value="ammonia">Ammonia (NH₃)</option>
+                            <option value="co">Carbon Monoxide (CO)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="windSpeed" class="form-label">Wind Speed: <span id="windSpeedValue">5</span> m/s</label>
+                        <input type="range" class="form-range" id="windSpeed" min="0" max="20" value="5" step="1">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="windDirection" class="form-label">Wind Direction: <span id="windDirValue">90</span>°</label>
+                        <input type="range" class="form-range" id="windDirection" min="0" max="360" value="90" step="15">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="detectorSensitivity" class="form-label">Detector Sensitivity: <span id="sensitivityValue">50</span> ppm</label>
+                        <input type="range" class="form-range" id="detectorSensitivity" min="10" max="200" value="50" step="10">
+                    </div>
+
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="autoVentilation" checked>
+                        <label class="form-check-label" for="autoVentilation">
+                            Auto Ventilation System
+                        </label>
+                    </div>
+
+                    <div class="form-check mb-4">
+                        <input class="form-check-input" type="checkbox" id="emergencyShutdown" checked>
+                        <label class="form-check-label" for="emergencyShutdown">
+                            Emergency Shutdown
+                        </label>
+                    </div>
+
+                    <div class="d-grid gap-2 mb-4">
+                        <button class="btn btn-primary btn-simulation" id="setupBtn">
+                            <i class="fas fa-sync me-2"></i>Setup
+                        </button>
+                        <button class="btn btn-success btn-simulation" id="runBtn">
+                            <i class="fas fa-play me-2"></i>Start Monitor
+                        </button>
+                        <button class="btn btn-danger btn-simulation" id="leakBtn">
+                            <i class="fas fa-exclamation-triangle me-2"></i>Simulate Leak
+                        </button>
+                        <button class="btn btn-warning btn-simulation" id="stopBtn">
+                            <i class="fas fa-stop me-2"></i>Stop
+                        </button>
+                    </div>
+
+                    <div class="alarm-panel">
+                        <h6><i class="fas fa-bell me-2"></i>Alarm Status</h6>
+                        <div class="mb-2">
+                            <span class="alarm-light alarm-green" id="systemStatus"></span>
+                            <span class="small">System Status: <strong id="statusText">Normal</strong></span>
+                        </div>
+                        <div class="mb-2">
+                            <span class="alarm-light alarm-green" id="gasStatus"></span>
+                            <span class="small">Gas Level: <strong id="gasLevelText">Safe</strong></span>
+                        </div>
+                        <div class="mb-2">
+                            <span class="alarm-light alarm-green" id="ventStatus"></span>
+                            <span class="small">Ventilation: <strong id="ventText">Standby</strong></span>
+                        </div>
+                    </div>
+
+                    <div class="gas-concentration">
+                        <h6 class="text-center mb-3">Gas Concentration</h6>
+                        <canvas id="concentrationChart" width="100%" height="120"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-8">
+                <div class="gas-canvas">
+                    <h5 class="text-white mb-3"><i class="fas fa-industry me-2"></i>Industrial Facility Layout</h5>
+                    
+                    <div class="ppm-display ppm-safe" id="ppmDisplay">
+                        0 PPM
+                        <div class="small mt-1">Parts Per Million</div>
+                    </div>
+                    
+                    <div class="facility-layout" id="facilityLayout">
+                        <!-- Rooms -->
+                        <div class="room" style="left: 50px; top: 50px; width: 180px; height: 120px;">
+                            <div>Production Area A</div>
+                        </div>
+                        <div class="room" style="left: 250px; top: 50px; width: 150px; height: 120px;">
+                            <div>Storage</div>
+                        </div>
+                        <div class="room" style="left: 420px; top: 50px; width: 120px; height: 120px;">
+                            <div>Control Room</div>
+                        </div>
+                        <div class="room" style="left: 50px; top: 190px; width: 200px; height: 100px;">
+                            <div>Production Area B</div>
+                        </div>
+                        <div class="room" style="left: 270px; top: 190px; width: 130px; height: 100px;">
+                            <div>Chemical Store</div>
+                        </div>
+                        <div class="room" style="left: 420px; top: 190px; width: 120px; height: 100px;">
+                            <div>Maintenance</div>
+                        </div>
+                        <div class="room" style="left: 50px; top: 310px; width: 490px; height: 80px;">
+                            <div>Loading/Unloading Bay</div>
+                        </div>
+                        
+                        <!-- Gas Sources (potential leak points) -->
+                        <div class="gas-source" style="left: 150px; top: 100px;" data-source="1" title="Pipeline Junction A"></div>
+                        <div class="gas-source" style="left: 320px; top: 80px;" data-source="2" title="Storage Tank Valve"></div>
+                        <div class="gas-source" style="left: 180px; top: 240px;" data-source="3" title="Process Equipment"></div>
+                        <div class="gas-source" style="left: 350px; top: 220px;" data-source="4" title="Chemical Feed Line"></div>
+                        <div class="gas-source" style="left: 280px; top: 350px;" data-source="5" title="Loading Connection"></div>
+                        
+                        <!-- Gas Detectors -->
+                        <div class="gas-detector" style="left: 120px; top: 70px;" data-detector="1" title="Detector D1">D1</div>
+                        <div class="gas-detector" style="left: 350px; top: 60px;" data-detector="2" title="Detector D2">D2</div>
+                        <div class="gas-detector" style="left: 480px; top: 70px;" data-detector="3" title="Detector D3">D3</div>
+                        <div class="gas-detector" style="left: 150px; top: 210px;" data-detector="4" title="Detector D4">D4</div>
+                        <div class="gas-detector" style="left: 320px; top: 200px;" data-detector="5" title="Detector D5">D5</div>
+                        <div class="gas-detector" style="left: 480px; top: 210px;" data-detector="6" title="Detector D6">D6</div>
+                        <div class="gas-detector" style="left: 200px; top: 330px;" data-detector="7" title="Detector D7">D7</div>
+                        <div class="gas-detector" style="left: 400px; top: 330px;" data-detector="8" title="Detector D8">D8</div>
+                        
+                        <!-- Ventilation Systems -->
+                        <div class="ventilation-system" style="left: 20px; top: 20px;" data-vent="1" title="Exhaust Fan 1"><i class="fas fa-fan"></i></div>
+                        <div class="ventilation-system" style="right: 20px; top: 20px;" data-vent="2" title="Exhaust Fan 2"><i class="fas fa-fan"></i></div>
+                        <div class="ventilation-system" style="left: 20px; bottom: 20px;" data-vent="3" title="Exhaust Fan 3"><i class="fas fa-fan"></i></div>
+                        <div class="ventilation-system" style="right: 20px; bottom: 20px;" data-vent="4" title="Exhaust Fan 4"><i class="fas fa-fan"></i></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="text-center py-4 mt-5">
+        <div class="container">
+            <p class="mb-2">
+                <i class="fas fa-copyright me-2"></i>
+                © 2025 <strong>Aldwin Nunag</strong>. All rights reserved.
+            </p>
+            <small class="text-muted">
+                Gas Leak Detection Simulation - Part of Modeling & Simulation Hub
+            </small>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="../js/gas-leak-detector-simulation.js"></script>
+</body>
+</html>
