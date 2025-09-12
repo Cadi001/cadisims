@@ -1,3 +1,12 @@
+// Cryptographically secure random number generator utility
+function secureRandom() {
+    return crypto.getRandomValues(new Uint32Array(1))[0] / 4294967295;
+}
+
+function secureRandomFloat(min, max) {
+    return secureRandom() * (max - min) + min;
+}
+
 class MolecularDynamicsSimulation {
     constructor() {
         this.canvas = document.getElementById('simulationCanvas');
@@ -139,7 +148,7 @@ class MolecularDynamicsSimulation {
         const proteinCenter = {x: width * 0.3, y: height * 0.5};
         for (let i = 0; i < 15; i++) {
             const angle = (i / 15) * Math.PI * 2;
-            const radius = 60 + Math.random() * 20;
+            const radius = 60 + secureRandom() * 20;
             this.molecules.push({
                 id: `protein_${i}`,
                 type: 'protein',
@@ -159,11 +168,11 @@ class MolecularDynamicsSimulation {
             this.molecules.push({
                 id: `drug_${i}`,
                 type: 'drug',
-                atomType: ['n', 'o', 'c'][Math.floor(Math.random() * 3)],
-                x: width * 0.7 + (Math.random() - 0.5) * 100,
-                y: height * 0.5 + (Math.random() - 0.5) * 100,
-                vx: (Math.random() - 0.5) * 2,
-                vy: (Math.random() - 0.5) * 2,
+                atomType: ['n', 'o', 'c'][Math.floor(secureRandom() * 3)],
+                x: width * 0.7 + (secureRandom() - 0.5) * 100,
+                y: height * 0.5 + (secureRandom() - 0.5) * 100,
+                vx: (secureRandom() - 0.5) * 2,
+                vy: (secureRandom() - 0.5) * 2,
                 size: 6,
                 mass: 8,
                 fixed: false
@@ -188,10 +197,10 @@ class MolecularDynamicsSimulation {
                     id: `water_${row}_${col}_o`,
                     type: 'water',
                     atomType: 'o',
-                    x: startX + col * spacing + (Math.random() - 0.5) * 8,
-                    y: startY + row * spacing + (Math.random() - 0.5) * 8,
-                    vx: (Math.random() - 0.5) * 0.5,
-                    vy: (Math.random() - 0.5) * 0.5,
+                    x: startX + col * spacing + (secureRandom() - 0.5) * 8,
+                    y: startY + row * spacing + (secureRandom() - 0.5) * 8,
+                    vx: (secureRandom() - 0.5) * 0.5,
+                    vy: (secureRandom() - 0.5) * 0.5,
                     size: 7,
                     mass: 16,
                     fixed: false
@@ -203,10 +212,10 @@ class MolecularDynamicsSimulation {
                         id: `water_${row}_${col}_h${h}`,
                         type: 'water',
                         atomType: 'h',
-                        x: startX + col * spacing + (Math.random() - 0.5) * 12,
-                        y: startY + row * spacing + (Math.random() - 0.5) * 12,
-                        vx: (Math.random() - 0.5) * 0.8,
-                        vy: (Math.random() - 0.5) * 0.8,
+                        x: startX + col * spacing + (secureRandom() - 0.5) * 12,
+                        y: startY + row * spacing + (secureRandom() - 0.5) * 12,
+                        vx: (secureRandom() - 0.5) * 0.8,
+                        vy: (secureRandom() - 0.5) * 0.8,
                         size: 4,
                         mass: 1,
                         fixed: false
@@ -277,10 +286,10 @@ class MolecularDynamicsSimulation {
                 id: `transport_${i}`,
                 type: 'transport',
                 atomType: i < 6 ? 'n' : 'o',
-                x: Math.random() * width,
+                x: secureRandom() * width,
                 y: i < 6 ? height * 0.25 : height * 0.75,
-                vx: (Math.random() - 0.5) * 1,
-                vy: (Math.random() - 0.5) * 0.5,
+                vx: (secureRandom() - 0.5) * 1,
+                vy: (secureRandom() - 0.5) * 0.5,
                 size: 5,
                 mass: 10,
                 fixed: false
@@ -314,10 +323,10 @@ class MolecularDynamicsSimulation {
                 id: `reactant_${i}`,
                 type: 'reactant',
                 atomType: i % 2 === 0 ? 'n' : 'o',
-                x: Math.random() * width,
-                y: Math.random() * height * 0.6,
-                vx: (Math.random() - 0.5) * 2,
-                vy: (Math.random() - 0.5) * 2,
+                x: secureRandom() * width,
+                y: secureRandom() * height * 0.6,
+                vx: (secureRandom() - 0.5) * 2,
+                vy: (secureRandom() - 0.5) * 2,
                 size: 5,
                 mass: 8,
                 fixed: false

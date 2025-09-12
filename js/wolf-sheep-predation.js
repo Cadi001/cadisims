@@ -1,3 +1,8 @@
+// Cryptographically secure random number generator utility
+function secureRandom() {
+    return crypto.getRandomValues(new Uint32Array(1))[0] / 4294967295;
+}
+
 class WolfSheepPredationSimulation {
     constructor() {
         this.gridWidth = 50;
@@ -184,8 +189,8 @@ class WolfSheepPredationSimulation {
                 this.grass.push({
                     x: x,
                     y: y,
-                    grown: Math.random() > 0.5,
-                    countdown: Math.random() > 0.5 ? 0 : Math.floor(Math.random() * this.params.grassRegrowthTime)
+                    grown: secureRandom() > 0.5,
+                    countdown: secureRandom() > 0.5 ? 0 : Math.floor(secureRandom() * this.params.grassRegrowthTime)
                 });
             }
         }
@@ -193,9 +198,9 @@ class WolfSheepPredationSimulation {
         // Initialize sheep
         for (let i = 0; i < this.params.initialSheep; i++) {
             this.sheep.push({
-                x: Math.floor(Math.random() * this.gridWidth),
-                y: Math.floor(Math.random() * this.gridHeight),
-                energy: Math.floor(Math.random() * (2 * this.params.sheepGainFromFood)) + 1,
+                x: Math.floor(secureRandom() * this.gridWidth),
+                y: Math.floor(secureRandom() * this.gridHeight),
+                energy: Math.floor(secureRandom() * (2 * this.params.sheepGainFromFood)) + 1,
                 id: i
             });
         }
@@ -203,9 +208,9 @@ class WolfSheepPredationSimulation {
         // Initialize wolves
         for (let i = 0; i < this.params.initialWolves; i++) {
             this.wolves.push({
-                x: Math.floor(Math.random() * this.gridWidth),
-                y: Math.floor(Math.random() * this.gridHeight),
-                energy: Math.floor(Math.random() * (2 * this.params.wolfGainFromFood)) + 1,
+                x: Math.floor(secureRandom() * this.gridWidth),
+                y: Math.floor(secureRandom() * this.gridHeight),
+                energy: Math.floor(secureRandom() * (2 * this.params.wolfGainFromFood)) + 1,
                 id: i + 1000
             });
         }
@@ -307,7 +312,7 @@ class WolfSheepPredationSimulation {
             {dx: 1, dy: 1}, {dx: -1, dy: 1}, {dx: 1, dy: -1}, {dx: -1, dy: -1}
         ];
         
-        const direction = directions[Math.floor(Math.random() * directions.length)];
+        const direction = directions[Math.floor(secureRandom() * directions.length)];
         sheep.x = Math.max(0, Math.min(this.gridWidth - 1, sheep.x + direction.dx));
         sheep.y = Math.max(0, Math.min(this.gridHeight - 1, sheep.y + direction.dy));
     }
@@ -363,13 +368,13 @@ class WolfSheepPredationSimulation {
         // Sheep reproduction
         const newSheep = [];
         this.sheep.forEach(sheep => {
-            if (sheep.energy >= 2 * this.params.sheepGainFromFood && Math.random() * 100 < this.params.sheepReproduce) {
+            if (sheep.energy >= 2 * this.params.sheepGainFromFood && secureRandom() * 100 < this.params.sheepReproduce) {
                 sheep.energy = Math.floor(sheep.energy / 2);
                 newSheep.push({
-                    x: Math.max(0, Math.min(this.gridWidth - 1, sheep.x + (Math.random() > 0.5 ? 1 : -1))),
-                    y: Math.max(0, Math.min(this.gridHeight - 1, sheep.y + (Math.random() > 0.5 ? 1 : -1))),
+                    x: Math.max(0, Math.min(this.gridWidth - 1, sheep.x + (secureRandom() > 0.5 ? 1 : -1))),
+                    y: Math.max(0, Math.min(this.gridHeight - 1, sheep.y + (secureRandom() > 0.5 ? 1 : -1))),
                     energy: sheep.energy,
-                    id: Date.now() + Math.random()
+                    id: Date.now() + secureRandom()
                 });
             }
         });
@@ -378,13 +383,13 @@ class WolfSheepPredationSimulation {
         // Wolf reproduction
         const newWolves = [];
         this.wolves.forEach(wolf => {
-            if (wolf.energy >= 2 * this.params.wolfGainFromFood && Math.random() * 100 < this.params.wolfReproduce) {
+            if (wolf.energy >= 2 * this.params.wolfGainFromFood && secureRandom() * 100 < this.params.wolfReproduce) {
                 wolf.energy = Math.floor(wolf.energy / 2);
                 newWolves.push({
-                    x: Math.max(0, Math.min(this.gridWidth - 1, wolf.x + (Math.random() > 0.5 ? 1 : -1))),
-                    y: Math.max(0, Math.min(this.gridHeight - 1, wolf.y + (Math.random() > 0.5 ? 1 : -1))),
+                    x: Math.max(0, Math.min(this.gridWidth - 1, wolf.x + (secureRandom() > 0.5 ? 1 : -1))),
+                    y: Math.max(0, Math.min(this.gridHeight - 1, wolf.y + (secureRandom() > 0.5 ? 1 : -1))),
                     energy: wolf.energy,
-                    id: Date.now() + Math.random() + 1000
+                    id: Date.now() + secureRandom() + 1000
                 });
             }
         });

@@ -1,3 +1,8 @@
+// Cryptographically secure random number generator utility
+function secureRandom() {
+    return crypto.getRandomValues(new Uint32Array(1))[0] / 4294967295;
+}
+
 class EpidemicSimulation {
     constructor() {
         this.population = [];
@@ -142,11 +147,11 @@ class EpidemicSimulation {
             this.population.push({
                 id: i,
                 state: i < this.parameters.initialInfected ? 'infected' : 'susceptible',
-                x: Math.random() * 100,
-                y: Math.random() * 100,
+                x: secureRandom() * 100,
+                y: secureRandom() * 100,
                 infectionTime: 0,
-                dx: (Math.random() - 0.5) * 2,
-                dy: (Math.random() - 0.5) * 2
+                dx: (secureRandom() - 0.5) * 2,
+                dy: (secureRandom() - 0.5) * 2
             });
         }
 
@@ -237,7 +242,7 @@ class EpidemicSimulation {
                     Math.pow(infectedPerson.y - susceptiblePerson.y, 2)
                 );
                 
-                if (distance < 3 && Math.random() < this.parameters.transmissionRate) {
+                if (distance < 3 && secureRandom() < this.parameters.transmissionRate) {
                     susceptiblePerson.state = 'infected';
                     susceptiblePerson.infectionTime = 0;
                 }
@@ -246,8 +251,8 @@ class EpidemicSimulation {
             infectedPerson.infectionTime++;
             
             // Recovery or death
-            if (Math.random() < this.parameters.recoveryRate) {
-                if (Math.random() < this.parameters.mortalityRate) {
+            if (secureRandom() < this.parameters.recoveryRate) {
+                if (secureRandom() < this.parameters.mortalityRate) {
                     infectedPerson.state = 'dead';
                     infectedPerson.dx = 0;
                     infectedPerson.dy = 0;

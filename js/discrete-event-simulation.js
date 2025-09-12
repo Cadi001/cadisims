@@ -1,3 +1,12 @@
+// Cryptographically secure random number generator utility
+function secureRandom() {
+    return crypto.getRandomValues(new Uint32Array(1))[0] / 4294967295;
+}
+
+function secureRandomFloat(min, max) {
+    return secureRandom() * (max - min) + min;
+}
+
 class DiscreteEventSimulation {
     constructor() {
         this.canvas = document.getElementById('simulationCanvas');
@@ -295,7 +304,7 @@ class DiscreteEventSimulation {
     generateInterArrivalTime() {
         // Exponential distribution for arrivals
         const rate = this.arrivalRate / 60; // Convert to per minute
-        return -Math.log(Math.random()) / rate;
+        return -Math.log(secureRandom()) / rate;
     }
 
     generateServiceTime(entity = null) {
@@ -306,7 +315,7 @@ class DiscreteEventSimulation {
         switch(this.currentScenario) {
             case 'hospital-emergency':
                 const complexity = parseInt($('#complexitySlider').val() || 50) / 100;
-                if (Math.random() < complexity) {
+                if (secureRandom() < complexity) {
                     baseTime *= 2; // Complex cases take longer
                 }
                 break;
@@ -324,7 +333,7 @@ class DiscreteEventSimulation {
                 break;
             case 'airport-security':
                 const bagCheckRate = parseInt($('#bagCheckSlider').val() || 15) / 100;
-                if (Math.random() < bagCheckRate) {
+                if (secureRandom() < bagCheckRate) {
                     baseTime *= 2; // Additional screening
                 }
                 break;
@@ -337,13 +346,13 @@ class DiscreteEventSimulation {
         }
         
         // Add randomness (exponential distribution)
-        return baseTime * (-Math.log(Math.random()));
+        return baseTime * (-Math.log(secureRandom()));
     }
 
     generateBreakdownTime() {
         const reliability = parseInt($('#reliabilitySlider').val() || 90) / 100;
         const mtbf = 120 / (1 - reliability); // Mean time between failures
-        return mtbf * (-Math.log(Math.random()));
+        return mtbf * (-Math.log(secureRandom()));
     }
 
     scheduleEvent(type, time, entity = null, server = null) {
@@ -572,7 +581,7 @@ class DiscreteEventSimulation {
         // Find a random busy server to break down
         const busyServers = this.servers.filter(s => s.busy);
         if (busyServers.length > 0) {
-            const server = busyServers[Math.floor(Math.random() * busyServers.length)];
+            const server = busyServers[Math.floor(secureRandom() * busyServers.length)];
             server.broken = true;
             
             // If serving an entity, put it back in queue
@@ -583,7 +592,7 @@ class DiscreteEventSimulation {
             server.busy = false;
             
             // Schedule repair
-            const repairTime = 30 + Math.random() * 60; // 30-90 minutes
+            const repairTime = 30 + secureRandom() * 60; // 30-90 minutes
             this.scheduleEvent('repair', this.currentTime + repairTime, null, server);
         }
         

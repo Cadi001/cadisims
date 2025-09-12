@@ -1,3 +1,8 @@
+// Cryptographically secure random number generator utility
+function secureRandom() {
+    return crypto.getRandomValues(new Uint32Array(1))[0] / 4294967295;
+}
+
 class StochasticSimulation {
     constructor() {
         this.canvas = document.getElementById('simulationCanvas');
@@ -596,7 +601,7 @@ class StochasticSimulation {
     performWeatherStep() {
         const transitions = this.weatherTransitions[this.climate];
         const probabilities = transitions[this.currentState];
-        const rand = Math.random();
+        const rand = secureRandom();
         
         let cumulative = 0;
         for (let i = 0; i < probabilities.length; i++) {
@@ -618,8 +623,8 @@ class StochasticSimulation {
         const arrivalRate = businessData.baseArrival * timeData.arrival;
         
         // Random arrivals (Poisson-like process)
-        if (Math.random() < arrivalRate / 10) {
-            const newArrivals = Math.floor(Math.random() * 2) + 1; // 1-2 customers
+        if (secureRandom() < arrivalRate / 10) {
+            const newArrivals = Math.floor(secureRandom() * 2) + 1; // 1-2 customers
             this.queueSize += newArrivals;
         }
         
@@ -632,12 +637,12 @@ class StochasticSimulation {
             // Service rate varies by business type and current conditions
             const baseServiceTime = businessData.baseService;
             const serviceVariability = businessData.serviceVariability;
-            const actualServiceTime = baseServiceTime + (Math.random() - 0.5) * serviceVariability;
+            const actualServiceTime = baseServiceTime + (secureRandom() - 0.5) * serviceVariability;
             
             // Probability of serving customers this step
             const serviceProb = serviceCapacity / actualServiceTime / 10;
             
-            if (Math.random() < serviceProb) {
+            if (secureRandom() < serviceProb) {
                 const served = Math.min(this.queueSize, Math.max(1, Math.floor(serviceCapacity)));
                 this.queueSize -= served;
                 this.customersServed += served;
@@ -652,8 +657,8 @@ class StochasticSimulation {
             
             if (this.queueSize > abandonmentThreshold) {
                 const abandonRate = (this.queueSize - abandonmentThreshold) * 0.1;
-                if (Math.random() < abandonRate) {
-                    const abandoned = Math.floor(Math.random() * 2) + 1;
+                if (secureRandom() < abandonRate) {
+                    const abandoned = Math.floor(secureRandom() * 2) + 1;
                     this.queueSize = Math.max(0, this.queueSize - abandoned);
                     this.customersLost += abandoned;
                 }
@@ -670,11 +675,11 @@ class StochasticSimulation {
         
         // Births (reduced by overcrowding)
         const birthRate = params.birthRate * (1 - overcrowding * 0.8);
-        const births = Math.floor(this.population * birthRate * Math.random());
+        const births = Math.floor(this.population * birthRate * secureRandom());
         
         // Deaths (increased by overcrowding)  
         const deathRate = params.deathRate * (1 + overcrowding * 0.5);
-        const deaths = Math.floor(this.population * deathRate * Math.random());
+        const deaths = Math.floor(this.population * deathRate * secureRandom());
         
         this.population = Math.max(0, this.population + births - deaths);
         this.history.push(this.population);
@@ -685,7 +690,7 @@ class StochasticSimulation {
         const params = this.trafficParams[this.trafficTime];
         
         // Random fluctuation around base rate
-        const variation = (Math.random() - 0.5) * params.variability;
+        const variation = (secureRandom() - 0.5) * params.variability;
         this.carsPerHour = Math.max(0, params.baseRate + variation);
         
         this.history.push(this.carsPerHour);
@@ -697,11 +702,11 @@ class StochasticSimulation {
         
         // New infections based on contact between infected and susceptible
         const newInfections = Math.floor(
-            params.transmissionRate * this.infected * this.susceptible * Math.random()
+            params.transmissionRate * this.infected * this.susceptible * secureRandom()
         );
         
         // Recoveries
-        const newRecoveries = Math.floor(this.infected * params.recoveryRate * Math.random());
+        const newRecoveries = Math.floor(this.infected * params.recoveryRate * secureRandom());
         
         this.susceptible = Math.max(0, this.susceptible - newInfections);
         this.infected = Math.max(0, this.infected + newInfections - newRecoveries);

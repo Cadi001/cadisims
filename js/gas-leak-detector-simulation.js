@@ -1,3 +1,12 @@
+// Cryptographically secure random number generator utility
+function secureRandom() {
+    return crypto.getRandomValues(new Uint32Array(1))[0] / 4294967295;
+}
+
+function secureRandomFloat(min, max) {
+    return secureRandom() * (max - min) + min;
+}
+
 class GasLeakDetectorSimulation {
     constructor() {
         this.isRunning = false;
@@ -194,7 +203,7 @@ class GasLeakDetectorSimulation {
         if (this.isRunning && !this.isLeaking) {
             // Randomly select a gas source
             const sourceIds = Object.keys(this.gasSourcePositions);
-            const randomSourceId = sourceIds[Math.floor(Math.random() * sourceIds.length)];
+            const randomSourceId = sourceIds[Math.floor(secureRandom() * sourceIds.length)];
             this.activateGasLeak(parseInt(randomSourceId));
         }
     }
@@ -265,7 +274,7 @@ class GasLeakDetectorSimulation {
         const source = this.gasSourcePositions[this.activeLeakSource];
         
         // Simulate gas leak rate (PPM increase per tick)
-        let leakRate = 50 + Math.random() * 50; // 50-100 PPM per tick
+        let leakRate = 50 + secureRandom() * 50; // 50-100 PPM per tick
         
         // Adjust for gas properties
         leakRate *= gasType.dispersionRate;
@@ -282,7 +291,7 @@ class GasLeakDetectorSimulation {
         this.maxConcentration = Math.max(this.maxConcentration, this.gasConcentration);
         
         // Stop leak randomly after some time
-        if (Math.random() < 0.01) { // 1% chance to stop each tick
+        if (secureRandom() < 0.01) { // 1% chance to stop each tick
             this.stopLeak();
         }
     }
@@ -314,7 +323,7 @@ class GasLeakDetectorSimulation {
                 reading = this.gasConcentration * distanceFactor;
                 
                 // Add some random variation
-                reading *= (0.8 + Math.random() * 0.4);
+                reading *= (0.8 + secureRandom() * 0.4);
                 
                 // Account for wind direction (simplified)
                 const windFactor = this.calculateWindEffect(source, detector);
