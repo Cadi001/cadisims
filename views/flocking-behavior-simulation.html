@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flocking Behavior Simulation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../css/main.css" rel="stylesheet">
+    <style>
+        .flocking-canvas {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .flock-space {
+            background: #000;
+            border-radius: 10px;
+            height: 500px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .boid {
+            position: absolute;
+            font-size: 12px;
+            color: #FFD700;
+            transition: all 0.1s ease;
+            transform-origin: center;
+        }
+        
+        .predator {
+            color: #FF4500 !important;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container">
+            <a class="navbar-brand" href="../views/index.html">
+                <i class="fas fa-arrow-left me-2"></i>
+                Flocking Behavior Simulation
+            </a>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="alert alert-info">
+                    <h5><i class="fas fa-dove me-2"></i>Boids Algorithm</h5>
+                    <p class="mb-0">Simulate emergent flocking behavior using Reynolds' three rules: separation, alignment, and cohesion. Add predators to observe escape responses.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="control-panel">
+                    <h5 class="mb-4"><i class="fas fa-sliders-h me-2"></i>Flocking Rules</h5>
+                    
+                    <div class="mb-3">
+                        <label for="boidCount" class="form-label">Boid Count: <span id="boidCountValue">50</span></label>
+                        <input type="range" class="form-range" id="boidCount" min="10" max="200" value="50" step="10">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="separationWeight" class="form-label">Separation: <span id="separationValue">1.5</span></label>
+                        <input type="range" class="form-range" id="separationWeight" min="0.1" max="3.0" value="1.5" step="0.1">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="alignmentWeight" class="form-label">Alignment: <span id="alignmentValue">1.0</span></label>
+                        <input type="range" class="form-range" id="alignmentWeight" min="0.1" max="3.0" value="1.0" step="0.1">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="cohesionWeight" class="form-label">Cohesion: <span id="cohesionValue">1.0</span></label>
+                        <input type="range" class="form-range" id="cohesionWeight" min="0.1" max="3.0" value="1.0" step="0.1">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="predatorCount" class="form-label">Predators: <span id="predatorCountValue">2</span></label>
+                        <input type="range" class="form-range" id="predatorCount" min="0" max="10" value="2" step="1">
+                    </div>
+
+                    <div class="d-grid gap-2 mb-4">
+                        <button class="btn btn-primary btn-simulation" id="setupBtn">
+                            <i class="fas fa-sync me-2"></i>Setup
+                        </button>
+                        <button class="btn btn-success btn-simulation" id="runBtn">
+                            <i class="fas fa-play me-2"></i>Run
+                        </button>
+                        <button class="btn btn-warning btn-simulation" id="pauseBtn" disabled>
+                            <i class="fas fa-pause me-2"></i>Pause
+                        </button>
+                        <button class="btn btn-danger btn-simulation" id="stopBtn">
+                            <i class="fas fa-stop me-2"></i>Stop
+                        </button>
+                    </div>
+
+                    <div class="row text-center">
+                        <div class="col-6 mb-2">
+                            <div class="stat-display bg-primary text-white">
+                                <span class="stat-value" id="currentBoids">50</span>
+                                <span class="stat-label small">Active Boids</span>
+                            </div>
+                        </div>
+                        <div class="col-6 mb-2">
+                            <div class="stat-display bg-warning text-dark">
+                                <span class="stat-value" id="flockCohesion">85</span>%
+                                <span class="stat-label small">Cohesion</span>
+                            </div>
+                        </div>
+                        <div class="col-6 mb-2">
+                            <div class="stat-display bg-success text-white">
+                                <span class="stat-value" id="avgSpeed">2.5</span>
+                                <span class="stat-label small">Avg Speed</span>
+                            </div>
+                        </div>
+                        <div class="col-6 mb-2">
+                            <div class="stat-display bg-danger text-white">
+                                <span class="stat-value" id="predatorDistance">15</span>
+                                <span class="stat-label small">Pred. Dist.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-8">
+                <div class="flocking-canvas">
+                    <h5 class="text-white mb-3"><i class="fas fa-feather me-2"></i>Flocking Space</h5>
+                    <div class="flock-space" id="flockSpace">
+                        <!-- Boids will appear here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="text-center py-4 mt-5">
+        <div class="container">
+            <p class="mb-2">
+                <i class="fas fa-copyright me-2"></i>
+                © 2025 <strong>Aldwin Nunag</strong>. All rights reserved.
+            </p>
+            <small class="text-muted">
+                Flocking Behavior Simulation - Part of Modeling & Simulation Hub
+            </small>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="../js/flocking-behavior-simulation.js"></script>
+</body>
+</html>

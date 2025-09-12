@@ -236,6 +236,138 @@
                     </p>
                 </div>
             </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="simulation-card active" onclick="startSimulation('cat-health')">
+                    <div class="simulation-icon">
+                        <i class="fas fa-heartbeat"></i>
+                    </div>
+                    <h3 class="simulation-title">Cat Health Detection</h3>
+                    <p class="simulation-description">
+                        AI-powered feline health monitoring using heartbeat analysis and vital signs.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="simulation-card active" onclick="startSimulation('epidemic')">
+                    <div class="simulation-icon">
+                        <i class="fas fa-virus"></i>
+                    </div>
+                    <h3 class="simulation-title">SIR Epidemic Model</h3>
+                    <p class="simulation-description">
+                        Simulate disease spread through populations using Susceptible-Infected-Recovered dynamics.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="simulation-card active" onclick="startSimulation('traffic-flow')">
+                    <div class="simulation-icon">
+                        <i class="fas fa-traffic-light"></i>
+                    </div>
+                    <h3 class="simulation-title">Traffic Flow Model</h3>
+                    <p class="simulation-description">
+                        Study vehicle traffic patterns, congestion, and traffic light optimization strategies.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="simulation-card active" onclick="startSimulation('queue-management')">
+                    <div class="simulation-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3 class="simulation-title">Queue Management</h3>
+                    <p class="simulation-description">
+                        Analyze customer service queues with multiple servers and priority systems.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="simulation-card active" onclick="startSimulation('financial-markets')">
+                    <div class="simulation-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3 class="simulation-title">Financial Markets</h3>
+                    <p class="simulation-description">
+                        Simulate stock price movements with multiple trading agents and market dynamics.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="simulation-card active" onclick="startSimulation('supply-chain')">
+                    <div class="simulation-icon">
+                        <i class="fas fa-shipping-fast"></i>
+                    </div>
+                    <h3 class="simulation-title">Supply Chain</h3>
+                    <p class="simulation-description">
+                        Model complex supply networks with inventory management and demand forecasting.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="simulation-card active" onclick="startSimulation('population-dynamics')">
+                    <div class="simulation-icon">
+                        <i class="fas fa-baby"></i>
+                    </div>
+                    <h3 class="simulation-title">Population Dynamics</h3>
+                    <p class="simulation-description">
+                        Study demographic transitions with birth rates, death rates, and age structures.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="simulation-card active" onclick="startSimulation('weather-system')">
+                    <div class="simulation-icon">
+                        <i class="fas fa-cloud-sun"></i>
+                    </div>
+                    <h3 class="simulation-title">Weather System</h3>
+                    <p class="simulation-description">
+                        Simulate weather patterns with pressure systems and temperature gradients.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="simulation-card active" onclick="startSimulation('flocking-behavior')">
+                    <div class="simulation-icon">
+                        <i class="fas fa-dove"></i>
+                    </div>
+                    <h3 class="simulation-title">Flocking Behavior</h3>
+                    <p class="simulation-description">
+                        Explore emergent flocking patterns using Reynolds' boids algorithm with predators.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="simulation-card active" onclick="startSimulation('forest-fire')">
+                    <div class="simulation-icon">
+                        <i class="fas fa-fire"></i>
+                    </div>
+                    <h3 class="simulation-title">Forest Fire</h3>
+                    <p class="simulation-description">
+                        Simulate wildfire spread using cellular automata and study containment strategies.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="simulation-card active" onclick="startSimulation('gas-leak-detector')">
+                    <div class="simulation-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3 class="simulation-title">Gas Leak Detection</h3>
+                    <p class="simulation-description">
+                        Industrial safety simulation with gas detectors, ventilation systems, and emergency protocols.
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -278,7 +410,18 @@
                 'agent-based': 'agent-based.html',
                 'system-dynamics': 'system-dynamics.html',
                 'discrete-event': 'discrete-event.html',
-                'wolf-sheep': 'wolf-sheep-predation.html'
+                'wolf-sheep': 'wolf-sheep-predation.html',
+                'cat-health': 'cat-health-detection.html',
+                'epidemic': 'epidemic-simulation.html',
+                'traffic-flow': 'traffic-flow-simulation.html',
+                'queue-management': 'queue-simulation.html',
+                'financial-markets': 'financial-markets-simulation.html',
+                'supply-chain': 'supply-chain-simulation.html',
+                'population-dynamics': 'population-dynamics-simulation.html',
+                'weather-system': 'weather-system-simulation.html',
+                'flocking-behavior': 'flocking-behavior-simulation.html',
+                'forest-fire': 'forest-fire-simulation.html',
+                'gas-leak-detector': 'gas-leak-detector-simulation.html'
             };
             
             if (simulations[type]) {

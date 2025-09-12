@@ -1,3 +1,12 @@
+// Cryptographically secure random number generator utility
+function secureRandom() {
+    return crypto.getRandomValues(new Uint32Array(1))[0] / 4294967295;
+}
+
+function secureRandomFloat(min, max) {
+    return secureRandom() * (max - min) + min;
+}
+
 class MonteCarloSimulation {
     constructor() {
         this.canvas = document.getElementById('simulationCanvas');
@@ -467,8 +476,8 @@ class MonteCarloSimulation {
     }
 
     performPiIteration() {
-        const x = Math.random() * 2 * this.circleRadius - this.circleRadius;
-        const y = Math.random() * 2 * this.circleRadius - this.circleRadius;
+        const x = secureRandom() * 2 * this.circleRadius - this.circleRadius;
+        const y = secureRandom() * 2 * this.circleRadius - this.circleRadius;
         const distance = Math.sqrt(x * x + y * y);
         
         if (distance <= this.circleRadius) {
@@ -481,16 +490,16 @@ class MonteCarloSimulation {
 
     performStockIteration() {
         // Base random change
-        const random = Math.random();
+        const random = secureRandom();
         const baseChange = this.volatility * (2 * random - 1);
         
         // Add market trend
         let change = baseChange + this.trend;
         
         // Add special events (random occurrence)
-        if (this.eventType !== 'none' && Math.random() < 0.05) { // 5% chance per day
+        if (this.eventType !== 'none' && secureRandom() < 0.05) { // 5% chance per day
             const eventMultipliers = {'earnings': 0.05, 'crisis': 0.15};
-            const eventChange = eventMultipliers[this.eventType] * (2 * Math.random() - 1);
+            const eventChange = eventMultipliers[this.eventType] * (2 * secureRandom() - 1);
             change += eventChange;
         }
         
@@ -504,7 +513,7 @@ class MonteCarloSimulation {
         let sum = 0;
         const roll = [];
         for (let i = 0; i < this.diceCount; i++) {
-            const die = Math.floor(Math.random() * 6) + 1;
+            const die = Math.floor(secureRandom() * 6) + 1;
             roll.push(die);
             sum += die;
         }
@@ -514,7 +523,7 @@ class MonteCarloSimulation {
     }
 
     performCoinIteration() {
-        const flip = Math.random() < 0.5 ? 'heads' : 'tails';
+        const flip = secureRandom() < 0.5 ? 'heads' : 'tails';
         this.flips.push(flip);
         
         if ((this.trackingHeads && flip === 'heads') || (!this.trackingHeads && flip === 'tails')) {
@@ -554,7 +563,7 @@ class MonteCarloSimulation {
         const monthlyVolatility = adjustedVolatility / Math.sqrt(12);
         
         // Add random component
-        const random = Math.random();
+        const random = secureRandom();
         const change = monthlyReturn + monthlyVolatility * (2 * random - 1);
         
         // Apply monthly contribution

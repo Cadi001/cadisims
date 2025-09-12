@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather System Simulation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../css/main.css" rel="stylesheet">
+    <style>
+        .weather-canvas {
+            background: linear-gradient(135deg, #87CEEB 0%, #4682B4 100%);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .weather-map {
+            background: #E6F3FF;
+            border-radius: 10px;
+            padding: 20px;
+            height: 400px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .weather-station {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .sunny { background: #FFD700; color: #333; }
+        .cloudy { background: #B0B0B0; }
+        .rainy { background: #4682B4; }
+        .stormy { background: #2F4F4F; }
+        
+        .weather-front {
+            position: absolute;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #FF4500, transparent);
+            animation: moveFront 10s linear infinite;
+        }
+        
+        @keyframes moveFront {
+            from { transform: translateX(-100px); }
+            to { transform: translateX(400px); }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container">
+            <a class="navbar-brand" href="../views/index.html">
+                <i class="fas fa-arrow-left me-2"></i>
+                Weather System Simulation
+            </a>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="alert alert-info">
+                    <h5><i class="fas fa-cloud-sun me-2"></i>Meteorological Model</h5>
+                    <p class="mb-0">Simulate weather patterns with pressure systems, temperature gradients, and precipitation. Study climate dynamics and weather forecasting.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="control-panel">
+                    <h5 class="mb-4"><i class="fas fa-thermometer-half me-2"></i>Weather Parameters</h5>
+                    
+                    <div class="mb-3">
+                        <label for="temperature" class="form-label">Base Temperature: <span id="tempValue">20</span>°C</label>
+                        <input type="range" class="form-range" id="temperature" min="-20" max="50" value="20" step="1">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="humidity" class="form-label">Humidity: <span id="humidityValue">60</span>%</label>
+                        <input type="range" class="form-range" id="humidity" min="20" max="100" value="60" step="5">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="windSpeed" class="form-label">Wind Speed: <span id="windValue">15</span> km/h</label>
+                        <input type="range" class="form-range" id="windSpeed" min="0" max="100" value="15" step="5">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="pressure" class="form-label">Pressure: <span id="pressureValue">1013</span> hPa</label>
+                        <input type="range" class="form-range" id="pressure" min="980" max="1040" value="1013" step="1">
+                    </div>
+
+                    <div class="d-grid gap-2 mb-4">
+                        <button class="btn btn-primary btn-simulation" id="setupBtn">
+                            <i class="fas fa-sync me-2"></i>Setup
+                        </button>
+                        <button class="btn btn-success btn-simulation" id="runBtn">
+                            <i class="fas fa-play me-2"></i>Run
+                        </button>
+                        <button class="btn btn-warning btn-simulation" id="pauseBtn" disabled>
+                            <i class="fas fa-pause me-2"></i>Pause
+                        </button>
+                        <button class="btn btn-danger btn-simulation" id="stopBtn">
+                            <i class="fas fa-stop me-2"></i>Stop
+                        </button>
+                    </div>
+
+                    <div class="row text-center">
+                        <div class="col-6 mb-2">
+                            <div class="stat-display bg-warning text-dark">
+                                <span class="stat-value" id="currentTemp">20</span>°C
+                                <span class="stat-label small">Temperature</span>
+                            </div>
+                        </div>
+                        <div class="col-6 mb-2">
+                            <div class="stat-display bg-info text-white">
+                                <span class="stat-value" id="currentHumidity">60</span>%
+                                <span class="stat-label small">Humidity</span>
+                            </div>
+                        </div>
+                        <div class="col-6 mb-2">
+                            <div class="stat-display bg-primary text-white">
+                                <span class="stat-value" id="currentPressure">1013</span>
+                                <span class="stat-label small">Pressure</span>
+                            </div>
+                        </div>
+                        <div class="col-6 mb-2">
+                            <div class="stat-display bg-secondary text-white">
+                                <span class="stat-value" id="currentWind">15</span>
+                                <span class="stat-label small">Wind km/h</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-8">
+                <div class="weather-canvas">
+                    <h5 class="text-white mb-3"><i class="fas fa-globe me-2"></i>Weather Map</h5>
+                    <div class="weather-map" id="weatherMap">
+                        <!-- Weather stations and fronts will be generated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="text-center py-4 mt-5">
+        <div class="container">
+            <p class="mb-2">
+                <i class="fas fa-copyright me-2"></i>
+                © 2025 <strong>Aldwin Nunag</strong>. All rights reserved.
+            </p>
+            <small class="text-muted">
+                Weather System Simulation - Part of Modeling & Simulation Hub
+            </small>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="../js/weather-system-simulation.js"></script>
+</body>
+</html>

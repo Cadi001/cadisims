@@ -1,3 +1,8 @@
+// Cryptographically secure random number generator utility
+function secureRandom() {
+    return crypto.getRandomValues(new Uint32Array(1))[0] / 4294967295;
+}
+
 class SystemDynamicsSimulation {
     constructor() {
         this.canvas = document.getElementById('simulationCanvas');
@@ -526,7 +531,7 @@ class SystemDynamicsSimulation {
         // Calculate demand with variability
         const baseDemand = this.constants.demandRate;
         const demandVar = this.constants.demandVariability || 0.1;
-        const actualDemand = baseDemand * (1 + (Math.random() - 0.5) * demandVar);
+        const actualDemand = baseDemand * (1 + (secureRandom() - 0.5) * demandVar);
         
         // Calculate inventory gap
         const desiredInventory = this.constants.desiredInventory + (this.constants.safetyStock || 0);
@@ -560,7 +565,7 @@ class SystemDynamicsSimulation {
         const attractiveness = Math.max(0, infrastructureQuality * economicFactor * (1 - capacityUtilization));
         
         // Migration flow
-        const migrationRate = attractiveness * 5000 * (Math.random() * 0.5 + 0.75); // Some randomness
+        const migrationRate = attractiveness * 5000 * (secureRandom() * 0.5 + 0.75); // Some randomness
         
         // Infrastructure investment and depreciation
         const infrastructureInvestment = this.constants.infrastructureInvestment * this.stocks.population * 0.00001;

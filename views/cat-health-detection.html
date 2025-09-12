@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cat Health Detection - Heartbeat Analysis Simulation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../css/main.css" rel="stylesheet">
+    <style>
+        /* Cat Health Simulation Styles */
+        .cat-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+        
+        .cat-display {
+            text-align: center;
+            font-size: 8rem;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+        }
+        
+        .heartbeat-monitor {
+            background: #000;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            min-height: 200px;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid #333;
+        }
+        
+        .heartbeat-line {
+            width: 100%;
+            height: 100px;
+            position: relative;
+            background: linear-gradient(to right, transparent 0%, rgba(0, 255, 0, 0.1) 100%);
+        }
+        
+        .health-status {
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            transition: all 0.5s ease;
+        }
+        
+        .status-healthy {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+        }
+        
+        .status-warning {
+            background: linear-gradient(135deg, #ffc107, #fd7e14);
+            color: #333;
+        }
+        
+        .status-critical {
+            background: linear-gradient(135deg, #dc3545, #e83e8c);
+            color: white;
+        }
+        
+        .vital-signs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .vital-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+        
+        .vital-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #00ff00;
+            margin: 10px 0;
+        }
+        
+        .control-panel {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .scenario-btn {
+            margin: 5px;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .heartbeat-canvas {
+            width: 100%;
+            height: 150px;
+            background: #000;
+            border-radius: 10px;
+            border: 1px solid #333;
+        }
+        
+        .diagnosis-panel {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            color: #333;
+        }
+        
+        .symptom-indicator {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 15px;
+            margin: 3px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+        
+        .symptom-normal { background: #d4edda; color: #155724; }
+        .symptom-abnormal { background: #f8d7da; color: #721c24; }
+        .symptom-warning { background: #fff3cd; color: #856404; }
+        
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            15% { transform: scale(1.1); }
+            30% { transform: scale(1); }
+            45% { transform: scale(1.05); }
+            60% { transform: scale(1); }
+            100% { transform: scale(1); }
+        }
+        
+        .beating {
+            animation: heartbeat 1s infinite;
+        }
+        
+        .educational-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-arrow-left me-2"></i>
+                Cat Health Detection Simulation
+            </a>
+            <div>
+                <a href="index.html" class="btn btn-outline-light">
+                    <i class="fas fa-home me-2"></i>
+                    Back to Hub
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- Main Simulation Interface -->
+        <div class="cat-container">
+            <h2 class="text-center mb-4">🐱 Feline Health Monitor</h2>
+            
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="cat-display" id="catDisplay">
+                        🐱
+                    </div>
+                    <div class="text-center">
+                        <h4 id="catName">Whiskers</h4>
+                        <p class="text-muted">Age: <span id="catAge">3 years</span> | Weight: <span id="catWeight">4.2 kg</span></p>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6">
+                    <div class="health-status" id="healthStatus">
+                        <i class="fas fa-heartbeat me-2"></i>
+                        <span id="statusText">Monitoring...</span>
+                    </div>
+                    
+                    <div class="vital-signs">
+                        <div class="vital-card">
+                            <div class="vital-label">Heart Rate</div>
+                            <div class="vital-value" id="heartRate">---</div>
+                            <small>BPM</small>
+                        </div>
+                        <div class="vital-card">
+                            <div class="vital-label">Rhythm</div>
+                            <div class="vital-value" id="heartRhythm" style="font-size: 1.2rem;">---</div>
+                            <small>Pattern</small>
+                        </div>
+                        <div class="vital-card">
+                            <div class="vital-label">Variability</div>
+                            <div class="vital-value" id="heartVariability">---</div>
+                            <small>%</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Heartbeat Monitor -->
+        <div class="cat-container">
+            <h4><i class="fas fa-chart-line me-2"></i>Real-time Heartbeat Monitor</h4>
+            <div class="heartbeat-monitor">
+                <canvas id="heartbeatCanvas" class="heartbeat-canvas"></canvas>
+                <div class="mt-3 text-center">
+                    <span id="monitorStatus">🔴 Click Start Monitoring to begin</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Control Panel -->
+        <div class="cat-container">
+            <h4><i class="fas fa-sliders-h me-2"></i>Simulation Controls</h4>
+            <div class="control-panel">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5>Health Scenarios</h5>
+                        <button class="btn btn-success scenario-btn" onclick="setScenario('healthy')">
+                            😺 Healthy Cat
+                        </button>
+                        <button class="btn btn-warning scenario-btn" onclick="setScenario('stress')">
+                            😿 Stressed Cat
+                        </button>
+                        <button class="btn btn-info scenario-btn" onclick="setScenario('hyperthyroid')">
+                            😾 Hyperthyroid
+                        </button>
+                        <button class="btn btn-danger scenario-btn" onclick="setScenario('heart_disease')">
+                            💔 Heart Disease
+                        </button>
+                    </div>
+                    <div class="col-md-6">
+                        <h5>Monitor Controls</h5>
+                        <button class="btn btn-primary" id="monitorBtn" onclick="toggleMonitoring()">
+                            <i class="fas fa-play me-2"></i>Start Monitoring
+                        </button>
+                        <button class="btn btn-secondary ms-2" onclick="resetSimulation()">
+                            <i class="fas fa-refresh me-2"></i>Reset
+                        </button>
+                        <div class="mt-3">
+                            <label>Monitoring Duration:</label>
+                            <select id="duration" class="form-select">
+                                <option value="30">30 seconds</option>
+                                <option value="60" selected>1 minute</option>
+                                <option value="120">2 minutes</option>
+                                <option value="300">5 minutes</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Diagnosis Panel -->
+        <div class="diagnosis-panel">
+            <h4><i class="fas fa-stethoscope me-2"></i>AI Health Analysis</h4>
+            <div id="diagnosisContent">
+                <p class="text-muted">Start monitoring to see health analysis...</p>
+            </div>
+            <div id="symptomsDisplay" class="mt-3">
+                <!-- Symptoms will be displayed here -->
+            </div>
+            <div id="recommendationsDisplay" class="mt-3">
+                <!-- Recommendations will be displayed here -->
+            </div>
+        </div>
+
+        <!-- Educational Content -->
+        <div class="educational-section">
+            <h3><i class="fas fa-graduation-cap me-2"></i>Learn About Cat Heart Health</h3>
+            
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <h5>🫀 Normal Cat Heart Parameters</h5>
+                    <ul>
+                        <li><strong>Heart Rate:</strong> 140-220 BPM (average 180)</li>
+                        <li><strong>Rhythm:</strong> Regular sinus rhythm</li>
+                        <li><strong>Variability:</strong> 5-15% normal variation</li>
+                        <li><strong>Response:</strong> Increases with stress/activity</li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <h5>⚠️ Warning Signs to Watch For</h5>
+                    <ul>
+                        <li><strong>Tachycardia:</strong> >220 BPM at rest</li>
+                        <li><strong>Bradycardia:</strong> <120 BPM</li>
+                        <li><strong>Irregular rhythm:</strong> Skipped beats, arrhythmia</li>
+                        <li><strong>Poor variability:</strong> Fixed rate indicates stress</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="alert alert-info mt-4">
+                <h6><i class="fas fa-info-circle me-2"></i>How This Simulation Works</h6>
+                <p>This simulation uses realistic heart rate patterns based on veterinary research. It models different health conditions by adjusting:</p>
+                <ul class="mb-0">
+                    <li><strong>Base heart rate:</strong> The average BPM for the condition</li>
+                    <li><strong>Variability:</strong> How much the rate changes beat-to-beat</li>
+                    <li><strong>Rhythm patterns:</strong> Regular vs irregular beating</li>
+                    <li><strong>Response to stimuli:</strong> How quickly the heart adapts</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Copyright Footer -->
+    <footer class="text-center py-4 mt-5">
+        <div class="container">
+            <p class="mb-2">
+                <i class="fas fa-copyright me-2"></i>
+                © 2025 <strong>Aldwin Nunag</strong>. All rights reserved.
+            </p>
+            <div class="mb-2">
+                <i class="fab fa-creative-commons me-1"></i>
+                <i class="fab fa-creative-commons-by me-1"></i>
+                <i class="fab fa-creative-commons-nc me-1"></i>
+                <i class="fab fa-creative-commons-sa me-2"></i>
+                <strong>Open Source Project</strong> - Licensed under 
+                <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" class="text-decoration-none">
+                    CC BY-NC-SA 4.0
+                </a>
+            </div>
+            <small class="text-muted">
+                Educational simulation for veterinary and health informatics learning. Not for actual medical diagnosis.
+            </small>
+            <br>
+            <small class="text-muted">
+                Cat Health Detection Simulation - Interactive Medical Education
+            </small>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <script>
+        // Cat Health Detection Simulation
+        class CatHealthSimulator {
+            constructor() {
+                this.isMonitoring = false;
+                this.currentScenario = 'healthy';
+                this.heartRate = 180;
+                this.baseHeartRate = 180;
+                this.heartRateVariability = 10;
+                this.rhythmPattern = 'regular';
+                this.monitoringInterval = null;
+                this.heartbeatInterval = null;
+                this.canvas = document.getElementById('heartbeatCanvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.waveData = [];
+                this.waveOffset = 0;
+                this.symptoms = [];
+                this.recommendations = [];
+                
+                // Medical ECG parameters based on actual veterinary data
+                this.ecgParameters = {
+                    healthy: {
+                        pWaveAmplitude: 8,
+                        qrsAmplitude: 60,
+                        tWaveAmplitude: 15,
+                        stSegmentDeviation: 0,
+                        prInterval: 15,
+                        qrsWidth: 5,
+                        qtInterval: 25,
+                        noiseLevel: 1
+                    },
+                    stress: {
+                        pWaveAmplitude: 12,
+                        qrsAmplitude: 75,
+                        tWaveAmplitude: 20,
+                        stSegmentDeviation: 2,
+                        prInterval: 12,
+                        qrsWidth: 6,
+                        qtInterval: 22,
+                        noiseLevel: 3
+                    },
+                    hyperthyroid: {
+                        pWaveAmplitude: 15,
+                        qrsAmplitude: 85,
+                        tWaveAmplitude: 25,
+                        stSegmentDeviation: -1,
+                        prInterval: 10,
+                        qrsWidth: 4,
+                        qtInterval: 18,
+                        noiseLevel: 2
+                    },
+                    heart_disease: {
+                        pWaveAmplitude: 6,
+                        qrsAmplitude: 45,
+                        tWaveAmplitude: 8,
+                        stSegmentDeviation: 5,
+                        prInterval: 20,
+                        qrsWidth: 8,
+                        qtInterval: 30,
+                        noiseLevel: 5
+                    }
+                };
+                
+                this.initializeCanvas();
+                this.generateCatProfile();
+            }
+            
+            initializeCanvas() {
+                this.canvas.width = this.canvas.offsetWidth;
+                this.canvas.height = 150;
+                this.ctx.strokeStyle = '#00ff00';
+                this.ctx.lineWidth = 2;
+                this.ctx.fillStyle = '#000';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                // Initialize ECG data array
+                this.ecgData = new Array(this.canvas.width).fill(this.canvas.height / 2);
+                this.currentX = 0;
+                this.beatPhase = 0;
+                this.nextBeatTime = 0;
+                
+                this.drawGrid();
+            }
+            
+            generateCatProfile() {
+                const names = ['Whiskers', 'Luna', 'Shadow', 'Mittens', 'Pepper', 'Smokey', 'Tiger', 'Princess'];
+                const ages = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+                const weights = [3.2, 3.8, 4.1, 4.5, 4.8, 5.2, 5.5, 5.8];
+                
+                const randomValues = crypto.getRandomValues(new Uint8Array(3));
+                document.getElementById('catName').textContent = names[randomValues[0] % names.length];
+                document.getElementById('catAge').textContent = ages[randomValues[1] % ages.length] + ' years';
+                document.getElementById('catWeight').textContent = weights[randomValues[2] % weights.length] + ' kg';
+            }
+            
+            setScenario(scenario) {
+                this.currentScenario = scenario;
+                this.symptoms = [];
+                this.recommendations = [];
+                
+                switch(scenario) {
+                    case 'healthy':
+                        this.baseHeartRate = 180;
+                        this.heartRateVariability = 10;
+                        this.rhythmPattern = 'regular';
+                        this.symptoms = ['Normal appetite', 'Active behavior', 'Regular breathing'];
+                        this.recommendations = ['Continue regular checkups', 'Maintain healthy diet', 'Monitor for changes'];
+                        break;
+                        
+                    case 'stress':
+                        this.baseHeartRate = 200;
+                        this.heartRateVariability = 25;
+                        this.rhythmPattern = 'slightly_irregular';
+                        this.symptoms = ['Elevated heart rate', 'Increased anxiety', 'Rapid breathing'];
+                        this.recommendations = ['Reduce stressors', 'Create calm environment', 'Monitor closely'];
+                        break;
+                        
+                    case 'hyperthyroid':
+                        this.baseHeartRate = 240;
+                        this.heartRateVariability = 15;
+                        this.rhythmPattern = 'regular_fast';
+                        this.symptoms = ['Persistent tachycardia', 'Weight loss despite appetite', 'Hyperactivity'];
+                        this.recommendations = ['Immediate vet consultation', 'Blood work needed', 'Possible medication required'];
+                        break;
+                        
+                    case 'heart_disease':
+                        this.baseHeartRate = 160;
+                        this.heartRateVariability = 30;
+                        this.rhythmPattern = 'irregular';
+                        this.symptoms = ['Irregular heartbeat', 'Exercise intolerance', 'Possible murmur'];
+                        this.recommendations = ['URGENT: See veterinarian', 'Chest X-rays recommended', 'Restrict activity'];
+                        break;
+                }
+                
+                this.updateDisplay();
+            }
+            
+            toggleMonitoring() {
+                if (this.isMonitoring) {
+                    this.stopMonitoring();
+                } else {
+                    this.startMonitoring();
+                }
+            }
+            
+            startMonitoring() {
+                this.isMonitoring = true;
+                const duration = parseInt(document.getElementById('duration').value) * 1000;
+                
+                document.getElementById('monitorBtn').innerHTML = '<i class="fas fa-stop me-2"></i>Stop Monitoring';
+                document.getElementById('monitorBtn').className = 'btn btn-danger';
+                document.getElementById('monitorStatus').innerHTML = '🟢 Monitoring active...';
+                document.getElementById('catDisplay').classList.add('beating');
+                
+                // Start heartbeat animation
+                this.startHeartbeatAnimation();
+                
+                // Update monitoring data
+                this.monitoringInterval = setInterval(() => {
+                    this.updateHeartRate();
+                    this.updateDisplay();
+                    this.drawHeartbeatWave();
+                }, 50); // Faster refresh for smoother ECG
+                
+                // Auto-stop after duration
+                setTimeout(() => {
+                    if (this.isMonitoring) {
+                        this.stopMonitoring();
+                        this.generateDiagnosis();
+                    }
+                }, duration);
+            }
+            
+            stopMonitoring() {
+                this.isMonitoring = false;
+                
+                if (this.monitoringInterval) {
+                    clearInterval(this.monitoringInterval);
+                }
+                if (this.heartbeatInterval) {
+                    clearInterval(this.heartbeatInterval);
+                }
+                
+                document.getElementById('monitorBtn').innerHTML = '<i class="fas fa-play me-2"></i>Start Monitoring';
+                document.getElementById('monitorBtn').className = 'btn btn-primary';
+                document.getElementById('monitorStatus').innerHTML = '🔴 Monitoring stopped';
+                document.getElementById('catDisplay').classList.remove('beating');
+            }
+            
+            startHeartbeatAnimation() {
+                const bpm = this.heartRate;
+                const interval = 60000 / bpm; // ms per beat
+                
+                this.heartbeatInterval = setInterval(() => {
+                    if (!this.isMonitoring) return;
+                    
+                    const catDisplay = document.getElementById('catDisplay');
+                    catDisplay.style.color = '#ff6b6b';
+                    
+                    setTimeout(() => {
+                        catDisplay.style.color = '';
+                    }, 150);
+                }, interval);
+            }
+            
+            updateHeartRate() {
+                // Add realistic variability
+                const randomValues = crypto.getRandomValues(new Uint16Array(2));
+                const variation = (randomValues[0] / 65535 - 0.5) * 2 * this.heartRateVariability;
+                this.heartRate = Math.max(80, Math.min(300, this.baseHeartRate + variation));
+                
+                // Add rhythm irregularities
+                if (this.rhythmPattern === 'irregular') {
+                    if ((randomValues[1] / 65535) < 0.15) { // 15% chance of irregularity
+                        this.heartRate *= (randomValues[1] / 65535) < 0.08 ? 0.7 : 1.3; // Slower or faster beat
+                    }
+                }
+            }
+            
+            updateDisplay() {
+                document.getElementById('heartRate').textContent = Math.round(this.heartRate);
+                document.getElementById('heartRhythm').textContent = this.getRhythmDescription();
+                document.getElementById('heartVariability').textContent = Math.round(this.heartRateVariability) + '';
+                
+                // Update health status
+                const status = this.getHealthStatus();
+                const statusEl = document.getElementById('healthStatus');
+                const statusText = document.getElementById('statusText');
+                
+                statusEl.className = 'health-status ' + status.class;
+                statusText.innerHTML = status.text;
+            }
+            
+            getRhythmDescription() {
+                switch(this.rhythmPattern) {
+                    case 'regular': return 'Regular';
+                    case 'slightly_irregular': return 'Slightly Irregular';
+                    case 'regular_fast': return 'Regular (Fast)';
+                    case 'irregular': return 'Irregular';
+                    default: return 'Unknown';
+                }
+            }
+            
+            getHealthStatus() {
+                if (this.currentScenario === 'healthy') {
+                    return {
+                        class: 'status-healthy',
+                        text: '<i class="fas fa-check-circle me-2"></i>Healthy - Normal Parameters'
+                    };
+                } else if (this.currentScenario === 'stress') {
+                    return {
+                        class: 'status-warning',
+                        text: '<i class="fas fa-exclamation-triangle me-2"></i>Elevated Stress Response'
+                    };
+                } else if (this.currentScenario === 'hyperthyroid') {
+                    return {
+                        class: 'status-warning',
+                        text: '<i class="fas fa-thermometer-full me-2"></i>Possible Hyperthyroid'
+                    };
+                } else if (this.currentScenario === 'heart_disease') {
+                    return {
+                        class: 'status-critical',
+                        text: '<i class="fas fa-heart-broken me-2"></i>Cardiac Abnormality Detected'
+                    };
+                }
+            }
+            
+            drawGrid() {
+                // Draw ECG grid background
+                this.ctx.strokeStyle = '#003300';
+                this.ctx.lineWidth = 0.5;
+                
+                // Vertical grid lines
+                for (let x = 0; x < this.canvas.width; x += 20) {
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(x, 0);
+                    this.ctx.lineTo(x, this.canvas.height);
+                    this.ctx.stroke();
+                }
+                
+                // Horizontal grid lines
+                for (let y = 0; y < this.canvas.height; y += 20) {
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(0, y);
+                    this.ctx.lineTo(this.canvas.width, y);
+                    this.ctx.stroke();
+                }
+                
+                // Major grid lines (every 5th line)
+                this.ctx.strokeStyle = '#006600';
+                this.ctx.lineWidth = 1;
+                
+                for (let x = 0; x < this.canvas.width; x += 100) {
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(x, 0);
+                    this.ctx.lineTo(x, this.canvas.height);
+                    this.ctx.stroke();
+                }
+                
+                for (let y = 0; y < this.canvas.height; y += 100) {
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(0, y);
+                    this.ctx.lineTo(this.canvas.width, y);
+                    this.ctx.stroke();
+                }
+            }
+            
+            generateECGWaveform() {
+                const centerY = this.canvas.height / 2;
+                const currentTime = Date.now();
+                const bpm = this.heartRate;
+                const beatInterval = 60000 / bpm; // ms between beats
+                
+                // Get current medical parameters for this condition
+                const params = this.ecgParameters[this.currentScenario] || this.ecgParameters.healthy;
+                
+                // Check if it's time for next heartbeat
+                if (currentTime >= this.nextBeatTime) {
+                    this.beatPhase = 0;
+                    this.nextBeatTime = currentTime + beatInterval;
+                    
+                    // Add irregularity based on actual medical conditions
+                    if (this.rhythmPattern === 'irregular') {
+                        const randomValue = crypto.getRandomValues(new Uint32Array(1))[0] / 4294967295;
+                        if (randomValue < 0.15) {
+                            const irregularity = crypto.getRandomValues(new Uint32Array(1))[0] / 4294967295;
+                            this.nextBeatTime += (irregularity - 0.5) * beatInterval * 0.3;
+                        }
+                    }
+                }
+                
+                let y = centerY;
+                const totalPhases = params.prInterval + params.qrsWidth + params.qtInterval;
+                
+                // Generate medically accurate ECG waveform
+                if (this.beatPhase < totalPhases) {
+                    if (this.beatPhase < params.prInterval * 0.6) {
+                        // P wave (atrial depolarization) - data-driven amplitude
+                        const progress = this.beatPhase / (params.prInterval * 0.6);
+                        y = centerY - params.pWaveAmplitude * Math.sin(progress * Math.PI);
+                        
+                    } else if (this.beatPhase < params.prInterval) {
+                        // PR segment (baseline with ST deviation)
+                        y = centerY + params.stSegmentDeviation;
+                        
+                    } else if (this.beatPhase < params.prInterval + params.qrsWidth * 0.3) {
+                        // Q wave (small downward deflection)
+                        const progress = (this.beatPhase - params.prInterval) / (params.qrsWidth * 0.3);
+                        y = centerY + (params.qrsAmplitude * 0.25) * Math.sin(progress * Math.PI);
+                        
+                    } else if (this.beatPhase < params.prInterval + params.qrsWidth * 0.6) {
+                        // R wave (main upward spike) - strength based on heart condition
+                        const progress = (this.beatPhase - params.prInterval - params.qrsWidth * 0.3) / (params.qrsWidth * 0.3);
+                        const strengthMultiplier = this.calculateWaveStrength();
+                        y = centerY - params.qrsAmplitude * strengthMultiplier * Math.sin(progress * Math.PI);
+                        
+                    } else if (this.beatPhase < params.prInterval + params.qrsWidth) {
+                        // S wave (downward deflection)
+                        const progress = (this.beatPhase - params.prInterval - params.qrsWidth * 0.6) / (params.qrsWidth * 0.4);
+                        y = centerY + (params.qrsAmplitude * 0.4) * Math.sin(progress * Math.PI);
+                        
+                    } else if (this.beatPhase < params.prInterval + params.qrsWidth + params.qtInterval * 0.4) {
+                        // ST segment (baseline with potential elevation/depression)
+                        y = centerY + params.stSegmentDeviation;
+                        
+                    } else {
+                        // T wave (ventricular repolarization)
+                        const progress = (this.beatPhase - params.prInterval - params.qrsWidth - params.qtInterval * 0.4) / (params.qtInterval * 0.6);
+                        y = centerY - params.tWaveAmplitude * Math.sin(progress * Math.PI);
+                    }
+                    
+                    this.beatPhase++;
+                } else {
+                    // Baseline between beats with condition-specific noise
+                    const randomValue = crypto.getRandomValues(new Uint32Array(1))[0] / 4294967295;
+                    y = centerY + (randomValue - 0.5) * params.noiseLevel;
+                }
+                
+                return y;
+            }
+            
+            calculateWaveStrength() {
+                // Calculate wave strength based on actual heart condition data
+                let strength = 1.0;
+                
+                // Adjust strength based on heart rate (Starling's law)
+                const normalizedHR = this.heartRate / this.baseHeartRate;
+                strength *= (0.8 + normalizedHR * 0.4);
+                
+                // Condition-specific adjustments
+                switch(this.currentScenario) {
+                    case 'healthy':
+                        strength *= 1.0;
+                        break;
+                    case 'stress':
+                        strength *= 1.15; // Increased contractility
+                        break;
+                    case 'hyperthyroid':
+                        strength *= 1.25; // Hypercontractile state
+                        break;
+                    case 'heart_disease':
+                        strength *= 0.7; // Reduced contractility
+                        break;
+                }
+                
+                // Add variability based on heart rate variability
+                const randomValue = crypto.getRandomValues(new Uint32Array(1))[0] / 4294967295;
+                const variabilityFactor = 1 + (randomValue - 0.5) * (this.heartRateVariability / 100);
+                strength *= variabilityFactor;
+                
+                return Math.max(0.3, Math.min(1.8, strength));
+            }
+            
+            drawHeartbeatWave() {
+                // Clear canvas and redraw grid
+                this.ctx.fillStyle = '#000';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                this.drawGrid();
+                
+                // Generate new ECG point
+                const newY = this.generateECGWaveform();
+                
+                // Shift array left and add new point
+                for (let i = 0; i < this.ecgData.length - 1; i++) {
+                    this.ecgData[i] = this.ecgData[i + 1];
+                }
+                this.ecgData[this.ecgData.length - 1] = newY;
+                
+                // Draw the ECG waveform
+                this.ctx.strokeStyle = '#00ff00';
+                this.ctx.lineWidth = 2;
+                this.ctx.shadowColor = '#00ff00';
+                this.ctx.shadowBlur = 5;
+                
+                this.ctx.beginPath();
+                for (let x = 0; x < this.ecgData.length; x++) {
+                    if (x === 0) {
+                        this.ctx.moveTo(x, this.ecgData[x]);
+                    } else {
+                        this.ctx.lineTo(x, this.ecgData[x]);
+                    }
+                }
+                this.ctx.stroke();
+                
+                // Reset shadow
+                this.ctx.shadowBlur = 0;
+                
+                // Draw current reading indicator
+                this.ctx.fillStyle = '#00ff00';
+                this.ctx.beginPath();
+                this.ctx.arc(this.canvas.width - 1, this.ecgData[this.ecgData.length - 1], 3, 0, 2 * Math.PI);
+                this.ctx.fill();
+            }
+            
+            generateDiagnosis() {
+                let diagnosisHTML = '<h5><i class="fas fa-clipboard-check me-2"></i>Health Analysis Complete</h5>';
+                
+                // Heart rate analysis
+                if (this.baseHeartRate > 220) {
+                    diagnosisHTML += '<p><strong>⚠️ Tachycardia detected:</strong> Heart rate consistently above normal range (>220 BPM).</p>';
+                } else if (this.baseHeartRate < 120) {
+                    diagnosisHTML += '<p><strong>⚠️ Bradycardia detected:</strong> Heart rate below normal range (<120 BPM).</p>';
+                } else {
+                    diagnosisHTML += '<p><strong>✅ Heart rate:</strong> Within normal parameters (120-220 BPM).</p>';
+                }
+                
+                // Rhythm analysis
+                if (this.rhythmPattern === 'irregular') {
+                    diagnosisHTML += '<p><strong>🚨 Arrhythmia detected:</strong> Irregular heartbeat pattern observed.</p>';
+                } else {
+                    diagnosisHTML += '<p><strong>✅ Heart rhythm:</strong> Regular pattern maintained.</p>';
+                }
+                
+                // Variability analysis
+                if (this.heartRateVariability > 25) {
+                    diagnosisHTML += '<p><strong>⚠️ High variability:</strong> Excessive heart rate fluctuation may indicate stress or illness.</p>';
+                } else if (this.heartRateVariability < 5) {
+                    diagnosisHTML += '<p><strong>⚠️ Low variability:</strong> Rigid heart rate may indicate autonomic dysfunction.</p>';
+                } else {
+                    diagnosisHTML += '<p><strong>✅ Heart rate variability:</strong> Healthy adaptive response.</p>';
+                }
+                
+                document.getElementById('diagnosisContent').innerHTML = diagnosisHTML;
+                
+                // Display symptoms
+                let symptomsHTML = '<h6>Observed Symptoms:</h6>';
+                this.symptoms.forEach(symptom => {
+                    const isNormal = symptom.includes('Normal') || symptom.includes('Active') || symptom.includes('Regular');
+                    const className = isNormal ? 'symptom-normal' : 
+                                   (symptom.includes('Elevated') || symptom.includes('Possible') ? 'symptom-warning' : 'symptom-abnormal');
+                    symptomsHTML += `<span class="symptom-indicator ${className}">${symptom}</span>`;
+                });
+                document.getElementById('symptomsDisplay').innerHTML = symptomsHTML;
+                
+                // Display recommendations
+                let recommendationsHTML = '<h6>Recommendations:</h6><ul>';
+                this.recommendations.forEach(rec => {
+                    const isUrgent = rec.includes('URGENT') || rec.includes('Immediate');
+                    const icon = isUrgent ? '🚨' : (rec.includes('Monitor') ? '👁️' : '💡');
+                    recommendationsHTML += `<li><strong>${icon}</strong> ${rec}</li>`;
+                });
+                recommendationsHTML += '</ul>';
+                document.getElementById('recommendationsDisplay').innerHTML = recommendationsHTML;
+            }
+            
+            resetSimulation() {
+                this.stopMonitoring();
+                this.setScenario('healthy');
+                this.waveOffset = 0;
+                this.initializeCanvas();
+                
+                document.getElementById('diagnosisContent').innerHTML = '<p class="text-muted">Start monitoring to see health analysis...</p>';
+                document.getElementById('symptomsDisplay').innerHTML = '';
+                document.getElementById('recommendationsDisplay').innerHTML = '';
+                
+                this.generateCatProfile();
+            }
+        }
+        
+        // Initialize simulation
+        let catHealthSim;
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            catHealthSim = new CatHealthSimulator();
+        });
+        
+        // Global functions for HTML onclick handlers
+        function setScenario(scenario) {
+            catHealthSim.setScenario(scenario);
+        }
+        
+        function toggleMonitoring() {
+            catHealthSim.toggleMonitoring();
+        }
+        
+        function resetSimulation() {
+            catHealthSim.resetSimulation();
+        }
+        
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            if (catHealthSim) {
+                catHealthSim.initializeCanvas();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,3 +1,16 @@
+// Cryptographically secure random number generator utility
+function secureRandom() {
+    return crypto.getRandomValues(new Uint32Array(1))[0] / 4294967295;
+}
+
+function secureRandomInt(min, max) {
+    return Math.floor(secureRandom() * (max - min + 1)) + min;
+}
+
+function secureRandomFloat(min, max) {
+    return secureRandom() * (max - min) + min;
+}
+
 class AgentBasedSimulation {
     constructor() {
         this.canvas = document.getElementById('simulationCanvas');
@@ -163,10 +176,10 @@ class AgentBasedSimulation {
         // Create obstacles (walls, furniture)
         for (let i = 0; i < 8; i++) {
             this.obstacles.push({
-                x: Math.random() * (this.canvasWidth - 100) + 50,
-                y: Math.random() * (this.canvasHeight - 100) + 50,
-                width: 40 + Math.random() * 30,
-                height: 20 + Math.random() * 20
+                x: secureRandom() * (this.canvasWidth - 100) + 50,
+                y: secureRandom() * (this.canvasHeight - 100) + 50,
+                width: 40 + secureRandom() * 30,
+                height: 20 + secureRandom() * 20
             });
         }
         
@@ -174,8 +187,8 @@ class AgentBasedSimulation {
         for (let i = 0; i < this.agentCount; i++) {
             let x, y;
             do {
-                x = Math.random() * (this.canvasWidth - 100) + 50;
-                y = Math.random() * (this.canvasHeight - 100) + 50;
+                x = secureRandom() * (this.canvasWidth - 100) + 50;
+                y = secureRandom() * (this.canvasHeight - 100) + 50;
             } while (this.isPositionBlocked(x, y, 15));
             
             this.agents.push({
@@ -206,14 +219,14 @@ class AgentBasedSimulation {
         for (let i = 0; i < this.agentCount; i++) {
             this.agents.push({
                 id: i,
-                type: Math.random() < 0.5 ? 'buyer' : 'seller',
-                x: Math.random() * this.canvasWidth,
-                y: Math.random() * this.canvasHeight,
+                type: secureRandom() < 0.5 ? 'buyer' : 'seller',
+                x: secureRandom() * this.canvasWidth,
+                y: secureRandom() * this.canvasHeight,
                 vx: 0,
                 vy: 0,
                 size: 6,
-                wealth: 100 + Math.random() * 100,
-                strategy: Math.random() < 0.5 ? 'aggressive' : 'conservative',
+                wealth: 100 + secureRandom() * 100,
+                strategy: secureRandom() < 0.5 ? 'aggressive' : 'conservative',
                 speed: this.getSpeedMultiplier(),
                 trades: 0
             });
@@ -227,8 +240,8 @@ class AgentBasedSimulation {
         for (let i = 0; i < 15; i++) {
             this.resources.push({
                 type: 'food',
-                x: Math.random() * this.canvasWidth,
-                y: Math.random() * this.canvasHeight,
+                x: secureRandom() * this.canvasWidth,
+                y: secureRandom() * this.canvasHeight,
                 size: 4
             });
         }
@@ -241,8 +254,8 @@ class AgentBasedSimulation {
             this.agents.push({
                 id: i,
                 type: 'predator',
-                x: Math.random() * this.canvasWidth,
-                y: Math.random() * this.canvasHeight,
+                x: secureRandom() * this.canvasWidth,
+                y: secureRandom() * this.canvasHeight,
                 vx: 0,
                 vy: 0,
                 size: 10,
@@ -257,8 +270,8 @@ class AgentBasedSimulation {
             this.agents.push({
                 id: i + predatorCount,
                 type: 'prey',
-                x: Math.random() * this.canvasWidth,
-                y: Math.random() * this.canvasHeight,
+                x: secureRandom() * this.canvasWidth,
+                y: secureRandom() * this.canvasHeight,
                 vx: 0,
                 vy: 0,
                 size: 6,
@@ -275,8 +288,8 @@ class AgentBasedSimulation {
         // Create road obstacles
         for (let i = 0; i < 6; i++) {
             this.obstacles.push({
-                x: Math.random() * this.canvasWidth,
-                y: Math.random() * this.canvasHeight,
+                x: secureRandom() * this.canvasWidth,
+                y: secureRandom() * this.canvasHeight,
                 width: 30,
                 height: 15
             });
@@ -287,14 +300,14 @@ class AgentBasedSimulation {
             this.agents.push({
                 id: i,
                 type: 'car',
-                x: Math.random() * 50,
-                y: Math.random() * this.canvasHeight,
+                x: secureRandom() * 50,
+                y: secureRandom() * this.canvasHeight,
                 vx: 0,
                 vy: 0,
                 size: 8,
-                speed: this.getSpeedMultiplier() * (0.8 + Math.random() * 0.4),
-                destination: {x: this.canvasWidth - 30, y: Math.random() * this.canvasHeight},
-                behavior: Math.random() < 0.3 ? 'aggressive' : 'normal'
+                speed: this.getSpeedMultiplier() * (0.8 + secureRandom() * 0.4),
+                destination: {x: this.canvasWidth - 30, y: secureRandom() * this.canvasHeight},
+                behavior: secureRandom() < 0.3 ? 'aggressive' : 'normal'
             });
         }
     }
@@ -304,12 +317,12 @@ class AgentBasedSimulation {
         
         // Create agents with different influence levels
         for (let i = 0; i < this.agentCount; i++) {
-            const influence = Math.random();
+            const influence = secureRandom();
             this.agents.push({
                 id: i,
                 type: 'person',
-                x: Math.random() * this.canvasWidth,
-                y: Math.random() * this.canvasHeight,
+                x: secureRandom() * this.canvasWidth,
+                y: secureRandom() * this.canvasHeight,
                 vx: 0,
                 vy: 0,
                 size: 4 + influence * 8,
@@ -322,9 +335,9 @@ class AgentBasedSimulation {
         
         // Create connections between agents
         this.agents.forEach(agent => {
-            const connectionCount = Math.floor(Math.random() * 8) + 2;
+            const connectionCount = Math.floor(secureRandom() * 8) + 2;
             for (let i = 0; i < connectionCount; i++) {
-                const otherAgent = this.agents[Math.floor(Math.random() * this.agents.length)];
+                const otherAgent = this.agents[Math.floor(secureRandom() * this.agents.length)];
                 if (otherAgent.id !== agent.id && !agent.connections.includes(otherAgent.id)) {
                     agent.connections.push(otherAgent.id);
                 }
@@ -586,9 +599,9 @@ class AgentBasedSimulation {
                     let moveY = (dy / distance) * agent.speed * panicModifier.speed;
                     
                     // Add random movement based on panic level
-                    if (Math.random() < panicModifier.randomness) {
-                        moveX += (Math.random() - 0.5) * 4;
-                        moveY += (Math.random() - 0.5) * 4;
+                    if (secureRandom() < panicModifier.randomness) {
+                        moveX += (secureRandom() - 0.5) * 4;
+                        moveY += (secureRandom() - 0.5) * 4;
                     }
                     
                     agent.vx = moveX;
@@ -643,7 +656,7 @@ class AgentBasedSimulation {
                 this.agents.forEach(other => {
                     if (other.id !== agent.id && agent.type !== other.type) {
                         const dist = Math.sqrt((agent.x - other.x) ** 2 + (agent.y - other.y) ** 2);
-                        if (dist < 20 && Math.random() < volatility.tradeFreq) {
+                        if (dist < 20 && secureRandom() < volatility.tradeFreq) {
                             agent.trades = (agent.trades || 0) + 1;
                             other.trades = (other.trades || 0) + 1;
                             this.systemMetric++;
@@ -665,11 +678,11 @@ class AgentBasedSimulation {
         const foodConfig = foodSettings[foodLevel];
         
         // Spawn new food based on abundance level
-        if (Math.random() < foodConfig.spawnRate && this.resources.length < 20) {
+        if (secureRandom() < foodConfig.spawnRate && this.resources.length < 20) {
             this.resources.push({
                 type: 'food',
-                x: Math.random() * this.canvasWidth,
-                y: Math.random() * this.canvasHeight,
+                x: secureRandom() * this.canvasWidth,
+                y: secureRandom() * this.canvasHeight,
                 size: 4
             });
         }
@@ -803,9 +816,9 @@ class AgentBasedSimulation {
             } else {
                 this.systemMetric++;
                 // Reset to start
-                agent.x = Math.random() * 50;
-                agent.y = Math.random() * this.canvasHeight;
-                agent.destination = {x: this.canvasWidth - 30, y: Math.random() * this.canvasHeight};
+                agent.x = secureRandom() * 50;
+                agent.y = secureRandom() * this.canvasHeight;
+                agent.destination = {x: this.canvasWidth - 30, y: secureRandom() * this.canvasHeight};
             }
         });
     }
@@ -822,8 +835,8 @@ class AgentBasedSimulation {
         
         this.agents.forEach(agent => {
             // Random movement
-            agent.x += (Math.random() - 0.5) * agent.speed;
-            agent.y += (Math.random() - 0.5) * agent.speed;
+            agent.x += (secureRandom() - 0.5) * agent.speed;
+            agent.y += (secureRandom() - 0.5) * agent.speed;
             
             // Keep in bounds
             agent.x = Math.max(agent.size, Math.min(this.canvasWidth - agent.size, agent.x));
@@ -833,7 +846,7 @@ class AgentBasedSimulation {
             if (agent.informed) {
                 agent.connections.forEach(connId => {
                     const connected = this.agents.find(a => a.id === connId);
-                    if (connected && !connected.informed && Math.random() < agent.influence * contentConfig.spreadRate * contentConfig.reachMultiplier) {
+                    if (connected && !connected.informed && secureRandom() < agent.influence * contentConfig.spreadRate * contentConfig.reachMultiplier) {
                         connected.informed = true;
                         this.systemMetric++;
                     }

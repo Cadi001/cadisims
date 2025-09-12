@@ -38,7 +38,7 @@
 .simulation-icon {
     font-size: 3rem;
     margin-bottom: 20px;
-    color: #667eea;
+    color: #2a5298;
 }
 
 .simulation-card.active .simulation-icon {
@@ -78,7 +78,7 @@
 }
 
 .info-card-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
     color: white;
     border-radius: 15px 15px 0 0;
 }

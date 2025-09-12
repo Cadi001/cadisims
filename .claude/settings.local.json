@@ -5,7 +5,8 @@
       "Read(//c/Users/Ale/Downloads/**)",
       "Bash(find:*)",
       "Bash(node:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(sed:*)"
     ],
     "deny": [],
     "ask": []

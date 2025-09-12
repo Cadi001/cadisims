@@ -1,3 +1,8 @@
+// Cryptographically secure random number generator utility
+function secureRandom() {
+    return crypto.getRandomValues(new Uint32Array(1))[0] / 4294967295;
+}
+
 // Simulation JavaScript Functions
 
 // Helper function to scroll to top of page
@@ -34,8 +39,8 @@ function runPiEstimation() {
     results += "===================\n\n";
     
     for (let i = 0; i < darts; i++) {
-        const x = Math.random() * 2 - 1; // -1 to 1
-        const y = Math.random() * 2 - 1; // -1 to 1
+        const x = secureRandom() * 2 - 1; // -1 to 1
+        const y = secureRandom() * 2 - 1; // -1 to 1
         const distance = Math.sqrt(x * x + y * y);
         
         totalDarts++;
@@ -91,7 +96,7 @@ function runStockSimulation() {
     
     // Generate price path
     for (let day = 1; day <= days; day++) {
-        const randomChange = (Math.random() - 0.5) * 2 * volatility;
+        const randomChange = (secureRandom() - 0.5) * 2 * volatility;
         const newPrice = prices[day - 1] * (1 + randomChange);
         prices.push(Math.max(0.01, newPrice)); // Prevent negative prices
     }
@@ -172,7 +177,7 @@ function runDiceAnalysis() {
     for (let roll = 0; roll < numRolls; roll++) {
         let sum = 0;
         for (let die = 0; die < numDice; die++) {
-            sum += Math.floor(Math.random() * 6) + 1;
+            sum += Math.floor(secureRandom() * 6) + 1;
         }
         outcomes[sum - minSum]++;
     }
@@ -236,10 +241,10 @@ function runCoinStreaks() {
     for (let trial = 0; trial < numTrials; trial++) {
         let currentStreak = 1;
         let maxStreak = 1;
-        let lastFlip = Math.random() < 0.5 ? 'H' : 'T';
+        let lastFlip = secureRandom() < 0.5 ? 'H' : 'T';
         
         for (let flip = 1; flip < flipsPerTrial; flip++) {
-            const currentFlip = Math.random() < 0.5 ? 'H' : 'T';
+            const currentFlip = secureRandom() < 0.5 ? 'H' : 'T';
             
             if (currentFlip === lastFlip) {
                 currentStreak++;
@@ -359,8 +364,8 @@ function runPortfolioRisk() {
 function normalRandom() {
     // Box-Muller transformation for normal distribution
     let u = 0, v = 0;
-    while(u === 0) u = Math.random();
-    while(v === 0) v = Math.random();
+    while(u === 0) u = secureRandom();
+    while(v === 0) v = secureRandom();
     return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
 }
 
@@ -388,7 +393,7 @@ function runInsuranceClaims() {
     
     // Generate claims using Poisson process
     for (let policy = 0; policy < numPolicies; policy++) {
-        if (Math.random() < claimRate) {
+        if (secureRandom() < claimRate) {
             // Generate claim size using log-normal distribution
             const claimSize = Math.exp(normalRandom() * 0.8 + Math.log(avgClaimSize));
             actualClaims.push(Math.max(100, claimSize)); // Minimum $100 claim
@@ -555,7 +560,7 @@ function runCheckoutSimulation() {
 }
 
 function exponentialRandom(mean) {
-    return -mean * Math.log(Math.random());
+    return -mean * Math.log(secureRandom());
 }
 
 function runBankSimulation() {
@@ -771,7 +776,7 @@ function runERSimulation() {
         if (currentTime > simTime) break;
         
         if (event.type === 'arrival') {
-            const isCritical = Math.random() < criticalPercent;
+            const isCritical = secureRandom() < criticalPercent;
             const patient = {
                 arrivalTime: currentTime,
                 isCritical: isCritical
@@ -1003,7 +1008,7 @@ function runDemandSimulation() {
     let tableHTML = "<table class='table table-striped'><thead><tr><th>Day</th><th>Random Number</th><th>Demand</th><th>Cumulative</th></tr></thead><tbody>";
     
     for (let day = 1; day <= days; day++) {
-        const randomNum = Math.floor(Math.random() * 100);
+        const randomNum = Math.floor(secureRandom() * 100);
         let demand;
         
         if (randomNum <= 9) demand = 0;
@@ -1069,7 +1074,7 @@ function runRandomWalk() {
         const path = [0];
         
         for (let step = 0; step < steps; step++) {
-            position += Math.random() < 0.5 ? 1 : -1;
+            position += secureRandom() < 0.5 ? 1 : -1;
             path.push(position);
             maxDistance = Math.max(maxDistance, Math.abs(position));
         }
@@ -1099,7 +1104,7 @@ function runRandomWalk() {
     for (let trial = 0; trial < trials; trial++) {
         let position = 0;
         for (let step = 0; step < steps; step++) {
-            position += Math.random() < 0.5 ? 1 : -1;
+            position += secureRandom() < 0.5 ? 1 : -1;
         }
         allPositions.push(position);
     }
@@ -1150,7 +1155,7 @@ function runInventorySimulation() {
     
     for (let day = 1; day <= days; day++) {
         // Generate demand (0-5 units with different probabilities)
-        const randomNum = Math.random();
+        const randomNum = secureRandom();
         let demand;
         if (randomNum < 0.1) demand = 0;
         else if (randomNum < 0.3) demand = 1;
@@ -1233,7 +1238,7 @@ function runWeatherSimulation() {
     for (let day = 1; day <= days; day++) {
         weatherCounts[currentWeather]++;
         
-        const random = Math.random();
+        const random = secureRandom();
         let nextWeather = currentWeather;
         let cumulative = 0;
         
@@ -1262,7 +1267,7 @@ function runWeatherSimulation() {
     // Reset for streak calculation
     currentWeather = initialWeather;
     for (let day = 1; day < days; day++) {
-        const random = Math.random();
+        const random = secureRandom();
         let nextWeather = currentWeather;
         let cumulative = 0;
         
@@ -1315,12 +1320,12 @@ function runHandQueue() {
     for (let customer = 1; customer <= numCustomers; customer++) {
         // Generate interarrival time (1-3 minutes)
         if (customer > 1) {
-            const interarrival = Math.floor(Math.random() * 3) + 1;
+            const interarrival = Math.floor(secureRandom() * 3) + 1;
             currentTime += interarrival;
         }
         
         // Generate service time (2-6 minutes)
-        const serviceTime = Math.floor(Math.random() * 5) + 2;
+        const serviceTime = Math.floor(secureRandom() * 5) + 2;
         totalServiceTime += serviceTime;
         
         // Calculate service start time
@@ -1377,11 +1382,11 @@ function runExcelCheckout() {
     
     for (let customer = 1; customer <= numCustomers; customer++) {
         // Excel-style random number generation
-        const rand1 = Math.random();
+        const rand1 = secureRandom();
         const interarrival = customer === 1 ? 0 : -Math.log(rand1) * 5;
         currentTime += interarrival;
         
-        const rand2 = Math.random();
+        const rand2 = secureRandom();
         const serviceTime = -Math.log(rand2) * 4;
         
         const serviceStart = Math.max(currentTime, serverBusyUntil);
@@ -1449,7 +1454,7 @@ function runSalesForecast() {
     for (let month = 1; month <= months; month++) {
         const trend = 0.02 * month; // 2% monthly growth
         const seasonality = 0.2 * Math.sin(2 * Math.PI * month / 12); // 20% seasonal variation
-        const random = (Math.random() - 0.5) * 0.3; // ±15% random variation
+        const random = (secureRandom() - 0.5) * 0.3; // ±15% random variation
         
         const sales = baseSales * (1 + trend + seasonality + random);
         salesData.push(sales);
@@ -1602,7 +1607,7 @@ function runProjectRisk() {
 }
 
 function triangularRandom(min, mode, max) {
-    const u = Math.random();
+    const u = secureRandom();
     const c = (mode - min) / (max - min);
     
     if (u < c) {
@@ -1717,7 +1722,7 @@ function runQualityControl() {
         // Binomial distribution simulation
         let defects = 0;
         for (let unit = 0; unit < batchSize; unit++) {
-            if (Math.random() < defectRate) {
+            if (secureRandom() < defectRate) {
                 defects++;
             }
         }
@@ -1817,7 +1822,7 @@ function runTransportationSimulation() {
     
     for (let stop = 1; stop <= numStops; stop++) {
         let currentTime = 0;
-        let nextBusTime = Math.random() * headway; // Random start offset
+        let nextBusTime = secureRandom() * headway; // Random start offset
         
         while (currentTime < simTime) {
             // Generate passenger arrival
@@ -1904,7 +1909,7 @@ function runSupplyChain() {
         
         // Generate consumer demand at retailers
         for (let r = 0; r < numRetailers; r++) {
-            const demand = Math.floor(Math.random() * 20) + 5; // 5-24 units per day
+            const demand = Math.floor(secureRandom() * 20) + 5; // 5-24 units per day
             
             if (retailerInventory[r] >= demand) {
                 retailerInventory[r] -= demand;
@@ -1953,7 +1958,7 @@ function runSupplyChain() {
         
         // Supplier operations
         for (let s = 0; s < numSuppliers; s++) {
-            supplierInventory[s] += Math.floor(Math.random() * 200) + 100; // Daily production
+            supplierInventory[s] += Math.floor(secureRandom() * 200) + 100; // Daily production
             dayCost += supplierInventory[s] * rawMaterialCost * holdingCostRate;
         }
         
@@ -2020,7 +2025,7 @@ function runSocialServices() {
         if (currentTime > simTime) break;
         
         if (event.type === 'arrival') {
-            const isComplex = Math.random() < complexPercent;
+            const isComplex = secureRandom() < complexPercent;
             const client = {
                 arrivalTime: currentTime,
                 isComplex: isComplex,
@@ -2158,7 +2163,7 @@ function runEcommerceSimulation() {
             conversionRate * (1 - hourlyOverloads / peakConcurrent * 0.7) : conversionRate;
         
         const sales = Math.floor(hourlyVisitors * effectiveConversionRate);
-        const revenue = sales * avgOrderValue * (0.8 + Math.random() * 0.4); // ±20% variation
+        const revenue = sales * avgOrderValue * (0.8 + secureRandom() * 0.4); // ±20% variation
         
         totalSales += sales;
         totalRevenue += revenue;
@@ -2240,11 +2245,11 @@ function runHealthcareSystem() {
         
         // Scheduled appointments
         for (let clinic = 0; clinic < numClinics; clinic++) {
-            const scheduledPatients = clinicCapacity + Math.floor(Math.random() * 10 - 5); // ±5 variation
+            const scheduledPatients = clinicCapacity + Math.floor(secureRandom() * 10 - 5); // ±5 variation
             dayPatients += scheduledPatients;
             
             // Average wait time per clinic (varies by efficiency)
-            const avgWaitTime = 15 + Math.random() * 20; // 15-35 minutes
+            const avgWaitTime = 15 + secureRandom() * 20; // 15-35 minutes
             dayWaitTime += scheduledPatients * avgWaitTime;
             
             // Generate referrals (20% of patients)
@@ -2252,12 +2257,12 @@ function runHealthcareSystem() {
             dayReferrals += clinicReferrals;
             
             // Missed appointments (5-10%)
-            const noShows = Math.floor(scheduledPatients * (0.05 + Math.random() * 0.05));
+            const noShows = Math.floor(scheduledPatients * (0.05 + secureRandom() * 0.05));
             dayMissed += noShows;
         }
         
         // Emergency visits (unscheduled)
-        dayEmergency = Math.floor(Math.random() * dailyAppointments * 0.1); // 10% emergency rate
+        dayEmergency = Math.floor(secureRandom() * dailyAppointments * 0.1); // 10% emergency rate
         dayPatients += dayEmergency;
         dayWaitTime += dayEmergency * 45; // Emergencies wait longer initially
         
@@ -2355,7 +2360,7 @@ function runAirportSecurity() {
     
     // Simulate each day
     for (let day = 1; day <= days; day++) {
-        let dailyPassengers = Math.round(passengers * (0.8 + Math.random() * 0.4)); // 80-120% variation
+        let dailyPassengers = Math.round(passengers * (0.8 + secureRandom() * 0.4)); // 80-120% variation
         totalPassengers += dailyPassengers;
         
         // Peak hours simulation (6-9 AM, 4-7 PM)
@@ -2376,7 +2381,7 @@ function runAirportSecurity() {
         
         // Flight delays (if wait time > 45 minutes)
         if (peakWaitTime > 45) {
-            delayedFlights += Math.round(Math.random() * 5 + 1);
+            delayedFlights += Math.round(secureRandom() * 5 + 1);
             peakHourDelays++;
         }
     }
