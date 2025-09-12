@@ -425,26 +425,26 @@ class WolfSheepPredationSimulation {
 
         // Render sheep
         this.sheep.forEach(sheep => {
-            const sheepElement = $('<div class="agent sheep"></div>');
+            const sheepElement = $('<div class="agent sheep"><i class="fas fa-sheep"></i></div>');
             if (this.params.showEnergy) {
-                sheepElement.text(sheep.energy);
+                sheepElement.append(`<div style="font-size: 8px; color: black; text-shadow: 1px 1px 1px white; position: absolute; top: -2px; right: -2px; background: rgba(255,255,255,0.8); border-radius: 2px; padding: 1px 2px;">${sheep.energy}</div>`);
             }
             sheepElement.css({
-                left: (sheep.x * cellWidth + cellWidth/2 - 6) + 'px',
-                top: (sheep.y * cellHeight + cellHeight/2 - 6) + 'px'
+                left: (sheep.x * cellWidth + cellWidth/2 - 8) + 'px',
+                top: (sheep.y * cellHeight + cellHeight/2 - 8) + 'px'
             });
             canvas.append(sheepElement);
         });
 
         // Render wolves
         this.wolves.forEach(wolf => {
-            const wolfElement = $('<div class="agent wolf"></div>');
+            const wolfElement = $('<div class="agent wolf"><i class="fas fa-wolf"></i></div>');
             if (this.params.showEnergy) {
-                wolfElement.text(wolf.energy);
+                wolfElement.append(`<div style="font-size: 8px; color: white; text-shadow: 1px 1px 1px black; position: absolute; top: -2px; right: -2px; background: rgba(0,0,0,0.8); border-radius: 2px; padding: 1px 2px;">${wolf.energy}</div>`);
             }
             wolfElement.css({
-                left: (wolf.x * cellWidth + cellWidth/2 - 6) + 'px',
-                top: (wolf.y * cellHeight + cellHeight/2 - 6) + 'px'
+                left: (wolf.x * cellWidth + cellWidth/2 - 8) + 'px',
+                top: (wolf.y * cellHeight + cellHeight/2 - 8) + 'px'
             });
             canvas.append(wolfElement);
         });

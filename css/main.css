@@ -1,6 +1,6 @@
 /* Main Layout Styles */
 body {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
     min-height: 100vh;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
@@ -48,6 +48,38 @@ body {
     border-radius: 25px;
     font-weight: bold;
     margin: 5px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.btn-simulation:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    border: none;
+    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #0056b3, #004085);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 123, 255, 0.4);
+}
+
+.btn-outline-light {
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.btn-outline-light:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2);
 }
 
 .form-range {
@@ -78,8 +110,81 @@ body {
     opacity: 0.9;
 }
 
+/* Modal and Dialog Styles */
+.modal-content {
+    background: rgba(255, 255, 255, 0.98);
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 15px 15px 0 0;
+}
+
+.modal-body {
+    color: #333;
+    font-weight: 500;
+    line-height: 1.6;
+}
+
+.modal-footer {
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 0 0 15px 15px;
+}
+
+.offcanvas, .bottom-sheet {
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(20px);
+}
+
+.offcanvas-body, .bottom-sheet-body {
+    color: #333 !important;
+    font-weight: 500;
+    text-shadow: none;
+}
+
+.offcanvas-header, .bottom-sheet-header {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.text-muted {
+    color: #666 !important;
+}
+
+/* Educational Resource Button Styles */
+.btn-light {
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.btn-light:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    border-color: currentColor;
+}
+
 /* Footer */
 footer {
     background: rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.8);
+    color: white;
+}
+
+footer p, footer small, footer a, footer .text-muted {
+    color: white !important;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+footer .text-muted {
+    color: #e9ecef !important;
+}
+
+footer a:hover {
+    color: #87ceeb !important;
+    text-decoration: underline;
+}
+
+footer .text-decoration-none {
+    color: #87ceeb !important;
 }

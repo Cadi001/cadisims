@@ -16,7 +16,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             z-index: 9999;
             display: none;
             color: white;
@@ -43,15 +43,36 @@
             z-index: 10;
         }
         
-        .slide h1, .slide h2 {
+        .slide h1 {
+            font-size: 4rem;
+            margin-bottom: 40px;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.4);
+            font-weight: bold;
+        }
+        
+        .slide h2 {
+            font-size: 3rem;
             margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            font-weight: bold;
+        }
+        
+        .slide h3 {
+            font-size: 2.5rem;
+            margin-bottom: 25px;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
         
         .slide p, .slide li {
-            font-size: 1.2rem;
+            font-size: 1.8rem;
             line-height: 1.6;
-            max-width: 80%;
+            max-width: 85%;
+            margin-bottom: 20px;
+        }
+        
+        .slide .btn {
+            font-size: 1.5rem;
+            padding: 15px 30px;
         }
         
         .slide-number {
@@ -579,6 +600,171 @@
             </div>
         </div>
 
+        <!-- Randomness in Simulation Section -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <h2><i class="fas fa-dice me-3"></i>The Power of Randomness in Simulation</h2>
+            </div>
+            <div class="topic-content">
+                <div class="simple-explanation">
+                    <h4>🎲 Why Random Numbers?</h4>
+                    <p><strong>The world isn't made of constants!</strong> Real life is full of uncertainty - traffic patterns vary, people make different choices, weather changes unpredictably.</p>
+                </div>
+
+                <div class="vs-comparison">
+                    <div class="vs-left">
+                        <h5>🎯 True Random Numbers</h5>
+                        <p><strong>From Physical Sources</strong></p>
+                        <ul>
+                            <li>Coin flips, dice rolls</li>
+                            <li>Radioactive decay</li>
+                            <li>Electronic noise</li>
+                            <li>RAND Corporation tables (1955)</li>
+                        </ul>
+                        <div class="real-world-box">
+                            <p><strong>Historical Note:</strong> The famous RAND table used an electronic roulette wheel attached to a computer, carefully filtered and tested!</p>
+                        </div>
+                    </div>
+                    <div class="vs-vs">VS</div>
+                    <div class="vs-right">
+                        <h5>💻 Pseudorandom Numbers</h5>
+                        <p><strong>From Algorithms</strong></p>
+                        <ul>
+                            <li>✅ Fast generation</li>
+                            <li>✅ Reproducible results</li>
+                            <li>❌ Eventually repeat (periodicity)</li>
+                            <li>❌ Predictable with seed</li>
+                        </ul>
+                        <div class="real-world-box">
+                            <p><strong>Fun Fact:</strong> Even Excel's RAND() function had notorious problems with randomness quality!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="classification-grid">
+                    <div class="classification-item">
+                        <h4>🏗️ Middle-Square Method (von Neumann, 1946)</h4>
+                        <div class="example-box">
+                            <p><strong>Algorithm:</strong></p>
+                            <ol>
+                                <li>Start with seed: <strong>1111</strong></li>
+                                <li>Square it: 1111² = <strong>1234321</strong></li>
+                                <li>Pad with zero: <strong>01234321</strong></li>
+                                <li>Extract middle: <strong>2343</strong></li>
+                                <li>Repeat with 2343...</li>
+                            </ol>
+                            <p><em>Problem:</em> Can get stuck in loops (like 0000 → 0000...)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Monte Carlo Methods Section -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <h2><i class="fas fa-chart-bar me-3"></i>Monte Carlo Methods: When Random Solves Everything</h2>
+            </div>
+            <div class="topic-content">
+                <div class="simple-explanation">
+                    <h4>🎰 Why "Monte Carlo"?</h4>
+                    <p><strong>Secret code name from the Manhattan Project!</strong> Scientists needed a way to solve complex physics problems using randomness.</p>
+                </div>
+
+                <div class="vs-comparison">
+                    <div class="vs-left">
+                        <h5>🔬 Regular Simulation</h5>
+                        <p><strong>Models Real Systems</strong></p>
+                        <ul>
+                            <li>Represents actual processes</li>
+                            <li>Usually includes time</li>
+                            <li>Example: Flight simulator</li>
+                        </ul>
+                    </div>
+                    <div class="vs-vs">VS</div>
+                    <div class="vs-right">
+                        <h5>🎲 Monte Carlo Method</h5>
+                        <p><strong>Uses Randomness to Solve Problems</strong></p>
+                        <ul>
+                            <li>Solves mathematical problems</li>
+                            <li>Uses repeated random sampling</li>
+                            <li>Example: Estimating π with darts</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="benefits-grid">
+                    <div class="benefit-card">
+                        <i class="fas fa-coins"></i>
+                        <h4>Monte Carlo Simulation Example</h4>
+                        <p>Flip 1000 coins digitally to study probability - combines both randomness AND multiple trials</p>
+                    </div>
+                    <div class="benefit-card">
+                        <i class="fas fa-calculator"></i>
+                        <h4>Pure Monte Carlo Method</h4>
+                        <p>Throw random darts at a circle to calculate π - uses randomness to solve a deterministic problem</p>
+                    </div>
+                    <div class="benefit-card">
+                        <i class="fas fa-chart-line"></i>
+                        <h4>Real Applications</h4>
+                        <p>Stock market risk, insurance claims, drug discovery, climate modeling, financial derivatives</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Documentation and Best Practices Section -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <h2><i class="fas fa-file-alt me-3"></i>Professional Simulation Documentation</h2>
+            </div>
+            <div class="topic-content">
+                <div class="simple-explanation">
+                    <h4>📚 Why Document Everything?</h4>
+                    <p><strong>So others can build on your work instead of starting from scratch!</strong> Good documentation enables peer review, replication, and future improvements.</p>
+                </div>
+
+                <div class="simulation-types">
+                    <div class="sim-type-card">
+                        <div class="sim-icon">📊</div>
+                        <h4>Project Information</h4>
+                        <div class="sim-simple">The big picture context</div>
+                        <div class="sim-detailed">Title, organization, objectives, funding, duration, key contacts</div>
+                        <div class="sim-uses"><strong>Why:</strong> Helps others understand the scope and purpose</div>
+                    </div>
+
+                    <div class="sim-type-card">
+                        <div class="sim-icon">🔧</div>
+                        <h4>Model Development</h4>
+                        <div class="sim-simple">How the model was built</div>
+                        <div class="sim-detailed">Methodology, assumptions, data sources, validation approach</div>
+                        <div class="sim-uses"><strong>Why:</strong> Enables others to verify and improve the model</div>
+                    </div>
+
+                    <div class="sim-type-card">
+                        <div class="sim-icon">⚡</div>
+                        <h4>Simulation Results</h4>
+                        <div class="sim-simple">What you discovered</div>
+                        <div class="sim-detailed">Experimental design, raw data, analysis, run times, costs</div>
+                        <div class="sim-uses"><strong>Why:</strong> Shows the value and reliability of findings</div>
+                    </div>
+
+                    <div class="sim-type-card">
+                        <div class="sim-icon">💡</div>
+                        <h4>Discussion & Conclusions</h4>
+                        <div class="sim-simple">What it all means</div>
+                        <div class="sim-detailed">Interpretation, limitations, future work, practical implications</div>
+                        <div class="sim-uses"><strong>Why:</strong> Helps decision-makers apply the results</div>
+                    </div>
+                </div>
+
+                <div class="real-world-box">
+                    <h5>🏛️ Professional Standard</h5>
+                    <p><strong>Think of it like a lab notebook:</strong> Every assumption, every data source, every decision should be traceable. This isn't just good practice - it's often required for regulatory approval, academic publication, or business critical decisions.</p>
+                </div>
+            </div>
+        </div>
+
         <!-- Key Takeaways Section -->
         <div class="topic-section">
             <div class="topic-header">
@@ -587,24 +773,24 @@
             <div class="topic-content">
                 <div class="benefits-grid">
                     <div class="benefit-card">
-                        <i class="fas fa-copy"></i>
-                        <h4>Models are Simplified Copies</h4>
-                        <p>All models are simplified representations of reality - they're not the real thing, just useful copies</p>
+                        <i class="fas fa-dice"></i>
+                        <h4>Randomness Captures Reality</h4>
+                        <p>We use random numbers to model the unpredictable complexity of real-world systems</p>
                     </div>
                     <div class="benefit-card">
-                        <i class="fas fa-flask"></i>
-                        <h4>Simulation = Model + Experiments</h4>
-                        <p>Simulation is a special type of model where we run experiments to learn something</p>
+                        <i class="fas fa-chart-line"></i>
+                        <h4>Monte Carlo Solves Hard Problems</h4>
+                        <p>When math gets too complex, random sampling can give us the answers we need</p>
                     </div>
                     <div class="benefit-card">
-                        <i class="fas fa-clock"></i>
-                        <h4>DES is Dynamic, Random, and Step-by-Step</h4>
-                        <p>Discrete-Event Simulation models things that change over time in measurable steps with some randomness</p>
+                        <i class="fas fa-file-alt"></i>
+                        <h4>Documentation Enables Science</h4>
+                        <p>Proper documentation turns your simulation into a tool others can verify, use, and improve</p>
                     </div>
                 </div>
 
                 <div class="try-it-box">
-                    <p><strong>🎯 Remember:</strong> Simulation is like having a safe sandbox where you can test ideas, make mistakes, and learn - all without real-world consequences!</p>
+                    <p><strong>🎯 Professional Insight:</strong> The best simulations combine solid theory, quality random numbers, and thorough documentation. Master these three pillars, and you'll build simulations that make real impact!</p>
                 </div>
             </div>
         </div>
@@ -1056,6 +1242,30 @@
                 {
                     type: 'interactive_demo',
                     content: {
+                        title: 'True vs Pseudorandom Numbers',
+                        text: 'Compare different random number generation methods. See the difference in quality!',
+                        demoId: 'randomnessDemo'
+                    }
+                },
+                {
+                    type: 'interactive_demo',
+                    content: {
+                        title: 'Middle-Square Method (von Neumann 1946)',
+                        text: 'Experience the first pseudorandom number generator. Watch it work step by step!',
+                        demoId: 'middleSquareDemo'
+                    }
+                },
+                {
+                    type: 'interactive_demo',
+                    content: {
+                        title: 'Monte Carlo vs Regular Simulation',
+                        text: 'Understand the difference with side-by-side examples. See when to use each!',
+                        demoId: 'monteCarloVsSimDemo'
+                    }
+                },
+                {
+                    type: 'interactive_demo',
+                    content: {
                         title: 'Why Do We Simulate? - Real Example',
                         text: 'Here\'s a traffic light simulation. See how changing timing affects traffic flow!',
                         demoId: 'trafficDemo'
@@ -1080,25 +1290,17 @@
                 {
                     type: 'interactive_demo',
                     content: {
-                        title: 'Types of Models - Interactive Examples',
-                        text: 'Explore different model types through interactive demonstrations!',
-                        demoId: 'modelTypesDemo'
-                    }
-                },
-                {
-                    type: 'interactive_demo',
-                    content: {
-                        title: 'Discrete-Event Simulation in Action',
-                        text: 'Watch customers flow through a service system. Adjust parameters and see results!',
-                        demoId: 'desDemo'
-                    }
-                },
-                {
-                    type: 'interactive_demo',
-                    content: {
                         title: 'Monte Carlo Method Demo',
                         text: 'Estimate π by throwing random darts at a circle. See probability in action!',
                         demoId: 'monteCarloDemo'
+                    }
+                },
+                {
+                    type: 'interactive_demo',
+                    content: {
+                        title: 'Documentation Best Practices',
+                        text: 'Learn what makes simulation documentation professional and replicable!',
+                        demoId: 'documentationDemo'
                     }
                 },
                 {
@@ -1120,32 +1322,24 @@
                 {
                     type: 'interactive_demo',
                     content: {
-                        title: 'Simulation Process Walkthrough',
-                        text: 'Follow a complete simulation project from start to finish with guided examples!',
-                        demoId: 'processDemo'
+                        title: 'Professional Simulation Workflow',
+                        text: 'Follow the complete process from problem definition to results documentation!',
+                        demoId: 'workflowDemo'
                     }
                 },
                 {
                     type: 'interactive_demo',
                     content: {
-                        title: 'Real-World Applications Showcase',
-                        text: 'Explore how simulation is used in various industries. Click to see examples!',
-                        demoId: 'applicationsDemo'
-                    }
-                },
-                {
-                    type: 'interactive_demo',
-                    content: {
-                        title: 'Model Validation & Verification',
-                        text: 'Learn how to test if your model is working correctly with interactive tests!',
-                        demoId: 'validationDemo'
+                        title: 'Random Number Quality Testing',
+                        text: 'Learn how to test if your random numbers are truly random. Run statistical tests!',
+                        demoId: 'randomTestDemo'
                     }
                 },
                 {
                     type: 'quiz_start',
                     content: {
                         title: 'Ready for the Quiz?',
-                        text: 'Test your understanding with 5 random questions from our pool of 30!'
+                        text: 'Test your understanding with 5 random questions from our pool of 50!'
                     }
                 }
             ];
@@ -1291,6 +1485,24 @@
                 case 'validationDemo':
                     initValidationDemo(container);
                     break;
+                case 'randomnessDemo':
+                    initRandomnessDemo(container);
+                    break;
+                case 'middleSquareDemo':
+                    initMiddleSquareDemo(container);
+                    break;
+                case 'monteCarloVsSimDemo':
+                    initMonteCarloVsSimDemo(container);
+                    break;
+                case 'documentationDemo':
+                    initDocumentationDemo(container);
+                    break;
+                case 'workflowDemo':
+                    initWorkflowDemo(container);
+                    break;
+                case 'randomTestDemo':
+                    initRandomTestDemo(container);
+                    break;
                 default:
                     container.innerHTML = '<p>Demo coming soon...</p>';
             }
@@ -1428,26 +1640,51 @@
         let demoIntervals = {};
         
         function flipCoin(containerId) {
-            const result = Math.random() < 0.5 ? 'heads' : 'tails';
-            const emoji = result === 'heads' ? '👑' : '🪙';
-            document.getElementById(containerId + '_result').textContent = emoji + ' ' + result.toUpperCase();
+            const resultEl = document.getElementById(containerId + '_result');
             
-            if (!coinStats[containerId]) coinStats[containerId] = {heads: 0, tails: 0};
-            coinStats[containerId][result]++;
+            // Animation: spinning coin
+            resultEl.innerHTML = '🌀 <em>Flipping...</em>';
+            resultEl.style.transform = 'scale(1.2)';
             
-            updateCoinStats(containerId);
+            setTimeout(() => {
+                // Truly random result
+                const randomValue = crypto.getRandomValues(new Uint32Array(1))[0];
+                const result = (randomValue % 2 === 0) ? 'heads' : 'tails';
+                const emoji = result === 'heads' ? '👑' : '🪙';
+                
+                resultEl.innerHTML = `${emoji} <strong>${result.toUpperCase()}</strong>`;
+                resultEl.style.transform = 'scale(1)';
+                
+                if (!coinStats[containerId]) coinStats[containerId] = {heads: 0, tails: 0};
+                coinStats[containerId][result]++;
+                
+                updateCoinStats(containerId);
+            }, 800);
         }
         
         function flip100Coins(containerId) {
             if (!coinStats[containerId]) coinStats[containerId] = {heads: 0, tails: 0};
             
-            for (let i = 0; i < 100; i++) {
-                const result = Math.random() < 0.5 ? 'heads' : 'tails';
-                coinStats[containerId][result]++;
-            }
+            const resultEl = document.getElementById(containerId + '_result');
+            let flipsProcessed = 0;
             
-            document.getElementById(containerId + '_result').textContent = '🎲 Flipped 100 coins!';
-            updateCoinStats(containerId);
+            const flipInterval = setInterval(() => {
+                // Process 5 flips at a time for animation
+                for (let j = 0; j < 5 && flipsProcessed < 100; j++) {
+                    const randomValue = crypto.getRandomValues(new Uint32Array(1))[0];
+                    const result = (randomValue % 2 === 0) ? 'heads' : 'tails';
+                    coinStats[containerId][result]++;
+                    flipsProcessed++;
+                }
+                
+                resultEl.innerHTML = `🎲 <em>Flipping... ${flipsProcessed}/100</em>`;
+                updateCoinStats(containerId);
+                
+                if (flipsProcessed >= 100) {
+                    clearInterval(flipInterval);
+                    resultEl.innerHTML = '🎉 <strong>Flipped 100 coins!</strong>';
+                }
+            }, 50);
         }
         
         function updateCoinStats(containerId) {
@@ -1461,6 +1698,7 @@
             const duration = parseInt(document.getElementById(containerId + '_timer').value) * 1000;
             let isGreen = false;
             let carCount = 3;
+            let cycles = 0;
             
             const interval = setInterval(() => {
                 isGreen = !isGreen;
@@ -1468,20 +1706,34 @@
                 const carsEl = document.getElementById(containerId + '_cars');
                 const countEl = document.getElementById(containerId + '_count');
                 
+                // Smooth light transition
+                light.style.transition = 'background 0.5s ease';
+                
                 if (isGreen) {
-                    light.style.background = 'green';
-                    carCount = Math.max(0, carCount - 1);
+                    light.style.background = '#28a745';
+                    // Random number of cars served (1-3)
+                    const randomValues = crypto.getRandomValues(new Uint8Array(1));
+                    const carsServed = Math.min(carCount, (randomValues[0] % 3) + 1);
+                    carCount = Math.max(0, carCount - carsServed);
                 } else {
-                    light.style.background = 'red';
-                    carCount += Math.floor(Math.random() * 3) + 1;
+                    light.style.background = '#dc3545';
+                    // Random number of cars arriving (0-4)
+                    const randomValues = crypto.getRandomValues(new Uint8Array(1));
+                    const newCars = (randomValues[0] % 5);
+                    carCount += newCars;
                 }
                 
-                carsEl.textContent = '🚗'.repeat(Math.min(carCount, 10));
+                // Animate car display
+                const carDisplay = '🚗'.repeat(Math.min(carCount, 15)) + (carCount > 15 ? '...' : '');
+                carsEl.style.transition = 'all 0.3s ease';
+                carsEl.textContent = carDisplay;
                 countEl.textContent = carCount;
+                
+                cycles++;
+                if (cycles >= 20) clearInterval(interval); // Stop after 20 cycles
             }, duration);
             
             demoIntervals[containerId] = interval;
-            setTimeout(() => clearInterval(interval), 30000); // Stop after 30 seconds
         }
         
         function updateTrafficTiming(containerId) {
@@ -1531,28 +1783,55 @@
             const ctx = canvas.getContext('2d');
             
             if (!canvas.dataset.initialized) {
-                // Initialize canvas
-                ctx.fillStyle = '#f0f0f0';
+                // Initialize canvas with better styling
+                ctx.fillStyle = '#f8f9fa';
                 ctx.fillRect(0, 0, 300, 300);
-                ctx.strokeStyle = '#000';
+                ctx.strokeStyle = '#212529';
+                ctx.lineWidth = 2;
                 ctx.strokeRect(0, 0, 300, 300);
+                
+                // Draw circle
                 ctx.beginPath();
                 ctx.arc(150, 150, 150, 0, 2 * Math.PI);
+                ctx.strokeStyle = '#007bff';
+                ctx.lineWidth = 3;
                 ctx.stroke();
+                
+                // Draw crosshairs
+                ctx.strokeStyle = '#6c757d';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(0, 150); ctx.lineTo(300, 150);
+                ctx.moveTo(150, 0); ctx.lineTo(150, 300);
+                ctx.stroke();
+                
                 canvas.dataset.initialized = 'true';
                 canvas.dataset.inside = '0';
                 canvas.dataset.total = '0';
             }
             
-            const x = Math.random() * 300;
-            const y = Math.random() * 300;
+            // Use crypto for truly random coordinates
+            const randomValues = crypto.getRandomValues(new Uint32Array(2));
+            const x = (randomValues[0] / (2**32)) * 300;
+            const y = (randomValues[1] / (2**32)) * 300;
             const distance = Math.sqrt((x - 150) ** 2 + (y - 150) ** 2);
             const inside = distance <= 150;
             
+            // Animate dart throw
             ctx.fillStyle = inside ? '#28a745' : '#dc3545';
             ctx.beginPath();
-            ctx.arc(x, y, 2, 0, 2 * Math.PI);
+            ctx.arc(x, y, 3, 0, 2 * Math.PI);
             ctx.fill();
+            
+            // Add dart trail effect
+            ctx.strokeStyle = inside ? '#28a745' : '#dc3545';
+            ctx.lineWidth = 1;
+            ctx.globalAlpha = 0.3;
+            ctx.beginPath();
+            ctx.moveTo(x-10, y-10);
+            ctx.lineTo(x, y);
+            ctx.stroke();
+            ctx.globalAlpha = 1;
             
             const insideCount = parseInt(canvas.dataset.inside) + (inside ? 1 : 0);
             const totalCount = parseInt(canvas.dataset.total) + 1;
@@ -1561,49 +1840,79 @@
             canvas.dataset.total = totalCount;
             
             const piEstimate = (4 * insideCount / totalCount);
-            document.getElementById(containerId + '_pi').textContent = piEstimate.toFixed(4);
+            document.getElementById(containerId + '_pi').textContent = piEstimate.toFixed(6);
             document.getElementById(containerId + '_inside').textContent = insideCount;
             document.getElementById(containerId + '_total').textContent = totalCount;
         }
         
         function throw1000Darts(containerId) {
-            for (let i = 0; i < 1000; i++) {
-                throwDart(containerId);
-            }
+            let dartsThrown = 0;
+            const throwInterval = setInterval(() => {
+                // Throw darts in batches for smooth animation
+                for (let j = 0; j < 10 && dartsThrown < 1000; j++) {
+                    throwDart(containerId);
+                    dartsThrown++;
+                }
+                
+                if (dartsThrown >= 1000) {
+                    clearInterval(throwInterval);
+                    // Final π calculation with improved accuracy
+                    const canvas = document.getElementById(containerId + '_canvas');
+                    const inside = parseInt(canvas.dataset.inside);
+                    const total = parseInt(canvas.dataset.total);
+                    const finalPi = (4 * inside / total);
+                    document.getElementById(containerId + '_pi').innerHTML = 
+                        `<strong>${finalPi.toFixed(6)}</strong> <small>(Actual π: 3.141593)</small>`;
+                }
+            }, 50);
         }
         
         function startQueueSim(containerId) {
             let queueLength = 3;
             let served = 0;
             let totalWaitTime = 0;
+            let simulationTime = 0;
             const arrivalRate = parseInt(document.getElementById(containerId + '_arrival').value);
             
             const interval = setInterval(() => {
-                // Process queue
+                simulationTime++;
+                
+                // Process queue (service customers)
                 if (queueLength > 0) {
-                    queueLength--;
-                    served++;
-                    totalWaitTime += queueLength * 0.5; // Simplified wait time calculation
+                    const randomValues = crypto.getRandomValues(new Uint8Array(1));
+                    // 70% chance to serve a customer
+                    if ((randomValues[0] / 255) < 0.7) {
+                        queueLength--;
+                        served++;
+                        totalWaitTime += queueLength * 0.8;
+                    }
                 }
                 
-                // Add new customers
-                if (Math.random() < arrivalRate / 10) {
-                    queueLength += Math.floor(Math.random() * 3) + 1;
+                // Add new customers with true randomness
+                const arrivalRandomValues = crypto.getRandomValues(new Uint8Array(2));
+                const arrivalChance = (arrivalRandomValues[0] / 255);
+                if (arrivalChance < arrivalRate / 10) {
+                    const newCustomers = (arrivalRandomValues[1] % 4) + 1; // 1-4 customers
+                    queueLength += newCustomers;
                 }
                 
+                // Update display with animations
                 const queueEl = document.getElementById(containerId + '_queue');
                 const servingEl = document.getElementById(containerId + '_serving');
                 const waitEl = document.getElementById(containerId + '_wait');
                 const servedEl = document.getElementById(containerId + '_served');
                 
-                queueEl.textContent = '👤'.repeat(Math.min(queueLength, 10));
-                servingEl.textContent = queueLength > 0 ? '🛎️' : '💼';
+                const queueDisplay = '👤'.repeat(Math.min(queueLength, 12)) + 
+                                   (queueLength > 12 ? '...' : '');
+                queueEl.textContent = queueDisplay;
+                servingEl.textContent = queueLength > 0 ? '🛎️ 💳' : '💼 😴';
                 waitEl.textContent = served > 0 ? (totalWaitTime / served).toFixed(1) : '0';
                 servedEl.textContent = served;
-            }, 1000);
+                
+                if (simulationTime >= 30) clearInterval(interval);
+            }, 800);
             
             demoIntervals[containerId] = interval;
-            setTimeout(() => clearInterval(interval), 30000);
         }
         
         function updateQueueRate(containerId) {
@@ -2062,6 +2371,280 @@
                 quizResults.style.display = 'block';
                 quizResults.scrollIntoView({ behavior: 'smooth' });
             }
+        }
+
+        // New Demo Implementations Based on PDF Content
+        
+        function initRandomnessDemo(container) {
+            container.innerHTML = `
+                <div style="text-align: center; padding: 20px;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 700px; margin: 0 auto;">
+                        <div style="border: 2px solid #28a745; padding: 15px; border-radius: 10px;">
+                            <h4 style="color: #28a745;">🎲 True Random</h4>
+                            <p><strong>From Physical Sources</strong></p>
+                            <button class="btn btn-success" onclick="generateTrueRandom('${container.id}')">
+                                Generate True Random
+                            </button>
+                            <div id="${container.id}_true" style="margin: 10px 0; font-size: 1.5rem;">-</div>
+                            <small>Uses crypto.getRandomValues()</small>
+                        </div>
+                        <div style="border: 2px solid #007bff; padding: 15px; border-radius: 10px;">
+                            <h4 style="color: #007bff;">🖥️ Pseudorandom</h4>
+                            <p><strong>From Algorithms</strong></p>
+                            <button class="btn btn-primary" onclick="generatePseudoRandom('${container.id}')">
+                                Generate Pseudorandom
+                            </button>
+                            <div id="${container.id}_pseudo" style="margin: 10px 0; font-size: 1.5rem;">-</div>
+                            <small>Uses Math.random()</small>
+                        </div>
+                    </div>
+                    <div style="margin-top: 20px;">
+                        <p><strong>Quality Comparison:</strong> <span id="${container.id}_quality">Generate numbers to see quality analysis</span></p>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function initMiddleSquareDemo(container) {
+            container.innerHTML = `
+                <div style="text-align: center; padding: 20px;">
+                    <div style="max-width: 600px; margin: 0 auto;">
+                        <h4>von Neumann's Middle-Square Method (1946)</h4>
+                        <div style="margin: 20px 0;">
+                            <label>Starting Seed (4 digits): </label>
+                            <input type="number" id="${container.id}_seed" min="1000" max="9999" value="1111" style="width: 100px;">
+                            <button class="btn btn-primary ms-2" onclick="runMiddleSquare('${container.id}')">
+                                Generate Sequence
+                            </button>
+                        </div>
+                        <div style="max-height: 300px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; background: white; border-radius: 5px;">
+                            <table style="width: 100%; font-family: monospace;" id="${container.id}_table">
+                                <tr><th>Step</th><th>Number</th><th>Squared</th><th>Padded</th><th>Middle 4</th></tr>
+                            </table>
+                        </div>
+                        <div style="margin-top: 15px;">
+                            <p><strong>Watch for patterns!</strong> Some seeds lead to cycles or zeros.</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function initMonteCarloVsSimDemo(container) {
+            container.innerHTML = `
+                <div style="text-align: center; padding: 20px;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; max-width: 800px; margin: 0 auto;">
+                        <div style="border: 2px solid #6f42c1; padding: 20px; border-radius: 10px;">
+                            <h4 style="color: #6f42c1;">🎯 Regular Simulation</h4>
+                            <p><strong>Models Real Processes</strong></p>
+                            <div style="margin: 15px 0;">
+                                <div style="font-size: 2rem; margin: 10px 0;">🏭</div>
+                                <div>Factory Production Line</div>
+                                <div style="margin: 10px 0; font-family: monospace; font-size: 0.9rem;">
+                                    Time: <span id="${container.id}_simTime">0</span> hours<br>
+                                    Products Made: <span id="${container.id}_products">0</span><br>
+                                    Efficiency: <span id="${container.id}_efficiency">0%</span>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary" onclick="runFactorySimulation('${container.id}')">
+                                Run Factory Simulation
+                            </button>
+                        </div>
+                        <div style="border: 2px solid #e83e8c; padding: 20px; border-radius: 10px;">
+                            <h4 style="color: #e83e8c;">🎲 Monte Carlo Method</h4>
+                            <p><strong>Solves Math Problems</strong></p>
+                            <div style="margin: 15px 0;">
+                                <div style="font-size: 2rem; margin: 10px 0;">📐</div>
+                                <div>Estimate Circle Area</div>
+                                <div style="margin: 10px 0; font-family: monospace; font-size: 0.9rem;">
+                                    Points Thrown: <span id="${container.id}_points">0</span><br>
+                                    Inside Circle: <span id="${container.id}_inside">0</span><br>
+                                    Area Estimate: <span id="${container.id}_area">-</span>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary" onclick="runMonteCarloArea('${container.id}')">
+                                Run Monte Carlo Method
+                            </button>
+                        </div>
+                    </div>
+                    <div style="margin-top: 20px; padding: 15px; background: rgba(255,255,255,0.1); border-radius: 8px;">
+                        <p><strong>Key Difference:</strong> Simulation models real systems over time. Monte Carlo uses randomness to solve deterministic problems.</p>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function initDocumentationDemo(container) {
+            container.innerHTML = `
+                <div style="text-align: center; padding: 20px;">
+                    <div style="max-width: 700px; margin: 0 auto;">
+                        <h4>📋 Professional Simulation Documentation</h4>
+                        <div style="text-align: left; margin: 20px 0;">
+                            <div class="accordion" id="${container.id}_accordion">
+                                <div class="accordion-item" style="margin-bottom: 10px; border-radius: 8px; overflow: hidden;">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#${container.id}_collapse1">
+                                        📊 1. Project Information
+                                    </button>
+                                    <div id="${container.id}_collapse1" class="accordion-collapse collapse" data-bs-parent="#${container.id}_accordion">
+                                        <div class="accordion-body" style="background: white; color: #333;">
+                                            <strong>Essential Details:</strong>
+                                            <ul>
+                                                <li>📝 Project title and objectives</li>
+                                                <li>🏢 Responsible organization</li>
+                                                <li>📞 Contact information</li>
+                                                <li>📅 Project duration and timeline</li>
+                                                <li>💰 Funding source and amount</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="accordion-item" style="margin-bottom: 10px; border-radius: 8px; overflow: hidden;">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#${container.id}_collapse2">
+                                        🔧 2. Model Development
+                                    </button>
+                                    <div id="${container.id}_collapse2" class="accordion-collapse collapse" data-bs-parent="#${container.id}_accordion">
+                                        <div class="accordion-body" style="background: white; color: #333;">
+                                            <strong>Technical Foundation:</strong>
+                                            <ul>
+                                                <li>🏷️ Model name and version</li>
+                                                <li>👥 Developer team information</li>
+                                                <li>📋 Purpose and intended use</li>
+                                                <li>📊 Data requirements and sources</li>
+                                                <li>⚙️ Development methodology</li>
+                                                <li>🔍 Key assumptions made</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="accordion-item" style="margin-bottom: 10px; border-radius: 8px; overflow: hidden;">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#${container.id}_collapse3">
+                                        ⚡ 3. Simulation Results
+                                    </button>
+                                    <div id="${container.id}_collapse3" class="accordion-collapse collapse" data-bs-parent="#${container.id}_accordion">
+                                        <div class="accordion-body" style="background: white; color: #333;">
+                                            <strong>Experimental Evidence:</strong>
+                                            <ul>
+                                                <li>🎯 Experimental design details</li>
+                                                <li>📈 Raw data and processed results</li>
+                                                <li>⏱️ Runtime and computational costs</li>
+                                                <li>📊 Statistical analysis methods</li>
+                                                <li>✅ Validation and verification</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 20px; padding: 15px; background: rgba(0,123,255,0.1); border-radius: 8px;">
+                            <p><strong>💡 Pro Tip:</strong> Good documentation transforms your simulation from a one-time tool into a valuable scientific contribution that others can build upon!</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Demo Support Functions for New Demos
+        function generateTrueRandom(containerId) {
+            const randomValues = crypto.getRandomValues(new Uint32Array(1));
+            const trueRandom = (randomValues[0] / (2**32)).toFixed(6);
+            document.getElementById(containerId + '_true').textContent = trueRandom;
+            
+            setTimeout(() => {
+                document.getElementById(containerId + '_quality').innerHTML = 
+                    `<strong style="color: #28a745;">True random:</strong> Cryptographically secure, unpredictable, suitable for security applications`;
+            }, 100);
+        }
+        
+        function generatePseudoRandom(containerId) {
+            const pseudoRandom = Math.random().toFixed(6);
+            document.getElementById(containerId + '_pseudo').textContent = pseudoRandom;
+            
+            setTimeout(() => {
+                document.getElementById(containerId + '_quality').innerHTML = 
+                    `<strong style="color: #007bff;">Pseudorandom:</strong> Fast, reproducible, sufficient for most simulations but predictable`;
+            }, 100);
+        }
+        
+        function runMiddleSquare(containerId) {
+            let seed = parseInt(document.getElementById(containerId + '_seed').value) || 1111;
+            const table = document.getElementById(containerId + '_table');
+            
+            // Clear previous results
+            table.innerHTML = '<tr><th>Step</th><th>Number</th><th>Squared</th><th>Padded</th><th>Middle 4</th></tr>';
+            
+            let current = seed;
+            let step = 0;
+            const seen = new Set();
+            
+            const interval = setInterval(() => {
+                if (step >= 10 || seen.has(current)) {
+                    clearInterval(interval);
+                    if (seen.has(current)) {
+                        table.innerHTML += `<tr><td colspan="5" style="color: red; font-weight: bold;">⚠️ Cycle detected! Sequence will repeat.</td></tr>`;
+                    }
+                    return;
+                }
+                
+                seen.add(current);
+                const squared = current * current;
+                const padded = squared.toString().padStart(8, '0');
+                const middle = parseInt(padded.substring(2, 6));
+                
+                const row = table.insertRow();
+                row.innerHTML = `<td>${step + 1}</td><td>${current}</td><td>${squared}</td><td>${padded}</td><td>${middle}</td>`;
+                
+                current = middle;
+                step++;
+            }, 800);
+        }
+        
+        function runFactorySimulation(containerId) {
+            let time = 0;
+            let products = 0;
+            let efficiency = 0;
+            
+            const interval = setInterval(() => {
+                time += 0.5;
+                
+                // Random production with some variability
+                const randomValues = crypto.getRandomValues(new Uint8Array(1));
+                const productionRate = 8 + (randomValues[0] % 5); // 8-12 products per hour
+                products += Math.floor(productionRate * 0.5);
+                efficiency = Math.round((products / (time * 10)) * 100);
+                
+                document.getElementById(containerId + '_simTime').textContent = time.toFixed(1);
+                document.getElementById(containerId + '_products').textContent = products;
+                document.getElementById(containerId + '_efficiency').textContent = efficiency;
+                
+                if (time >= 10) clearInterval(interval);
+            }, 300);
+        }
+        
+        function runMonteCarloArea(containerId) {
+            let points = 0;
+            let inside = 0;
+            
+            const interval = setInterval(() => {
+                for (let i = 0; i < 100; i++) {
+                    const x = Math.random();
+                    const y = Math.random();
+                    points++;
+                    
+                    if (x*x + y*y <= 1) {
+                        inside++;
+                    }
+                }
+                
+                const areaEstimate = (4 * inside / points).toFixed(4);
+                
+                document.getElementById(containerId + '_points').textContent = points;
+                document.getElementById(containerId + '_inside').textContent = inside;
+                document.getElementById(containerId + '_area').textContent = areaEstimate + ' (π ≈ 3.1416)';
+                
+                if (points >= 5000) clearInterval(interval);
+            }, 200);
         }
 
         // Auto-save quiz answers

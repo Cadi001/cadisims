@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Queue Management Simulation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../css/main.css" rel="stylesheet">
+    <style>
+        .queue-canvas {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .service-area {
+            width: 100%;
+            height: 400px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+        }
+        
+        .queue-line {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 10px;
+            max-width: 60%;
+            overflow-x: auto;
+        }
+        
+        .customer {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: white;
+            font-weight: bold;
+            min-width: 30px;
+        }
+        
+        .customer-priority-high { background: #dc3545; }
+        .customer-priority-normal { background: #007bff; }
+        .customer-priority-low { background: #6c757d; }
+        
+        .service-stations {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .service-station {
+            width: 80px;
+            height: 60px;
+            border: 3px solid #dee2e6;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            background: white;
+        }
+        
+        .station-busy { 
+            background: #28a745 !important; 
+            color: white;
+        }
+        
+        .station-idle { 
+            background: #ffc107 !important; 
+            color: black;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container">
+            <a class="navbar-brand" href="../views/index.html">
+                <i class="fas fa-arrow-left me-2"></i>
+                Queue Management Simulation
+            </a>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="alert alert-info">
+                    <h5><i class="fas fa-users me-2"></i>M/M/n Queue Model</h5>
+                    <p class="mb-0">Simulate customer service queues with multiple servers. Analyze waiting times, queue lengths, and service efficiency under different arrival and service rates.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="control-panel">
+                    <h5 class="mb-4"><i class="fas fa-cogs me-2"></i>Queue Parameters</h5>
+                    
+                    <div class="mb-3">
+                        <label for="arrivalRate" class="form-label">Arrival Rate: <span id="arrivalRateValue">2.0</span>/min</label>
+                        <input type="range" class="form-range" id="arrivalRate" min="0.5" max="10.0" value="2.0" step="0.5">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="serviceRate" class="form-label">Service Rate: <span id="serviceRateValue">3.0</span>/min</label>
+                        <input type="range" class="form-range" id="serviceRate" min="1.0" max="15.0" value="3.0" step="0.5">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="serverCount" class="form-label">Number of Servers: <span id="serverCountValue">2</span></label>
+                        <input type="range" class="form-range" id="serverCount" min="1" max="5" value="2" step="1">
+                    </div>
+
+                    <div class="mb-4">
+                        <h6>Priority Distribution</h6>
+                        <div class="row">
+                            <div class="col-4">
+                                <label class="form-label small">High: <span id="highPriority">20</span>%</label>
+                                <input type="range" class="form-range" id="highPriorityRate" min="5" max="50" value="20" step="5">
+                            </div>
+                            <div class="col-4">
+                                <label class="form-label small">Normal: <span id="normalPriority">60</span>%</label>
+                                <input type="range" class="form-range" id="normalPriorityRate" min="30" max="80" value="60" step="5">
+                            </div>
+                            <div class="col-4">
+                                <label class="form-label small">Low: <span id="lowPriority">20</span>%</label>
+                                <input type="range" class="form-range" id="lowPriorityRate" min="5" max="50" value="20" step="5">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="priorityQueue" checked>
+                        <label class="form-check-label" for="priorityQueue">
+                            Priority Queue System
+                        </label>
+                    </div>
+
+                    <div class="d-grid gap-2 mb-4">
+                        <button class="btn btn-primary btn-simulation" id="setupBtn">
+                            <i class="fas fa-sync me-2"></i>Setup
+                        </button>
+                        <button class="btn btn-success btn-simulation" id="runBtn">
+                            <i class="fas fa-play me-2"></i>Run
+                        </button>
+                        <button class="btn btn-warning btn-simulation" id="pauseBtn" disabled>
+                            <i class="fas fa-pause me-2"></i>Pause
+                        </button>
+                        <button class="btn btn-danger btn-simulation" id="stopBtn">
+                            <i class="fas fa-stop me-2"></i>Stop
+                        </button>
+                    </div>
+
+                    <div class="row text-center">
+                        <div class="col-6 mb-3">
+                            <div class="stat-display bg-primary text-white">
+                                <span class="stat-value" id="queueLength">0</span>
+                                <span class="stat-label">Queue Length</span>
+                            </div>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <div class="stat-display bg-warning text-dark">
+                                <span class="stat-value" id="avgWaitTime">0</span>
+                                <span class="stat-label">Avg Wait (min)</span>
+                            </div>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <div class="stat-display bg-success text-white">
+                                <span class="stat-value" id="customersServed">0</span>
+                                <span class="stat-label">Served</span>
+                            </div>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <div class="stat-display bg-info text-white">
+                                <span class="stat-value" id="serverUtilization">0</span>%
+                                <span class="stat-label">Server Util.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-8">
+                <div class="queue-canvas">
+                    <h5 class="text-white mb-3"><i class="fas fa-store me-2"></i>Service Area</h5>
+                    <div class="service-area" id="serviceArea">
+                        <div class="queue-line" id="queueLine">
+                            <!-- Customers in queue will appear here -->
+                        </div>
+                        <div class="service-stations" id="serviceStations">
+                            <!-- Service stations will be generated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="text-center py-4 mt-5">
+        <div class="container">
+            <p class="mb-2">
+                <i class="fas fa-copyright me-2"></i>
+                © 2025 <strong>Aldwin Nunag</strong>. All rights reserved.
+            </p>
+            <small class="text-muted">
+                Queue Management Simulation - Part of Modeling & Simulation Hub
+            </small>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="../js/queue-simulation.js"></script>
+</body>
+</html>
