@@ -6,7 +6,8 @@
       "Bash(find:*)",
       "Bash(node:*)",
       "Bash(ls:*)",
-      "Bash(sed:*)"
+      "Bash(sed:*)",
+      "Bash(xargs:*)"
     ],
     "deny": [],
     "ask": []
