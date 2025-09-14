@@ -1,6 +1,13 @@
 // Cryptographically secure random number generator utility
 function secureRandom() {
-    return crypto.getRandomValues(new Uint32Array(1))[0] / 4294967295;
+    try {
+        if (crypto && crypto.getRandomValues) {
+            return crypto.getRandomValues(new Uint32Array(1))[0] / 4294967295;
+        }
+    } catch (e) {
+        console.warn('Crypto API not available, falling back to Math.random()');
+    }
+    return Math.random();
 }
 
 class SystemDynamicsSimulation {
