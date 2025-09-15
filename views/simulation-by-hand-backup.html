@@ -1,0 +1,1458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulation by Hand</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../css/main.css" rel="stylesheet">
+    <link href="../css/topics.css" rel="stylesheet">
+    <style>
+        /* Presentation Mode Styles */
+        .presentation-mode {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            z-index: 9999;
+            display: none;
+            color: white;
+            overflow: hidden;
+        }
+        
+        .slide {
+            display: none;
+            height: 100vh;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .slide.active {
+            display: flex;
+        }
+        
+        .slide h1, .slide h2 {
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .slide p, .slide li {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            max-width: 80%;
+        }
+        
+        .slide-number {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            font-size: 1rem;
+            opacity: 0.7;
+        }
+        
+        .exit-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        /* Enhanced Quiz Styles */
+        .quiz-container {
+            display: none;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .quiz-question {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            border: 3px solid #e9ecef;
+        }
+        
+        .quiz-question.correct {
+            border-color: #28a745;
+            animation: correctPulse 0.6s ease-in-out;
+        }
+        
+        .quiz-question.incorrect {
+            border-color: #dc3545;
+            animation: incorrectShake 0.6s ease-in-out;
+        }
+        
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .question-number {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+        
+        .quiz-option {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 15px 20px;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .quiz-option:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+        
+        .quiz-option.selected {
+            background: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+        
+        .quiz-option.correct {
+            background: #28a745;
+            color: white;
+            border-color: #28a745;
+        }
+        
+        .quiz-option.incorrect {
+            background: #dc3545;
+            color: white;
+            border-color: #dc3545;
+        }
+        
+        .quiz-controls {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .quiz-progress {
+            background: #e9ecef;
+            height: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        
+        .quiz-progress-bar {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            height: 100%;
+            transition: width 0.5s ease;
+        }
+        
+        /* Animations */
+        @keyframes correctPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes incorrectShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        
+        @keyframes confetti {
+            0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
+        
+        @keyframes rainDrop {
+            0% { transform: translateY(-100vh); opacity: 1; }
+            100% { transform: translateY(100vh); opacity: 0; }
+        }
+        
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #f39c12;
+            animation: confetti 3s linear infinite;
+            z-index: 1000;
+        }
+        
+        .rain-drop {
+            position: fixed;
+            font-size: 20px;
+            animation: rainDrop 2s linear infinite;
+            z-index: 1000;
+        }
+        
+        .quiz-results {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .score-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .score-excellent { background: #28a745; }
+        .score-good { background: #ffc107; color: #333; }
+        .score-needs-improvement { background: #dc3545; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-arrow-left me-2"></i>
+                Simulation by Hand
+            </a>
+            <div>
+                <button class="btn btn-warning me-2" onclick="startPresentation()">
+                    <i class="fas fa-presentation me-2"></i>
+                    Present
+                </button>
+                <a href="topics.html" class="btn btn-outline-light">
+                    <i class="fas fa-book me-2"></i>
+                    All Topics
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- Introduction Section -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <h2><i class="fas fa-hand-paper me-3"></i>Simulating Without a Computer</h2>
+            </div>
+            <div class="topic-content">
+                <div class="simple-explanation">
+                    <h4>🎯 Think Like a Computer</h4>
+                    <p><strong>If you can pretend to be a computer, you can probably code the program to do the task!</strong></p>
+                    <p>Before computers do the work for us, let's understand what goes on "under the hood" by doing simulation manually.</p>
+                </div>
+
+                <div class="real-world-box">
+                    <h5>🧠 Why Learn This?</h5>
+                    <p>By doing simulation by hand, you'll understand exactly what computers do when they run simulations. It's like learning to do math by hand before using a calculator - you understand the process better!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Random Numbers and Probability Section -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <h2><i class="fas fa-dice me-3"></i>Using Random Numbers for Simulation</h2>
+            </div>
+            <div class="topic-content">
+                <div class="simple-explanation">
+                    <h4>🎲 Making Randomness Work for Us</h4>
+                    <p>Simulation often involves uncertainty - like "will customers arrive?" or "how long will service take?" We use random numbers to create this uncertainty in our models.</p>
+                </div>
+
+                <h4>Example: Simulating Customer Demand</h4>
+                <p>Let's say a store knows that weekly demand follows this pattern:</p>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="example-box">
+                            <h6>📊 Demand Probability</h6>
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr><th>Demand (units)</th><th>Probability</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td>0</td><td>20% (0.20)</td></tr>
+                                    <tr><td>1</td><td>30% (0.30)</td></tr>
+                                    <tr><td>2</td><td>40% (0.40)</td></tr>
+                                    <tr><td>3</td><td>10% (0.10)</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="example-box">
+                            <h6>🎯 Random Number Assignment</h6>
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr><th>Demand</th><th>Digits Assigned</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td>0</td><td>0, 1</td></tr>
+                                    <tr><td>1</td><td>2, 3, 4</td></tr>
+                                    <tr><td>2</td><td>5, 6, 7, 8</td></tr>
+                                    <tr><td>3</td><td>9</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step-item">
+                    <div class="step-number">💡</div>
+                    <div class="step-content">
+                        <h5>How It Works</h5>
+                        <p>Draw a random digit (0-9). If you get 5, that means demand = 2 units. If you get 2, that means demand = 1 unit. The number of digits assigned matches the probability!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Checkout Stand Example Section -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <h2><i class="fas fa-cash-register me-3"></i>Real Example: Checkout Stand Simulation</h2>
+            </div>
+            <div class="topic-content">
+                <div class="simple-explanation">
+                    <h4>🏪 A Small Store Scenario</h4>
+                    <p>Let's simulate a small gift shop with one cashier and one line. We want to find out: How long do customers wait? How busy is the cashier?</p>
+                </div>
+
+                <h4>The Setup:</h4>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="model-type-card">
+                            <h4>⏰ Time Between Customers</h4>
+                            <p>Randomly distributed from 1 to 10 minutes</p>
+                            <div class="example-box">
+                                <strong>How to simulate:</strong> Use 10 poker chips numbered 1-10, draw one from a hat
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="model-type-card">
+                            <h4>🛒 Service Time</h4>
+                            <p>Randomly distributed from 1 to 6 minutes</p>
+                            <div class="example-box">
+                                <strong>How to simulate:</strong> Roll a standard dice (1-6)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="real-world-box">
+                    <h5>🎮 The Physical Simulation</h5>
+                    <p><strong>Materials needed:</strong> 10 poker chips (numbered 1-10), 1 die, paper for tracking</p>
+                    <p><strong>Process:</strong> For each customer, draw a chip (arrival time), roll die (service time), then do the bookkeeping!</p>
+                </div>
+
+                <h4>Sample Results Table:</h4>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-sm">
+                        <thead class="table-primary">
+                            <tr>
+                                <th>Customer</th>
+                                <th>Time Since Last</th>
+                                <th>Service Time</th>
+                                <th>Arrival Time</th>
+                                <th>Service Begins</th>
+                                <th>Service Ends</th>
+                                <th>Time in System</th>
+                                <th>Clerk Idle</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>1</td><td>-</td><td>1</td><td>0:00</td><td>0:00</td><td>0:01</td><td>1</td><td>0</td></tr>
+                            <tr><td>2</td><td>3</td><td>4</td><td>0:03</td><td>0:03</td><td>0:07</td><td>4</td><td>2</td></tr>
+                            <tr><td>3</td><td>7</td><td>4</td><td>0:10</td><td>0:10</td><td>0:14</td><td>4</td><td>3</td></tr>
+                            <tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="benefits-grid">
+                    <div class="benefit-card">
+                        <i class="fas fa-clock"></i>
+                        <h4>Average Time in System</h4>
+                        <p>Add up all "Time in System" values and divide by number of customers</p>
+                    </div>
+                    <div class="benefit-card">
+                        <i class="fas fa-percentage"></i>
+                        <h4>Clerk Idle Percentage</h4>
+                        <p>Add up all "Clerk Idle" times and divide by total simulation time</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Random Walk Example Section -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <h2><i class="fas fa-walking me-3"></i>Fun Example: The Staggering Drunk</h2>
+            </div>
+            <div class="topic-content">
+                <div class="simple-explanation">
+                    <h4>🍺 A Classic Random Walk Problem</h4>
+                    <p>A drunk person walks randomly at street corners. After 10 blocks, what's the chance they end up within 2 blocks of where they started?</p>
+                </div>
+
+                <h4>The Setup:</h4>
+                <div class="step-item">
+                    <div class="step-number">📍</div>
+                    <div class="step-content">
+                        <h5>Coordinate System</h5>
+                        <p>Start at position (0,0). Each direction moves the coordinates:</p>
+                        <ul>
+                            <li><strong>East:</strong> X + 1</li>
+                            <li><strong>West:</strong> X - 1</li>
+                            <li><strong>North:</strong> Y + 1</li>
+                            <li><strong>South:</strong> Y - 1</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="model-type-card">
+                            <h4>🎲 Random Number Assignment</h4>
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr><th>Random Number</th><th>Direction</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td>00-24</td><td>East (X+1)</td></tr>
+                                    <tr><td>25-49</td><td>West (X-1)</td></tr>
+                                    <tr><td>50-74</td><td>North (Y+1)</td></tr>
+                                    <tr><td>75-99</td><td>South (Y-1)</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="model-type-card">
+                            <h4>📊 Success Criteria</h4>
+                            <p>After 10 steps, if <strong>|X| + |Y| ≤ 2</strong>, then the drunk is within 2 blocks of the start!</p>
+                            <div class="example-box">
+                                <strong>Example:</strong> Final position (-1, 1)<br>
+                                Distance = |-1| + |1| = 2 ✓ Success!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="real-world-box">
+                    <h5>🔄 Multiple Trials</h5>
+                    <p>Run this experiment many times (maybe 100 trials) and count how many times the drunk ends up within 2 blocks. That percentage is your answer!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Key Elements Section -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <h2><i class="fas fa-cogs me-3"></i>Three Critical Elements of Simulation</h2>
+            </div>
+            <div class="topic-content">
+                <div class="simple-explanation">
+                    <h4>🔧 The Essential Building Blocks</h4>
+                    <p>Every discrete-event simulation needs these three things to work properly:</p>
+                </div>
+
+                <div class="simulation-types">
+                    <div class="sim-type-card">
+                        <div class="sim-icon">🎲</div>
+                        <h4>Randomness</h4>
+                        <div class="sim-simple">Uncertainty in the system</div>
+                        <div class="sim-detailed">Random numbers, dice, coins, or random number tables to represent unpredictable events</div>
+                        <div class="sim-uses"><strong>Examples:</strong> Customer arrival times, service durations, equipment failures</div>
+                    </div>
+
+                    <div class="sim-type-card">
+                        <div class="sim-icon">⏰</div>
+                        <h4>Time Advance</h4>
+                        <div class="sim-simple">Moving forward through time</div>
+                        <div class="sim-detailed">A way to keep track of when events happen and move the simulation clock forward</div>
+                        <div class="sim-uses"><strong>Examples:</strong> Clock time, event scheduling, time stamps</div>
+                    </div>
+
+                    <div class="sim-type-card">
+                        <div class="sim-icon">📊</div>
+                        <h4>Output Statistics</h4>
+                        <div class="sim-simple">Collecting and analyzing results</div>
+                        <div class="sim-detailed">Recording what happens during the simulation so we can analyze performance</div>
+                        <div class="sim-uses"><strong>Examples:</strong> Average waiting time, utilization rates, success percentages</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytical vs Simulation Section -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <h2><i class="fas fa-balance-scale me-3"></i>Math Formula vs Simulation - Which is Better?</h2>
+            </div>
+            <div class="topic-content">
+                <div class="simple-explanation">
+                    <h4>🤔 The Big Question</h4>
+                    <p>Sometimes we can solve problems with math formulas, sometimes we need simulation. What's the difference?</p>
+                </div>
+
+                <div class="vs-comparison">
+                    <div class="vs-left">
+                        <h5>🧮 Analytical Solution (Math Formula)</h5>
+                        <ul>
+                            <li><strong>Exact answer</strong> - no guessing</li>
+                            <li><strong>Fast</strong> - just plug in numbers</li>
+                            <li><strong>Always the same result</strong></li>
+                            <li><strong>Limited</strong> - only works for simple problems</li>
+                        </ul>
+                        <div class="example-box">
+                            <strong>Example:</strong> Average = 0×0.2 + 1×0.3 + 2×0.4 + 3×0.1 = 1.4
+                        </div>
+                    </div>
+                    <div class="vs-vs">VS</div>
+                    <div class="vs-right">
+                        <h5>🎲 Simulation</h5>
+                        <ul>
+                            <li><strong>Approximate answer</strong> - close to truth</li>
+                            <li><strong>Flexible</strong> - works for complex problems</li>
+                            <li><strong>Different each time</strong> (due to randomness)</li>
+                            <li><strong>More effort</strong> - need many trials</li>
+                        </ul>
+                        <div class="example-box">
+                            <strong>Example:</strong> Trial 1 = 1.8, Trial 2 = 1.3 (both close to 1.4!)
+                        </div>
+                    </div>
+                </div>
+
+                <div class="real-world-box">
+                    <h5>🎯 When to Use Which?</h5>
+                    <p><strong>Use formulas when possible</strong> (simple problems), <strong>use simulation when necessary</strong> (complex real-world problems that are too complicated for math formulas).</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Key Takeaways Section -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <h2><i class="fas fa-lightbulb me-3"></i>Key Takeaways</h2>
+            </div>
+            <div class="topic-content">
+                <div class="benefits-grid">
+                    <div class="benefit-card">
+                        <i class="fas fa-brain"></i>
+                        <h4>Simulation is Just an Algorithm</h4>
+                        <p>If you can do it by hand, you can program a computer to do it - simulation is just step-by-step instructions</p>
+                    </div>
+                    <div class="benefit-card">
+                        <i class="fas fa-dice-six"></i>
+                        <h4>Random Numbers Drive Everything</h4>
+                        <p>We use random numbers (dice, coins, tables) to create the uncertainty that makes simulation realistic</p>
+                    </div>
+                    <div class="benefit-card">
+                        <i class="fas fa-chart-bar"></i>
+                        <h4>Bookkeeping is Key</h4>
+                        <p>The main work is careful tracking of events, times, and statistics - organization matters!</p>
+                    </div>
+                </div>
+
+                <div class="try-it-box">
+                    <p><strong>🎯 Bottom Line:</strong> Hand simulation teaches you exactly what computers do - it's the same process, just slower! Once you understand it by hand, programming it becomes much easier.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quiz Section -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <h2><i class="fas fa-question-circle me-3"></i>Test Your Understanding</h2>
+            </div>
+            <div class="topic-content">
+                <div class="interactive-question">
+                    <h5>📝 Multiple Choice Quiz</h5>
+                    <div class="question-content">
+                        <p><strong>Question 1:</strong> In the checkout stand simulation, what physical tools were suggested for generating random numbers?</p>
+                        <div class="quiz-options">
+                            <label class="option-label">
+                                <input type="radio" name="q1" value="a"> 
+                                A) Computer and calculator
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q1" value="b"> 
+                                B) 10 poker chips and a die
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q1" value="c"> 
+                                C) Two dice and a coin
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q1" value="d"> 
+                                D) Random number table only
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question-content mt-4">
+                        <p><strong>Question 2:</strong> What are the three critical elements that must be present in discrete-event simulation models?</p>
+                        <div class="quiz-options">
+                            <label class="option-label">
+                                <input type="radio" name="q2" value="a"> 
+                                A) Computers, software, and internet
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q2" value="b"> 
+                                B) Randomness, time advance, and output statistics
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q2" value="c"> 
+                                C) Input, processing, and output
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q2" value="d"> 
+                                D) Models, experiments, and results
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question-content mt-4">
+                        <p><strong>Question 3:</strong> In the "staggering drunk" problem, if the final position is (-2, 1), what is the distance from the starting point?</p>
+                        <div class="quiz-options">
+                            <label class="option-label">
+                                <input type="radio" name="q3" value="a"> 
+                                A) 1 block
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q3" value="b"> 
+                                B) 2 blocks
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q3" value="c"> 
+                                C) 3 blocks
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q3" value="d"> 
+                                D) 4 blocks
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question-content mt-4">
+                        <p><strong>Question 4:</strong> What is the main advantage of analytical solutions over simulation?</p>
+                        <div class="quiz-options">
+                            <label class="option-label">
+                                <input type="radio" name="q4" value="a"> 
+                                A) They are more realistic
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q4" value="b"> 
+                                B) They give exact answers and are faster
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q4" value="c"> 
+                                C) They work for all problems
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q4" value="d"> 
+                                D) They require no mathematics
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question-content mt-4">
+                        <p><strong>Question 5:</strong> In the demand simulation example, if you draw random digit "6", what would the simulated demand be?</p>
+                        <div class="quiz-options">
+                            <label class="option-label">
+                                <input type="radio" name="q5" value="a"> 
+                                A) 0 units
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q5" value="b"> 
+                                B) 1 unit
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q5" value="c"> 
+                                C) 2 units
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q5" value="d"> 
+                                D) 3 units
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <button class="btn btn-primary" onclick="checkQuizAnswers()">
+                            <i class="fas fa-check me-2"></i>Check My Answers
+                        </button>
+                    </div>
+
+                    <div id="quizResults" class="quiz-results mt-3" style="display: none;">
+                        <!-- Results will be inserted here -->
+                    </div>
+                    
+                    <!-- Enhanced Quiz Button -->
+                    <div class="text-center mt-4">
+                        <div class="alert alert-info">
+                            <h5><i class="fas fa-star me-2"></i>Want a More Interactive Experience?</h5>
+                            <p class="mb-3">Try our enhanced quiz with animations, random questions, and immediate feedback!</p>
+                            <button class="btn btn-warning btn-lg" onclick="startEnhancedQuiz()">
+                                <i class="fas fa-rocket me-2"></i>Take Enhanced Quiz
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Copyright Footer -->
+    <footer class="text-center py-4 mt-5">
+        <div class="container">
+            <p class="mb-2">
+                <i class="fas fa-copyright me-2"></i>
+                © 2025 <strong>Aldwin Nunag</strong>. All rights reserved.
+            </p>
+            <div class="mb-2">
+                <i class="fab fa-creative-commons me-1"></i>
+                <i class="fab fa-creative-commons-by me-1"></i>
+                <i class="fab fa-creative-commons-nc me-1"></i>
+                <i class="fab fa-creative-commons-sa me-2"></i>
+                <strong>Open Source Project</strong> - Licensed under 
+                <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" class="text-decoration-none">
+                    CC BY-NC-SA 4.0
+                </a>
+            </div>
+            <small class="text-muted">
+                Free to use, modify, and share for educational purposes only. Commercial use prohibited. 
+                Modified works must retain this license and be shared under the same terms.
+            </small>
+            <br>
+            <small class="text-muted">
+                Simulation by Hand - Educational Content
+            </small>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Presentation Mode -->
+    <div class="presentation-mode" id="presentationMode">
+        <button class="exit-btn" onclick="exitPresentation()">
+            <i class="fas fa-times"></i> Exit
+        </button>
+        <div class="slide-number" id="slideNumber">1 / 12</div>
+    </div>
+
+    <!-- Enhanced Quiz Container -->
+    <div class="quiz-container" id="enhancedQuizContainer">
+        <div class="quiz-progress">
+            <div class="quiz-progress-bar" id="enhancedProgressBar"></div>
+        </div>
+        <div class="quiz-question" id="enhancedQuizQuestion"></div>
+        <div class="quiz-controls">
+            <button class="btn btn-success" id="enhancedCheckBtn" onclick="checkEnhancedAnswer()" style="display: none;">
+                <i class="fas fa-check me-2"></i>Check Answer
+            </button>
+            <button class="btn btn-primary" id="enhancedNextBtn" onclick="nextEnhancedQuestion()" style="display: none;">
+                Next Question <i class="fas fa-arrow-right ms-2"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Enhanced Quiz Results -->
+    <div class="quiz-results" id="enhancedQuizResults" style="display: none;"></div>
+
+    <script>
+        // Hand Simulation Question Pool (30 questions)
+        const questionPool = [
+            {
+                question: "What are the three critical elements of simulation?",
+                options: ["Speed, accuracy, and cost", "Randomness, time advance, and output statistics", "Input, process, and output", "Planning, execution, and analysis"],
+                correct: 1,
+                explanation: "The three critical elements are randomness (random events), time advance (moving through time), and output statistics (collecting results)."
+            },
+            {
+                question: "What is the primary tool needed for hand simulation?",
+                options: ["A computer", "10 poker chips and a die", "Random number tables", "Mathematical formulas"],
+                correct: 1,
+                explanation: "Hand simulation can be done with simple tools like poker chips to represent entities and a die for random events."
+            },
+            {
+                question: "In a random walk starting at 0, after steps +1, -3, +1, what is the final position?",
+                options: ["1", "-1", "-3", "0"],
+                correct: 1,
+                explanation: "Starting at 0: 0 + 1 - 3 + 1 = -1"
+            },
+            {
+                question: "What is the main advantage of analytical solutions over simulation?",
+                options: ["They look better", "They give exact answers and are faster", "They use more data", "They are easier to understand"],
+                correct: 1,
+                explanation: "Analytical solutions provide exact mathematical answers quickly, while simulation gives approximations through sampling."
+            },
+            {
+                question: "In demand simulation, if daily demand follows: 0(10%), 1(20%), 2(40%), 3(20%), 4(10%), what demand corresponds to random number 65?",
+                options: ["1 unit", "2 units", "3 units", "4 units"],
+                correct: 1,
+                explanation: "Cumulative: 0-9→0, 10-29→1, 30-69→2, 70-89→3, 90-99→4. Random number 65 falls in range 30-69, so demand = 2 units."
+            },
+            {
+                question: "What does 'by hand' mean in simulation context?",
+                options: ["Using your fingers to count", "Manual calculation without computers", "Drawing pictures", "Writing everything down"],
+                correct: 1,
+                explanation: "Hand simulation means performing the simulation manually using simple tools and calculations rather than computer programs."
+            },
+            {
+                question: "Why is hand simulation useful for learning?",
+                options: ["It's faster than computers", "It helps understand the underlying process", "It's more accurate", "It costs less"],
+                correct: 1,
+                explanation: "Hand simulation helps students understand exactly how simulation works step-by-step before using complex software."
+            },
+            {
+                question: "In a simple queue simulation, what information do you track for each customer?",
+                options: ["Only arrival time", "Only service time", "Arrival time, service start, service time, departure", "Just the total time"],
+                correct: 2,
+                explanation: "For each customer, you track when they arrive, when service starts, how long service takes, and when they leave."
+            },
+            {
+                question: "What is a random number table used for?",
+                options: ["Decoration", "Generating random events in hand simulation", "Solving equations", "Drawing charts"],
+                correct: 1,
+                explanation: "Random number tables provide pre-generated random numbers for hand simulation when you don't have dice or other random generators."
+            },
+            {
+                question: "In inventory simulation by hand, when do you place an order?",
+                options: ["Every day", "When inventory reaches the reorder point", "When you run out completely", "Once a month"],
+                correct: 1,
+                explanation: "Orders are typically placed when inventory level drops to or below the predetermined reorder point."
+            },
+            {
+                question: "What is the purpose of the checkout stand simulation example?",
+                options: ["To sell products", "To demonstrate queueing concepts", "To calculate profits", "To hire employees"],
+                correct: 1,
+                explanation: "The checkout stand is a classic example used to teach queueing theory concepts like arrival rates, service times, and waiting."
+            },
+            {
+                question: "In the random walk problem, what determines the direction of each step?",
+                options: ["The previous step", "A random mechanism (like coin flip)", "The time of day", "The total distance walked"],
+                correct: 1,
+                explanation: "Each step direction is determined randomly, often by flipping a coin (heads = forward, tails = backward)."
+            },
+            {
+                question: "How many outcomes are possible when rolling a standard die?",
+                options: ["5", "6", "7", "8"],
+                correct: 1,
+                explanation: "A standard die has 6 faces, numbered 1 through 6, giving 6 possible outcomes."
+            },
+            {
+                question: "What is the main limitation of hand simulation?",
+                options: ["It's too accurate", "It's time-consuming for large problems", "It uses too much paper", "It's too expensive"],
+                correct: 1,
+                explanation: "Hand simulation becomes impractical for large, complex problems due to the time required for manual calculations."
+            },
+            {
+                question: "In demand simulation, why do you use cumulative probabilities?",
+                options: ["They look better", "To map random numbers to demand levels", "They are more accurate", "To confuse students"],
+                correct: 1,
+                explanation: "Cumulative probabilities create ranges that map random numbers to specific demand levels systematically."
+            },
+            {
+                question: "What does interarrival time mean?",
+                options: ["Time to serve a customer", "Time between consecutive customer arrivals", "Time to close the shop", "Time to count money"],
+                correct: 1,
+                explanation: "Interarrival time is the time elapsed between when one customer arrives and the next customer arrives."
+            },
+            {
+                question: "In hand simulation, how do you generate exponential random variables?",
+                options: ["Use a calculator", "Use the inverse transform method with random numbers", "Guess randomly", "Use a stopwatch"],
+                correct: 1,
+                explanation: "Exponential random variables can be generated using the inverse transform: X = -ln(U)/λ where U is uniform random."
+            },
+            {
+                question: "What is the purpose of tracking utilization in service simulation?",
+                options: ["To measure how busy the server is", "To count customers", "To calculate profits", "To determine closing time"],
+                correct: 0,
+                explanation: "Utilization measures the percentage of time the server is busy, indicating efficiency and capacity usage."
+            },
+            {
+                question: "Why might you choose hand simulation over computer simulation?",
+                options: ["It's always faster", "For small problems and learning purposes", "It's more accurate", "Computers are broken"],
+                correct: 1,
+                explanation: "Hand simulation is valuable for small problems, educational purposes, and understanding simulation mechanics."
+            },
+            {
+                question: "In the checkout example, what happens when the server is busy and a customer arrives?",
+                options: ["Customer leaves immediately", "Customer waits in queue", "Customer is served immediately", "Store closes"],
+                correct: 1,
+                explanation: "When the server is busy, arriving customers must wait in a queue until the server becomes available."
+            },
+            {
+                question: "What is the difference between discrete and continuous simulation?",
+                options: ["Discrete uses integers, continuous uses decimals", "Discrete has events at specific times, continuous changes continuously", "No difference", "Discrete is easier"],
+                correct: 1,
+                explanation: "Discrete simulation has events at specific time points, while continuous simulation involves variables changing continuously over time."
+            },
+            {
+                question: "How do you calculate average waiting time by hand?",
+                options: ["Guess", "Sum all wait times and divide by number of customers", "Use the largest wait time", "Count the servers"],
+                correct: 1,
+                explanation: "Average waiting time = Total waiting time ÷ Number of customers served."
+            },
+            {
+                question: "What is a simulation clock?",
+                options: ["A wall clock", "A variable that tracks simulation time", "A timer for breaks", "An alarm"],
+                correct: 1,
+                explanation: "The simulation clock is a variable that keeps track of the current time within the simulation."
+            },
+            {
+                question: "In inventory simulation, what costs are typically considered?",
+                options: ["Only purchase costs", "Holding, ordering, and stockout costs", "Only labor costs", "Only rent"],
+                correct: 1,
+                explanation: "Inventory simulation considers holding costs (storage), ordering costs (placing orders), and stockout costs (running out)."
+            },
+            {
+                question: "What is an event in discrete-event simulation?",
+                options: ["A party", "An instantaneous occurrence that changes system state", "A long process", "A customer complaint"],
+                correct: 1,
+                explanation: "An event is an instantaneous occurrence (like arrival or departure) that changes the state of the system."
+            },
+            {
+                question: "How do you validate a hand simulation?",
+                options: ["Just trust it", "Compare results with known analytical solutions or real data", "Ask friends", "Use a bigger table"],
+                correct: 1,
+                explanation: "Validation involves comparing simulation results with analytical solutions, real-world data, or expected behavior."
+            },
+            {
+                question: "What is steady-state in simulation?",
+                options: ["When simulation stops", "When system reaches stable, long-term behavior", "When customers stop coming", "When servers take breaks"],
+                correct: 1,
+                explanation: "Steady-state is reached when the system's statistical properties stabilize and are no longer affected by initial conditions."
+            },
+            {
+                question: "Why use multiple replications in simulation?",
+                options: ["To waste time", "To account for randomness and get reliable estimates", "To fill pages", "To confuse readers"],
+                correct: 1,
+                explanation: "Multiple replications help account for randomness and provide more reliable statistical estimates of system performance."
+            },
+            {
+                question: "What is the purpose of a warm-up period?",
+                options: ["To heat the room", "To let the system reach steady-state before collecting data", "To prepare coffee", "To organize papers"],
+                correct: 1,
+                explanation: "The warm-up period allows the simulation to reach steady-state conditions before beginning data collection."
+            },
+            {
+                question: "In the random walk, what is the expected final position after many steps?",
+                options: ["Always positive", "Zero (starting position)", "Always negative", "Depends on the walker"],
+                correct: 1,
+                explanation: "For a symmetric random walk, the expected final position equals the starting position (zero displacement on average)."
+            }
+        ];
+
+        // Presentation data for Hand Simulation
+        let presentationData = [
+            {
+                type: 'title',
+                content: {
+                    title: 'Simulation by Hand',
+                    subtitle: 'Understanding Simulation Fundamentals'
+                }
+            },
+            {
+                type: 'content',
+                content: {
+                    title: 'Why Simulate by Hand?',
+                    text: 'Hand simulation helps you understand the fundamental mechanics of simulation before using complex software. It reveals the step-by-step process and builds intuition.'
+                }
+            },
+            {
+                type: 'list',
+                content: {
+                    title: 'Three Critical Elements',
+                    items: [
+                        'Randomness: Random events drive the system',
+                        'Time Advance: Moving through time systematically', 
+                        'Output Statistics: Collecting and analyzing results'
+                    ]
+                }
+            },
+            {
+                type: 'content',
+                content: {
+                    title: 'Basic Tools Needed',
+                    text: 'Simple tools suffice: poker chips for entities, dice for random events, paper for tracking, and random number tables for consistency.'
+                }
+            },
+            {
+                type: 'content',
+                content: {
+                    title: 'Demand Simulation Example',
+                    text: 'Track daily product demand using probability distributions. Map random numbers to demand levels using cumulative probability ranges.'
+                }
+            },
+            {
+                type: 'content',
+                content: {
+                    title: 'Checkout Stand Simulation',
+                    text: 'Classic queueing example: customers arrive randomly, wait if server is busy, get served, then depart. Track wait times and utilization.'
+                }
+            },
+            {
+                type: 'content',
+                content: {
+                    title: 'Random Walk Problem',
+                    text: 'Person takes random steps forward (+1) or backward (-1). After many steps, where do they end up? Demonstrates randomness accumulation.'
+                }
+            },
+            {
+                type: 'list',
+                content: {
+                    title: 'Hand Simulation Process',
+                    items: [
+                        '1. Define system and objectives',
+                        '2. Identify random elements',
+                        '3. Create tracking tables',
+                        '4. Generate random events',
+                        '5. Advance time systematically',
+                        '6. Collect statistics',
+                        '7. Analyze results'
+                    ]
+                }
+            },
+            {
+                type: 'content',
+                content: {
+                    title: 'Advantages vs Limitations',
+                    text: 'Advantages: Educational value, transparency, no software needed. Limitations: Time-consuming, error-prone, limited complexity.'
+                }
+            },
+            {
+                type: 'list',
+                content: {
+                    title: 'Key Performance Metrics',
+                    items: [
+                        'Average waiting time',
+                        'Server utilization',
+                        'Queue length',
+                        'System throughput',
+                        'Cost per unit time'
+                    ]
+                }
+            },
+            {
+                type: 'content',
+                content: {
+                    title: 'When to Use Hand Simulation',
+                    text: 'Best for: Learning fundamentals, small problems, validating software results, and building intuition about system behavior.'
+                }
+            },
+            {
+                type: 'quiz_start',
+                content: {
+                    title: 'Test Your Knowledge!',
+                    text: 'Ready to test your understanding of hand simulation? Take our interactive quiz!'
+                }
+            }
+        ];
+
+        // Enhanced Quiz Variables
+        let currentSlide = 0;
+        let slides = [];
+        let currentQuestions = [];
+        let currentQuestionIndex = 0;
+        let userAnswers = [];
+
+        // Presentation Functions
+        function startPresentation() {
+            createSlides();
+            document.getElementById('presentationMode').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            showSlide(0);
+            
+            // Remove any existing event listeners first
+            document.getElementById('presentationMode').removeEventListener('click', nextSlide);
+            
+            // Click to advance slides - use event delegation
+            document.getElementById('presentationMode').addEventListener('click', function(e) {
+                console.log('Presentation clicked, target:', e.target);
+                
+                // Don't advance slide if clicking on interactive elements
+                if (e.target.closest('.exit-btn') || 
+                    e.target.closest('button') || 
+                    e.target.closest('input') || 
+                    e.target.closest('canvas') ||
+                    e.target.closest('.interactive-demo')) {
+                    console.log('Interactive element clicked, not advancing slide');
+                    return;
+                }
+                
+                // Only advance slide if clicking on empty space or text
+                console.log('Empty space clicked, advancing slide');
+                nextSlide();
+            });
+        }
+
+        function createSlides() {
+            const presentationMode = document.getElementById('presentationMode');
+            presentationData.forEach((slideData, index) => {
+                const slide = document.createElement('div');
+                slide.className = 'slide';
+                slide.id = `slide-${index}`;
+                
+                let content = '';
+                switch(slideData.type) {
+                    case 'title':
+                        content = `<h1>${slideData.content.title}</h1><h3>${slideData.content.subtitle}</h3>`;
+                        break;
+                    case 'content':
+                        content = `<h2>${slideData.content.title}</h2><p>${slideData.content.text}</p>`;
+                        break;
+                    case 'list':
+                        content = `<h2>${slideData.content.title}</h2><ul style="text-align: left; max-width: 80%;">${slideData.content.items.map(item => `<li>${item}</li>`).join('')}</ul>`;
+                        break;
+                    case 'quiz_start':
+                        content = `<h2>${slideData.content.title}</h2><p>${slideData.content.text}</p><button class="btn btn-warning btn-lg" onclick="startPresentationQuiz()"><i class="fas fa-play me-2"></i>Start Quiz</button>`;
+                        break;
+                }
+                
+                slide.innerHTML = content;
+                presentationMode.appendChild(slide);
+            });
+            slides = document.querySelectorAll('.slide');
+        }
+
+        function showSlide(index) {
+            slides.forEach(slide => slide.classList.remove('active'));
+            if (slides[index]) {
+                slides[index].classList.add('active');
+                currentSlide = index;
+                document.getElementById('slideNumber').textContent = `${index + 1} / ${slides.length}`;
+            }
+        }
+
+        function nextSlide() {
+            console.log('nextSlide called, current:', currentSlide, 'total:', slides.length);
+            if (currentSlide < slides.length - 1) {
+                showSlide(currentSlide + 1);
+            } else {
+                console.log('Reached end of slides');
+                // Optionally exit presentation or show a message
+            }
+        }
+
+        function exitPresentation() {
+            document.getElementById('presentationMode').style.display = 'none';
+            document.body.style.overflow = 'auto';
+            const slidesToRemove = document.querySelectorAll('.slide');
+            slidesToRemove.forEach(slide => slide.remove());
+            slides = [];
+            currentSlide = 0;
+        }
+
+        // Enhanced Quiz Functions
+        function startEnhancedQuiz() {
+            document.querySelector('.container').style.display = 'none';
+            document.getElementById('enhancedQuizContainer').style.display = 'block';
+            currentQuestions = selectRandomQuestions(5);
+            currentQuestionIndex = 0;
+            userAnswers = [];
+            showQuestion();
+        }
+
+        function startPresentationQuiz() {
+            exitPresentation();
+            setTimeout(() => startEnhancedQuiz(), 500);
+        }
+
+        function selectRandomQuestions(count) {
+            const shuffled = [...questionPool].sort((a, b) => { const r = crypto.getRandomValues(new Uint32Array(2)); return (r[0] % 2) - (r[1] % 2); });
+            return shuffled.slice(0, count);
+        }
+
+        function showQuestion() {
+            const question = currentQuestions[currentQuestionIndex];
+            const progressPercent = ((currentQuestionIndex + 1) / currentQuestions.length) * 100;
+            
+            document.getElementById('enhancedProgressBar').style.width = progressPercent + '%';
+            
+            const questionHtml = `
+                <div class="question-header">
+                    <div class="question-number">Question ${currentQuestionIndex + 1}</div>
+                    <div>${currentQuestions.length} Questions Total</div>
+                </div>
+                <h4 class="mb-4">${question.question}</h4>
+                <div class="options-container">
+                    ${question.options.map((option, index) => `
+                        <div class="quiz-option" data-option="${index}" onclick="selectOption(${index})">
+                            ${String.fromCharCode(65 + index)}. ${option}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            
+            document.getElementById('enhancedQuizQuestion').innerHTML = questionHtml;
+            document.getElementById('enhancedCheckBtn').style.display = 'none';
+            document.getElementById('enhancedNextBtn').style.display = 'none';
+        }
+
+        function selectOption(optionIndex) {
+            document.querySelectorAll('.quiz-option').forEach(opt => opt.classList.remove('selected'));
+            document.querySelector(`[data-option="${optionIndex}"]`).classList.add('selected');
+            document.getElementById('enhancedCheckBtn').style.display = 'inline-block';
+        }
+
+        function checkEnhancedAnswer() {
+            const selectedOption = document.querySelector('.quiz-option.selected');
+            if (!selectedOption) return;
+            
+            const userAnswer = parseInt(selectedOption.dataset.option);
+            const correctAnswer = currentQuestions[currentQuestionIndex].correct;
+            const isCorrect = userAnswer === correctAnswer;
+            
+            userAnswers.push({
+                questionIndex: currentQuestionIndex,
+                userAnswer: userAnswer,
+                correct: isCorrect,
+                question: currentQuestions[currentQuestionIndex]
+            });
+            
+            document.querySelectorAll('.quiz-option').forEach((opt, index) => {
+                if (index === correctAnswer) {
+                    opt.classList.add('correct');
+                } else if (index === userAnswer && !isCorrect) {
+                    opt.classList.add('incorrect');
+                }
+            });
+            
+            const questionContainer = document.getElementById('enhancedQuizQuestion');
+            if (isCorrect) {
+                questionContainer.classList.add('correct');
+                createConfetti();
+            } else {
+                questionContainer.classList.add('incorrect');
+                createRainEffect();
+            }
+            
+            const explanationHtml = `
+                <div class="mt-3 p-3 ${isCorrect ? 'bg-success' : 'bg-danger'} text-white rounded">
+                    <i class="fas ${isCorrect ? 'fa-check-circle' : 'fa-times-circle'} me-2"></i>
+                    ${isCorrect ? 'Correct!' : 'Incorrect'} ${currentQuestions[currentQuestionIndex].explanation}
+                </div>
+            `;
+            
+            questionContainer.insertAdjacentHTML('beforeend', explanationHtml);
+            document.getElementById('enhancedCheckBtn').style.display = 'none';
+            
+            if (currentQuestionIndex < currentQuestions.length - 1) {
+                document.getElementById('enhancedNextBtn').style.display = 'inline-block';
+            } else {
+                document.getElementById('enhancedNextBtn').innerHTML = '<i class="fas fa-flag-checkered me-2"></i>See Results';
+                document.getElementById('enhancedNextBtn').style.display = 'inline-block';
+            }
+        }
+
+        function nextEnhancedQuestion() {
+            document.getElementById('enhancedQuizQuestion').classList.remove('correct', 'incorrect');
+            
+            if (currentQuestionIndex < currentQuestions.length - 1) {
+                currentQuestionIndex++;
+                showQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('enhancedQuizContainer').style.display = 'none';
+            
+            const score = userAnswers.filter(answer => answer.correct).length;
+            const total = userAnswers.length;
+            const percentage = Math.round((score / total) * 100);
+            
+            let scoreClass = 'score-needs-improvement';
+            let message = 'Keep studying! 📚';
+            let icon = 'fa-sad-tear';
+            
+            if (percentage >= 80) {
+                scoreClass = 'score-excellent';
+                message = 'Excellent work! 🎉';
+                icon = 'fa-star';
+            } else if (percentage >= 60) {
+                scoreClass = 'score-good';
+                message = 'Good job! 👍';
+                icon = 'fa-thumbs-up';
+            }
+            
+            const detailedResults = userAnswers.map((answer, index) => `
+                <div class="d-flex justify-content-between align-items-center p-2 ${answer.correct ? 'bg-success' : 'bg-danger'} bg-opacity-10 rounded mb-2">
+                    <span>Question ${index + 1}</span>
+                    <span class="${answer.correct ? 'text-success' : 'text-danger'}">
+                        <i class="fas ${answer.correct ? 'fa-check' : 'fa-times'}"></i>
+                        ${answer.correct ? 'Correct' : 'Incorrect'}
+                    </span>
+                </div>
+            `).join('');
+            
+            const resultsHtml = `
+                <div class="text-center">
+                    <div class="score-circle ${scoreClass}">
+                        <span>${score}/${total}</span>
+                    </div>
+                    <h3><i class="fas ${icon} me-2"></i>${message}</h3>
+                    <h4>${percentage}% Score</h4>
+                    <div class="mt-4 mb-4">
+                        ${detailedResults}
+                    </div>
+                    <div class="d-flex gap-3 justify-content-center">
+                        <button class="btn btn-primary" onclick="restartQuiz()">
+                            <i class="fas fa-redo me-2"></i>Try Again
+                        </button>
+                        <button class="btn btn-secondary" onclick="backToContent()">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Content
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('enhancedQuizResults').innerHTML = resultsHtml;
+            document.getElementById('enhancedQuizResults').style.display = 'block';
+            
+            if (percentage >= 80) {
+                setTimeout(createConfetti, 500);
+            }
+        }
+
+        function restartQuiz() {
+            document.getElementById('enhancedQuizResults').style.display = 'none';
+            startEnhancedQuiz();
+        }
+
+        function backToContent() {
+            document.getElementById('enhancedQuizResults').style.display = 'none';
+            document.querySelector('.container').style.display = 'block';
+        }
+
+        // Animation Functions
+        function createConfetti() {
+            const colors = ['#f39c12', '#e74c3c', '#9b59b6', '#3498db', '#2ecc71'];
+            
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = (crypto.getRandomValues(new Uint32Array(1))[0] / 4294967295) * 100 + 'vw';
+                    confetti.style.backgroundColor = colors[Math.floor((crypto.getRandomValues(new Uint32Array(1))[0] / 4294967295) * colors.length)];
+                    confetti.style.animationDelay = (crypto.getRandomValues(new Uint32Array(1))[0] / 4294967295) * 3 + 's';
+                    confetti.style.animationDuration = ((crypto.getRandomValues(new Uint32Array(1))[0] / 4294967295) * 2 + 2) + 's';
+                    document.body.appendChild(confetti);
+                    
+                    setTimeout(() => confetti.remove(), 5000);
+                }, i * 50);
+            }
+        }
+
+        function createRainEffect() {
+            const sadEmojis = ['😢', '😞', '😔', '😭', '😿'];
+            
+            for (let i = 0; i < 20; i++) {
+                setTimeout(() => {
+                    const drop = document.createElement('div');
+                    drop.className = 'rain-drop';
+                    drop.textContent = sadEmojis[Math.floor((crypto.getRandomValues(new Uint32Array(1))[0] / 4294967295) * sadEmojis.length)];
+                    drop.style.left = (crypto.getRandomValues(new Uint32Array(1))[0] / 4294967295) * 100 + 'vw';
+                    drop.style.animationDelay = (crypto.getRandomValues(new Uint32Array(1))[0] / 4294967295) * 2 + 's';
+                    drop.style.animationDuration = ((crypto.getRandomValues(new Uint32Array(1))[0] / 4294967295) * 1 + 1.5) + 's';
+                    document.body.appendChild(drop);
+                    
+                    setTimeout(() => drop.remove(), 3000);
+                }, i * 100);
+            }
+        }
+
+        // Legacy quiz function
+        function checkQuizAnswers() {
+            const answers = {
+                q1: 'b', // 10 poker chips and a die
+                q2: 'b', // Randomness, time advance, and output statistics
+                q3: 'c', // 3 blocks (|-2| + |1| = 3)
+                q4: 'b', // They give exact answers and are faster
+                q5: 'c'  // 2 units (6 falls in range 5,6,7,8 = 2 units)
+            };
+
+            let score = 0;
+            let total = Object.keys(answers).length;
+            let results = [];
+
+            for (let question in answers) {
+                const userAnswer = document.querySelector(`input[name="${question}"]:checked`);
+                const correctAnswer = answers[question];
+                
+                if (userAnswer && userAnswer.value === correctAnswer) {
+                    score++;
+                    results.push(`<li class="text-success">Question ${question.slice(1)}: Correct! ✓</li>`);
+                } else {
+                    const questionNum = question.slice(1);
+                    const correctText = document.querySelector(`input[name="${question}"][value="${correctAnswer}"]`).parentElement.textContent.trim();
+                    results.push(`<li class="text-danger">Question ${questionNum}: Incorrect. Correct answer: ${correctText}</li>`);
+                }
+            }
+
+            const percentage = Math.round((score / total) * 100);
+            let alertClass = percentage >= 80 ? 'alert-success' : percentage >= 60 ? 'alert-warning' : 'alert-danger';
+            let message = percentage >= 80 ? 'Excellent work!' : percentage >= 60 ? 'Good job!' : 'Keep studying!';
+
+            const resultsHTML = `
+                <div class="alert ${alertClass}">
+                    <h6><i class="fas fa-chart-bar me-2"></i>Quiz Results: ${score}/${total} (${percentage}%)</h6>
+                    <p>${message}</p>
+                </div>
+                <ul class="list-unstyled">${results.join('')}</ul>
+            `;
+
+            document.getElementById('quizResults').innerHTML = resultsHTML;
+            document.getElementById('quizResults').style.display = 'block';
+            
+            // Scroll to results
+            document.getElementById('quizResults').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Auto-save quiz answers
+        document.addEventListener('change', function(e) {
+            if (e.target.type === 'radio') {
+                localStorage.setItem('sim_hand_quiz_' + e.target.name, e.target.value);
+            }
+        });
+
+        // Load saved answers
+        document.addEventListener('DOMContentLoaded', function() {
+            const questions = ['q1', 'q2', 'q3', 'q4', 'q5'];
+            questions.forEach(question => {
+                const saved = localStorage.getItem('sim_hand_quiz_' + question);
+                if (saved) {
+                    const radio = document.querySelector(`input[name="${question}"][value="${saved}"]`);
+                    if (radio) radio.checked = true;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

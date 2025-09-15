@@ -1,0 +1,151 @@
+<!-- IMPROVED SECTIONS FOR SIMULATION-BY-HAND.HTML -->
+
+<!-- Introduction Section (Replace lines 258-267) -->
+<div class="simple-explanation">
+    <h4>🎯 Think Like a Computer</h4>
+    <p><strong>Imagine you're a waiter taking orders at a restaurant.</strong> You follow the same steps every time: take the order, give it to the kitchen, serve the food, collect payment. A computer simulation works the same way - it follows the same steps over and over!</p>
+    <p><strong>If you can do it step-by-step with paper and pencil, you can teach a computer to do it automatically.</strong></p>
+</div>
+
+<div class="real-world-box">
+    <h5>🧠 Why Learn This?</h5>
+    <p>Think of it like learning to drive. You could just jump in a self-driving car, but if you learn to drive manually first, you understand how cars really work. Hand simulation teaches you the "driving" of computer modeling!</p>
+    <p><strong>Real benefit:</strong> When you use simulation software later, you'll know what's happening behind the scenes and can spot when something goes wrong.</p>
+</div>
+
+<!-- Random Numbers Section (Replace lines 277-280) -->
+<div class="simple-explanation">
+    <h4>🎲 Making Randomness Work for Us</h4>
+    <p><strong>Real life is unpredictable!</strong> You never know exactly when the next customer will walk into a store, or how long they'll take to decide what to buy. We use random numbers (like rolling dice) to mimic this unpredictability in our simulations.</p>
+    <p><strong>Think of it like this:</strong> Instead of guessing "customers arrive every 5 minutes," we say "customers arrive randomly between 1-10 minutes" and use dice to decide the exact time.</p>
+</div>
+
+<!-- Customer Demand Example (Replace lines 282-325) -->
+<h4>Example: A Grocery Store's Daily Apple Sales</h4>
+<p><strong>Imagine you own a small grocery store.</strong> Looking at your sales records, you notice that daily apple sales follow this pattern:</p>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="example-box">
+            <h6>📊 Apple Sales Pattern</h6>
+            <table class="table table-sm">
+                <thead>
+                    <tr><th>Apples Sold</th><th>How Often This Happens</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>0 bags</td><td>2 days out of 10 (20%)</td></tr>
+                    <tr><td>1 bag</td><td>3 days out of 10 (30%)</td></tr>
+                    <tr><td>2 bags</td><td>4 days out of 10 (40%)</td></tr>
+                    <tr><td>3 bags</td><td>1 day out of 10 (10%)</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="example-box">
+            <h6>🎯 Random Number Assignment</h6>
+            <table class="table table-sm">
+                <thead>
+                    <tr><th>Apples Sold</th><th>If You Roll These Numbers</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>0 bags</td><td>0, 1</td></tr>
+                    <tr><td>1 bag</td><td>2, 3, 4</td></tr>
+                    <tr><td>2 bags</td><td>5, 6, 7, 8</td></tr>
+                    <tr><td>3 bags</td><td>9</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="step-item">
+    <div class="step-number">💡</div>
+    <div class="step-content">
+        <h5>How It Works - Step by Step</h5>
+        <p><strong>Step 1:</strong> Put 10 pieces of paper numbered 0-9 in a hat.</p>
+        <p><strong>Step 2:</strong> Draw one piece. If you get "7", look at the table - that means you'll sell 2 bags of apples today!</p>
+        <p><strong>The Magic:</strong> Since 4 numbers (5,6,7,8) lead to "2 bags", you have a 40% chance of selling 2 bags - just like in real life!</p>
+    </div>
+</div>
+
+<!-- Improved Random Walk Section (Replace lines 414-467) -->
+<div class="simple-explanation">
+    <h4>🚶 A Person Taking a Random Walk</h4>
+    <p><strong>Imagine someone taking a walk where at each street corner, they flip a coin to decide which direction to go.</strong> After 10 blocks, how far from home will they be?</p>
+</div>
+
+<div class="real-world-box">
+    <h5>🌟 Real-World Applications</h5>
+    <ul>
+        <li><strong>Stock prices:</strong> Go up or down randomly each day</li>
+        <li><strong>Particle movement:</strong> Molecules bouncing around in air</li>
+        <li><strong>Website browsing:</strong> Users clicking links randomly</li>
+    </ul>
+</div>
+
+<h4>The Setup:</h4>
+<div class="step-item">
+    <div class="step-number">📍</div>
+    <div class="step-content">
+        <h5>Simple Rules</h5>
+        <p>Start at your house (position 0). Each block, flip a coin:</p>
+        <ul>
+            <li><strong>Heads:</strong> Move forward (+1)</li>
+            <li><strong>Tails:</strong> Move backward (-1)</li>
+        </ul>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="model-type-card">
+            <h4>🎲 Random Number Assignment</h4>
+            <table class="table table-sm">
+                <thead>
+                    <tr><th>Coin Flip</th><th>Direction</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Heads (0-4)</td><td>Forward (+1)</td></tr>
+                    <tr><td>Tails (5-9)</td><td>Backward (-1)</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="model-type-card">
+            <h4>📊 Measuring Success</h4>
+            <p>After 10 flips, if you're within 2 blocks of home, you "succeeded"!</p>
+            <div class="example-box">
+                <strong>Example:</strong> After 10 flips, you're at position -1<br>
+                Distance from home = 1 block ✓ Success! (Within 2 blocks)
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="real-world-box">
+    <h5>🔄 Multiple Trials</h5>
+    <p>Try this experiment many times (maybe 20 trials) and count how many times you end up within 2 blocks of home. That percentage tells you the probability!</p>
+</div>
+
+<!-- Improved Analytical vs Simulation Section -->
+<div class="concrete-example">
+    <h5>🏪 Concrete Example: Customers Per Hour</h5>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="example-box">
+                <h6>📐 Analytical (Math Formula)</h6>
+                <p>"If customers arrive every 6 minutes on average, then in 60 minutes we get 60÷6 = 10 customers exactly."</p>
+                <p><strong>Result:</strong> Always exactly 10 customers</p>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="example-box">
+                <h6>🎲 Simulation</h6>
+                <p>"Roll dice every few minutes to see when customers actually arrive. Sometimes 8 customers, sometimes 12, but averages around 10."</p>
+                <p><strong>Result:</strong> Different each time, but realistic!</p>
+            </div>
+        </div>
+    </div>
+</div>
