@@ -6,13 +6,15 @@
 }
 
 .simulation-card {
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-radius: 20px;
     padding: 30px;
     margin-bottom: 30px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    border: none;
     height: 250px;
     display: flex;
     flex-direction: column;
@@ -21,64 +23,83 @@
 }
 
 .simulation-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+    transform: translateY(-8px);
+    box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.5);
+    background: rgba(255, 255, 255, 0.2);
 }
 
 .simulation-card.active {
-    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    background: linear-gradient(135deg, rgba(40, 167, 69, 0.8), rgba(32, 201, 151, 0.8));
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.4);
     color: white;
 }
 
 .simulation-card.inactive {
     opacity: 0.7;
     cursor: not-allowed;
+    background: rgba(255, 255, 255, 0.1);
 }
 
 .simulation-icon {
     font-size: 3rem;
     margin-bottom: 20px;
-    color: #2a5298;
+    color: white;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
 .simulation-card.active .simulation-icon {
     color: white;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
 }
 
 .simulation-title {
     font-size: 1.5rem;
     font-weight: bold;
     margin-bottom: 15px;
+    color: white;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
 .simulation-description {
-    color: #666;
+    color: rgba(255, 255, 255, 0.9);
     line-height: 1.6;
+    text-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
 }
 
 .simulation-card.active .simulation-description {
-    color: rgba(255, 255, 255, 0.9);
+    color: rgba(255, 255, 255, 0.95);
 }
 
 .coming-soon {
-    background: linear-gradient(45deg, #ff6b6b, #ffa726);
+    background: linear-gradient(45deg, rgba(255, 107, 107, 0.8), rgba(255, 167, 38, 0.8));
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     color: white;
     border-radius: 20px;
     padding: 5px 15px;
     font-size: 0.8rem;
     margin-top: 10px;
     display: inline-block;
+    border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 /* Info card styles */
 .info-card {
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
 }
 
 .info-card-header {
-    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.8), rgba(118, 75, 162, 0.8));
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     color: white;
-    border-radius: 15px 15px 0 0;
+    border-radius: 20px 20px 0 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
