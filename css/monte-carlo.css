@@ -1,27 +1,19 @@
 /* Monte Carlo Simulation Styles */
 body {
-    background: linear-gradient(135deg, #ff6b6b 0%, #ffa726 50%, #f093fb 100%);
-    background-size: 400% 400%;
-    animation: gradientShift 15s ease infinite;
-}
-
-@keyframes gradientShift {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+    background: #1a1a1a;
+    color: #ffffff;
 }
 
 .simulation-stats {
-    background: linear-gradient(135deg, rgba(255, 107, 107, 0.8), rgba(255, 167, 38, 0.8));
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #ffffff;
 }
 
 .progress-bar {
-    background: linear-gradient(135deg, rgba(255, 107, 107, 0.8), rgba(255, 167, 38, 0.8));
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    background: #ffffff;
 }
 
 /* Chart container */
@@ -33,32 +25,33 @@ body {
 
 /* Scenario explanation box */
 .scenario-explanation {
-    background: rgba(255, 107, 107, 0.2);
-    backdrop-filter: blur(15px) saturate(180%);
-    -webkit-backdrop-filter: blur(15px) saturate(180%);
-    border-left: 4px solid rgba(255, 107, 107, 0.8);
-    border-radius: 15px;
+    background: #2a2a2a;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-left: 4px solid rgba(255, 255, 255, 0.5);
+    border-radius: 8px;
     padding: 15px;
     margin: 15px 0;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    color: #ffffff;
 }
 
 /* Monte Carlo specific elements */
 .monte-carlo-result {
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(15px) saturate(180%);
-    -webkit-backdrop-filter: blur(15px) saturate(180%);
-    border-radius: 15px;
+    background: #2a2a2a;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 8px;
     padding: 15px;
     margin: 10px 0;
-    color: white;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
 .iteration-counter {
     font-family: 'Courier New', monospace;
     font-weight: bold;
-    color: #ff6b6b;
+    color: #ffffff;
 }

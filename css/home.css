@@ -6,40 +6,39 @@
 }
 
 .simulation-card {
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    border-radius: 20px;
+    background: #2a2a2a;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 12px;
     padding: 30px;
     margin-bottom: 30px;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s ease;
     height: 250px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     cursor: pointer;
+    color: #ffffff;
 }
 
 .simulation-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.5);
-    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-4px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    background: #3a3a3a;
 }
 
 .simulation-card.active {
-    background: linear-gradient(135deg, rgba(40, 167, 69, 0.8), rgba(32, 201, 151, 0.8));
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    color: white;
+    background: #3a3a3a;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #ffffff;
 }
 
 .simulation-card.inactive {
     opacity: 0.7;
     cursor: not-allowed;
-    background: rgba(255, 255, 255, 0.1);
+    background: #2a2a2a;
 }
 
 .simulation-icon {
@@ -73,33 +72,29 @@
 }
 
 .coming-soon {
-    background: linear-gradient(45deg, rgba(255, 107, 107, 0.8), rgba(255, 167, 38, 0.8));
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    color: white;
-    border-radius: 20px;
+    background: #2a2a2a;
+    color: #ffffff;
+    border-radius: 8px;
     padding: 5px 15px;
     font-size: 0.8rem;
     margin-top: 10px;
     display: inline-block;
-    border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 /* Info card styles */
 .info-card {
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    background: #2a2a2a;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    color: #ffffff;
 }
 
 .info-card-header {
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.8), rgba(118, 75, 162, 0.8));
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    color: white;
-    border-radius: 20px 20px 0 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    background: #1a1a1a;
+    color: #ffffff;
+    border-radius: 8px 8px 0 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
